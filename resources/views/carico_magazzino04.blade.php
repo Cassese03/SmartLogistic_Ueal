@@ -520,7 +520,7 @@
                             onclick="$('#modal_cerca_articolo').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
                         Chiudi
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="cerca_articolo_smart1();check();">Cerca
+                    <button type="button" class="btn btn-primary" onclick="cerca_articolo_smart_manuale();check();">Cerca
                         Articolo
                     </button>
                 </div>
@@ -1005,7 +1005,7 @@
         lung = document.getElementById('lung').value;
         if (check2.length != 0) {
             if (lung == check2.length) {
-                cerca_articolo_smart();
+                cerca_articolo_smart_automatico();
                 document.getElementById('lung').value = 0;
                 document.getElementById('cerca_articolo2').value = '';
             } else {
@@ -1018,10 +1018,8 @@
 
     function carica_articolo() {
         codice = $('#modal_Cd_AR').val();
-        pos = codice.search('/');
-        if (pos != (-1)) {
-            codice = codice.substr(0, pos) + 'slash' + codice.substr(pos + 1)
-        }
+        codice = codice.replaceAll(';', 'punto');
+        codice = codice.replaceAll('/', 'slash');
         quantita = $('#modal_quantita').val();
         /* prezzo    =      $('#modal_prezzo').val();*/
         magazzino_A = '<?php echo ($session_mag['cd_mg_a']) ? $session_mag['cd_mg_a'] : 00001; ?>';
@@ -1079,25 +1077,22 @@
             });
     }
 
-    function cerca_articolo_smart() {
+    function cerca_articolo_smart_automatico() {
         testo = $('#cerca_articolo').val();
         if (testo == '')
             testo = $('#cerca_articolo2').val();
         testo = testo.trimEnd();
-        pos = testo.search('/');
-        if (pos != (-1)) {
-            testo = testo.substr(0, pos) + 'slash' + testo.substr(pos + 1)
-        }
+        testo = testo.replaceAll('/', 'slash');
+        testo = testo.replaceAll(';', 'punto');
         if (testo != '') {
             $.ajax({
-                url: "<?php echo URL::asset('ajax/cerca_articolo_smart') ?>/" + encodeURIComponent(testo) + "/" + cd_cf,
+                url: "<?php echo URL::asset('ajax/cerca_articolo_smart_automatico') ?>/" + encodeURIComponent(testo) + "/" + cd_cf,
                 context: document.body
             }).done(function (result) {
                 if (result != '') {
-                    pos = result.search('/');
-                    if (pos != (-1)) {
-                        result = result.substr(0, pos) + 'slash' + result.substr(pos + 1)
-                    }
+                    result = result.replaceAll('/', 'slash');
+                    result = result.replaceAll(';', 'punto');
+
                     $('#modal_cerca_articolo').modal('hide');
                     cerca_articolo_codice(result.trim());
                 } else
@@ -1106,25 +1101,22 @@
         }
     }
 
-    function cerca_articolo_smart1() {
+    function cerca_articolo_smart_manuale() {
         testo = $('#cerca_articolo').val();
         if (testo == '')
             testo = $('#cerca_articolo2').val();
         testo = testo.trimEnd();
-        pos = testo.search('/');
-        if (pos != (-1)) {
-            testo = testo.substr(0, pos) + 'slash' + testo.substr(pos + 1)
-        }
+        testo = testo.replaceAll('/', 'slash');
+        testo = testo.replaceAll(';', 'punto');
         if (testo != '') {
             $.ajax({
-                url: "<?php echo URL::asset('ajax/cerca_articolo_smart1') ?>/" + encodeURIComponent(testo) + "/" + cd_cf,
+                url: "<?php echo URL::asset('ajax/cerca_articolo_smart_manuale') ?>/" + encodeURIComponent(testo) + "/" + cd_cf,
                 context: document.body
             }).done(function (result) {
                 if (result != '') {
-                    pos = result.search('/');
-                    if (pos != (-1)) {
-                        result = result.substr(0, pos) + 'slash' + result.substr(pos + 1)
-                    }
+                    result = result.replaceAll(';', 'punto');
+                    result = result.replaceAll('/', 'slash');
+
                     $('#modal_cerca_articolo').modal('hide');
                     $('#modal_lista_articoli').modal('show');
                     $('#ajax_lista_articoli').html(result);

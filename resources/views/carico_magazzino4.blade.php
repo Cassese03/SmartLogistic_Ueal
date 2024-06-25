@@ -407,7 +407,7 @@
                 </button>
                 <button
                     style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:red;border: red"
-                    class="btn btn-primary" type="button" onclick="evadi_articolo2('1');">Evadi Righe<input
+                    class="btn btn-primary" type="button" onclick="conferma_righe('1');">Evadi Righe<input
                         style="background-color:red;border: red" size='1' class="btn btn-primary" type="text" readonly
                         id="button" value="0"> /(<?php echo $righe ?>)
                 </button>
@@ -557,7 +557,7 @@
                         onclick="$('#modal_cerca_articolo').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
                     Chiudi
                 </button>
-                <button type="button" class="btn btn-primary" onclick="cerca_articolo_smart();">Cerca Articolo</button>
+                <button type="button" class="btn btn-primary" onclick="cerca_articolo_smart_automatico();">Cerca Articolo</button>
             </div>
         </div>
     </div>
@@ -600,7 +600,7 @@
                         Chiudi
                     </button>
                     <button type="button" class="btn btn-primary"
-                            onclick="$('#modal_lista_articoli_daevadere').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus();evadi_articolo2('0');">
+                            onclick="$('#modal_lista_articoli_daevadere').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus();conferma_righe('0');">
                         Evadi Riga
                     </button>
                 </div>
@@ -941,7 +941,7 @@
                     <button type="button" class="btn btn-primary" style="width: 33%"
                             onclick="evadi_articolo(<?php echo $r->Id_DORig; ?>);">Evadi
                     </button>
-                        <?php //<button type="button" class="btn btn-primary" style="width: 38%" onclick="evadi_articolo2(<?php echo $r->Id_DORig; ?><?php //);" >Nuovo Doc</button>?>
+                        <?php //<button type="button" class="btn btn-primary" style="width: 38%" onclick="conferma_righe(<?php echo $r->Id_DORig; ?><?php //);" >Nuovo Doc</button>?>
                 </div>
             </div>
         </form>
@@ -1154,7 +1154,7 @@
         }
     }
 
-    function evadi_articolo2(conf) {
+    function conferma_righe(conf) {
 
         if (conf != '1') {
             document.getElementById('cerca_articolo2').value = '';
@@ -1196,7 +1196,7 @@
 
                 dorig = document.getElementById('DORIG').value;
                 $.ajax({
-                    url: "<?php echo URL::asset('ajax/evadi_articolo2') ?>/" + dorig + "/" + cd_mg_a + "/" + cd_mg_p + "/" + cd_do,
+                    url: "<?php echo URL::asset('ajax/conferma_righe') ?>/" + dorig + "/" + cd_mg_a + "/" + cd_mg_p + "/" + cd_do,
                     data: dorig,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -1260,10 +1260,8 @@
     function carica_articolo() {
 
         codice = $('#modal_Cd_AR').val();
-        pos = codice.search('/');
-        if (pos != (-1)) {
-            codice = codice.substr(0, pos) + 'slash' + codice.substr(pos + 1)
-        }
+        codice = codice.replaceAll(';', 'punto');
+        codice = codice.replaceAll('/', 'slash');
         quantita = $('#modal_quantita').val();
         magazzino_A = '00001 - Magazzino Centrale';
         magazzino_P = '00001 - Magazzino Centrale';
@@ -1319,27 +1317,23 @@
         }
     }
 
-    function cerca_articolo_smart() {
+    function cerca_articolo_smart_automatico() {
 
         testo = $('#cerca_articolo').val();
-        pos = testo.search('/');
-        if (pos != (-1)) {
-            testo = testo.substr(0, pos) + 'slash' + testo.substr(pos + 1)
-        }
+        testo = testo.replaceAll(';', 'punto');
+        testo = testo.replaceAll('/', 'slash');
         testo = testo.trimEnd();
 
         if (testo != '') {
 
             $.ajax({
-                url: "<?php echo URL::asset('ajax/cerca_articolo_smart') ?>/" + encodeURIComponent(testo) + "/" + cd_cf,
+                url: "<?php echo URL::asset('ajax/cerca_articolo_smart_automatico') ?>/" + encodeURIComponent(testo) + "/" + cd_cf,
                 context: document.body
             }).done(function (result) {
                 if (result != '') {
 
-                    pos = result.search('/');
-                    if (pos != (-1)) {
-                        result = result.substr(0, pos) + 'slash' + result.substr(pos + 1)
-                    }
+                    result = result.replaceAll(';', 'punto');
+                    result = result.replaceAll('/', 'slash');
                     $('#modal_cerca_articolo').modal('hide');
                     cerca_articolo_codice(result);
                 } else
@@ -1379,6 +1373,8 @@
 
     function controllo_articolo_smart() {
         testo = $('#cerca_articolo2').val();
+        testo = testo.replaceAll(';', 'punto');
+        testo = testo.replaceAll('/', 'slash');
         id_dotes = "<?php echo $id_dotes ?>";
         if (testo != '') {
 
@@ -1389,7 +1385,7 @@
                 if (result != '') {
                     $('#modal_cerca_articolo').modal('hide');
                     $('#ajax_lista_articoli').html(result);
-                    evadi_articolo2('0');
+                    conferma_righe('0');
                 } else {
                     $('#modal_segnalare').modal('show');
                     $('#cerca_articolo2').value = '';
