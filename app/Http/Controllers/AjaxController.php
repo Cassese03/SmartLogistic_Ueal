@@ -583,6 +583,13 @@ class AjaxController extends Controller
                 $insert_evasione['Cd_MG_A'] = $magazzino_A;
             if ($lotto != '0')
                 $insert_evasione['Cd_ARLotto'] = $lotto;
+            $check = DB::SELECT('SELECT * from MGCausale where Cd_MGCausale IN (SELECT Cd_MGCausale FROM DO where cd_do = (SELECT TOP 1 Cd_DO FROM DOTes where Id_DOTes = \'' . $Id_DoTes . '\'))');
+            if (sizeof($check) > 0) {
+                if ($check[0]->MagPFlag == 0)
+                    unset($insert_evasione['Cd_MG_P']);
+                if ($check[0]->MagAFlag == 0)
+                    unset($insert_evasione['Cd_MG_A']);
+            }
             $Id_DoTes1 = $Id_DoTes;
             $insert_evasione['Cd_AR'] = $cd_ar;
             $insert_evasione['Id_DORig_Evade'] = $Id_DoRig;
@@ -616,7 +623,7 @@ class AjaxController extends Controller
             DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes1'");
             DB::statement("exec asp_DO_End '$Id_DoTes1'");
         }
-
+        return true;
     }
 
     public
@@ -720,32 +727,6 @@ class AjaxController extends Controller
         }
     }
 
-    /*
-        public function trasporto_articolo($documento,$codice,$quantita,$magazzino,$ubicazione_P,$magazzino_A,$ubicazione_A,$fornitore,$lotto,$Id_DoTes){
-
-            ArcaUtilsController::trasporto_articolo($codice,$documento,$quantita,$magazzino,$ubicazione_P,$magazzino_A,$ubicazione_A,$fornitore,$lotto,$Id_DoTes);
-
-        }
-
-        public function modifica_articolo_ordine($id_ordine,$codice,$quantita,$magazzino_A,$ubicazione_A,$lotto,$magazzino_P,$ubicazione_P){
-
-            ArcaUtilsController::modifica_articolo($id_ordine,$codice,$quantita,$magazzino_A,1,$ubicazione_A,$lotto,$magazzino_P,$ubicazione_P);
-
-            $ordine = DB::select('SELECT * from DOTes where Id_DOtes = '.$id_ordine)[0];
-
-            echo 'Articolo Modificato Correttamente Ordine OAF: '.$ordine->NumeroDoc;
-
-        }
-        public function scarica_articolo_ordine($id_ordine,$codice,$quantita,$magazzino,$ubicazione,$lotto){
-
-            ArcaUtilsController::scarica_articolo($id_ordine,$codice,$quantita,$magazzino,1,$ubicazione,$lotto);
-
-            $ordine = DB::select('SELECT * from DOTes where Id_DOtes = '.$id_ordine)[0];
-
-            echo 'Articolo Scaricato Correttamente : '.$ordine->NumeroDoc;
-
-        }
-    */
     public
     function cerca_articolo_smart_automatico($q, $cd_cf)
     {
@@ -862,6 +843,7 @@ class AjaxController extends Controller
         $q = $q[0];
         $c = $q;
         $q = DB::SELECT('SELECT * FROM ARALias WHERE Alias = \'' . $q . '\' ');
+
 
         if (sizeof($q) != 0)
             $q = $q[0]->Cd_AR;

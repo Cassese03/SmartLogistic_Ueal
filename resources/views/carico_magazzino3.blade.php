@@ -192,7 +192,7 @@
             if(numero != '' && data != ''){
 
                 $.ajax({
-                    url: "<?php echo URL::asset('ajax/crea_documento_rif') ?>/<?php echo $fornitore->Cd_CF ?>/<?php echo $cd_do ?>/"+numero+"/"+data+"/"+numero_rif+"/"+data_rif
+                    url: "<?php echo URL::asset('ajax/crea_documento_rif') ?>/<?php echo $fornitore->Cd_CF ?>/<?php echo $cd_do ?>/"+numero+"/"+data+"/"+numero_rif+"/"+data_rif  + "/" + 0
                 }).done(function(result) {
                     $('#modal_alertDocumento').modal('show');
                     top.location.href = "/magazzino/carico4/<?php echo $fornitore->Id_CF ?>/"+result;
