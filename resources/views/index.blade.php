@@ -1,10 +1,11 @@
-<?php  $utente = session('utente');?>
-<!doctype html>
+<?php $utente = session('utente'); ?>
+    <!doctype html>
 <html lang="en" class="md">
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
     <link rel="apple-touch-icon" href="img/icona_arca.png">
     <link rel="icon" href="img/icona_arca.png">
     <link rel="stylesheet" href="vendor/bootstrap-4.1.3/css/bootstrap.min.css">
@@ -27,21 +28,23 @@
 
                 <div class="row" style="height:750px;overflow-y: none;">
                     <div class="col-md-6">
-                        <div class="background bg-250" style="height:100%;" ><img src="img/background.png" alt="" style="height:100%;" > </div>
+                        <div class="background bg-250" style="height:100%;"><img src="img/background.png" alt=""
+                                                                                 style="height:100%;"></div>
                         <div class="w-100">
-                            <h6 style="float: right;color: white">Accesso effettuato da : <?php echo $utente->Cd_Operatore ?></h6>
+                            <h6 style="float: right;color: white">Accesso effettuato da
+                                : <?php echo $utente->Cd_Operatore ?></h6>
                             <img src="img/logo_arca.png" style="width:80%;padding:10%;margin:0 auto;display:block;">
 
                             <h1 class="text-center text-white title-background" style="margin-top:0">
                                 <small>SMART LOGISTIC<br></small>
-                                <?php  echo $ditta->RagioneSociale ?></h1>
+                                <?php echo $ditta->RagioneSociale ?></h1>
 
                         </div>
                     </div>
 
                     <div class="col-md-6" style="padding-left:0;">
 
-                        <ul class="list-group" >
+                        <ul class="list-group">
                             <li class="list-group-item">
 
                                 <a href="<?php echo URL::ASSET('articoli') ?>" class="media">
@@ -92,7 +95,7 @@
                                     </div>
                                 </a>
                             </li>
-                        <!--
+                            <!--
                             <li class="list-group-item">
                                 <a href="<?php echo URL::asset('ordini') ?>" class="media">
                                     <div class="media-body">
@@ -124,8 +127,6 @@
 </div>
 
 
-
-
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="js/jquery-3.2.1.min.js"></script>
@@ -149,7 +150,7 @@
 
 <!-- page specific script -->
 <script>
-    $(window).on('load', function() {
+    $(window).on('load', function () {
         /* sparklines */
         $(".dynamicsparkline").sparkline([5, 6, 7, 2, 0, 4, 2, 5, 6, 7, 2, 0, 4, 2, 4], {
             type: 'bar',
@@ -188,7 +189,7 @@
             }
         });
         /* tooltip */
-        $(function() {
+        $(function () {
             $('[data-toggle="tooltip"]').tooltip()
         });
     });

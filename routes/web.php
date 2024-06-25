@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 //use App\Http\Controllers\HomeController;
 
 /*
@@ -38,7 +39,7 @@ Route::any('magazzino/produzione2_tot/{cd_do}', 'HomeController@produzione2_tot'
 Route::any('magazzino/produzione3/{id_dotes}/{id_fornitore}', 'HomeController@produzione3');
 */
 
-Route::any('ajax/evadi_articolo2/{dorig}', 'AjaxController@evadi_articolo2');
+Route::any('ajax/evadi_articolo2/{dorig}/{cd_mg_a}/{cd_mg_p}/{cd_do}', 'AjaxController@evadi_articolo2');
 
 Route::any('magazzino/carico', 'HomeController@carico_magazzino');
 Route::any('magazzino/carico2/{cd_do}', 'HomeController@carico_magazzino2');
