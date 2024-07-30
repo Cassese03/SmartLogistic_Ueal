@@ -668,7 +668,8 @@ class HomeController extends Controller
                 session()->save();
             }
             $session_mag = session('\'' . $id_dotes . '\'');
-            return View::make('carico_magazzino4', compact('articolo', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo', 'flusso', 'righe'));
+            $scatoli = DB::SELECT('SELECT * FROM AR WHERE Cd_AR LIKE \'SCATOLO%\'');
+            return View::make('carico_magazzino4', compact('scatoli','articolo', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo', 'flusso', 'righe'));
 
         }
 
@@ -748,7 +749,8 @@ class HomeController extends Controller
                 session()->save();
             }
             $session_mag = session('\'' . $id_dotes . '\'');
-            return View::make('carico_magazzino04', compact('session_mag', 'magazzini_selected', 'magazzini','fornitore', 'id_dotes', 'documento', 'articolo'));
+            $scatoli = DB::SELECT('SELECT * FROM AR WHERE Cd_AR LIKE \'SCATOLO%\'');
+            return View::make('carico_magazzino04', compact('scatoli','session_mag', 'magazzini_selected', 'magazzini','fornitore', 'id_dotes', 'documento', 'articolo'));
 
         }
 

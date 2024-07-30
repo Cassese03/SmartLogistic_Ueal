@@ -2,7 +2,8 @@
     <!doctype html>
 <html lang="en" class="md">
 
-<head> <div
+<head>
+    <div
         style="position: fixed;top: 0px;left: 0px;width: 100%;height: 100%;background: rgba(255, 255, 255,1);z-index: 1000000000;display: none;"
         id="ajax_loader">
 
@@ -417,6 +418,10 @@
                                                  style="text-align: center">
                                                 <h5 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>><?php echo $r->Cd_AR . ' ' . $r->Descrizione; ?>
                                                     <br><?php echo 'Prezzo : ' . round(floatval($r->PrezzoUnitarioV), 2); ?>
+                                                    @if($r->Cd_ARLotto != '')
+                                                            <?php echo '<br> Lotto : ' . $r->Cd_ARLotto; ?>
+                                                    @endif
+
                                                     <br>
                                                     Qta: <?php echo floatval($r->QtaEvadibile) ?><?php /* echo  'Magazzino di Partenza: '.$r->Cd_MG_P;if($r->Cd_MGUbicazione_A != null) echo ' - '.$r->Cd_MGUbicazione_A;?><br><?php echo' Magazzino di Arrivo: '.$r->Cd_MG_A;?><br><?php if($r->Cd_ARLotto != Null)echo 'Lotto: '.$r->Cd_ARLotto;*/ ?>
                                                 </h5>
@@ -527,7 +532,8 @@
                             onclick="$('#modal_cerca_articolo').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
                         Chiudi
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="cerca_articolo_smart_manuale();check();">Cerca
+                    <button type="button" class="btn btn-primary" onclick="/*cerca_articolo_smart_manuale();check();*/ cerca_articolo_smart_automatico();">
+                        Cerca
                         Articolo
                     </button>
                 </div>
@@ -609,6 +615,9 @@
                     <input class="form-control" type="number" id="modal_quantita" value="" required
                            placeholder="Inserisci una Quantità" autocomplete="off">
                     <input class="form-control" type="hidden" id="modal_Cd_AR" value="" required autocomplete="off">
+                    <select class="form-control" type="text" id="modal_lotto" autocomplete="off">
+
+                    </select>
                 </div>
 
                 <div class="modal-footer">
@@ -794,19 +803,35 @@
 
                     <div class="modal-body">
 
-                        <label>Vuoi Salvare il Documento ? </label>
+                        <label>Inserire Numero Scatoloni</label>
+
+                        <div class="row" style="margin: 2%">
+                            @foreach($scatoli as $s)
+                                <div class="col-xl-4 col-xs-4" style="padding: 1%">
+                                    <input type="text" readonly class="form-control"
+                                           id="ar_scatolo_{{$s->Cd_AR}}"
+                                           value="<?php echo $s->Cd_AR?>">
+                                </div>
+                                <div class="col-xl-6 col-xs-6" style="padding: 1%">
+                                    <input type="text" readonly class="form-control"
+                                           id="desc_scatolo_{{$s->Cd_AR}}"
+                                           value="<?php echo $s->Descrizione?>">
+                                </div>
+                                <div class="col-xl-2 col-xs-2" style="padding: 1%">
+                                    <input type="number" class="form-control" step="1" min="0" max="99"
+                                           id="qta_scatolo_{{$s->Cd_AR}}" value="0">
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
+
                     <?php //$('#modal_salva_documento').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()?>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal"
                                 onclick="$('#modal_salva_documento').modal('hide');$('#modal_elimina_documento').modal('show');">
                             No
                         </button>
-                        <?php if ($documento->Cd_Do == 'DDT'){ ?>
-                        <button type="button" class="btn btn-primary" onclick="salva_doc()">Si</button>
-                        <?php }else{ ?>
-                        <button type="button" class="btn btn-primary" onclick="top.location.href='/'">Si</button>
-                        <?php } ?>
+                        <button type="button" class="btn btn-primary" onclick="salva_scatoloni()">Si</button>
                     </div>
                 </div>
             </form>
@@ -965,6 +990,24 @@
         });
     }
 
+    function salva_scatoloni() {
+        @foreach($scatoli as $s)
+            ar = document.getElementById('ar_scatolo_{{$s->Cd_AR}}').value;
+        qta = document.getElementById('qta_scatolo_{{$s->Cd_AR}}').value;
+        if (qta >= 1) {
+
+            $.ajax({
+                url: "<?php echo URL::asset('ajax/inserisci_scatolone') ?>/<?php echo $id_dotes ?>/" + ar + "/" + qta,
+            }).done(function (result) {
+                if (result == 'Errore')
+                    alert('Scatolone non inserito. Prego Riprovare');
+            });
+        }
+        @endforeach
+
+        salva_doc();
+    }
+
     function elimina() {
         $.ajax({
             url: "<?php echo URL::asset('ajax/elimina') ?>/<?php echo $id_dotes ?>"
@@ -1034,7 +1077,12 @@
         ubicazione_A = $('#modal_ubicazione_A').val();
         if (ubicazione_A == '' || ubicazione_A == null)
             ubicazione_A = 'ND';
+
         lotto = 0;
+        lotto = $('#modal_lotto').val();
+        lotto = lotto.replaceAll(';', 'punto');
+        lotto = lotto.replaceAll('/', 'slash');
+
         if (quantita != '') {
             $.ajax({
                 url: "<?php echo URL::asset('ajax/aggiungi_articolo_ordine') ?>/<?php echo $id_dotes ?>/" + codice + "/" + quantita + "/" + magazzino_A + "/" + ubicazione_A + "/" + lotto + "/" + magazzino_P + "/" + 'ND'
@@ -1138,7 +1186,7 @@
             const myArray = fornitore.split("','");
             codice = myArray[1];
             lotto = myArray[2];
-            qta = myArray[3];
+            qta = 0;
         }
         $.ajax({
             url: "/ajax/cerca_articolo_codice/<?php echo $fornitore->Cd_CF ?>/" + codice + "/" + lotto + "/" + qta,

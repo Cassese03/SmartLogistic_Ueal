@@ -34,14 +34,12 @@ class ArcaUtilsController extends Controller
 
     public static function aggiungi_articolo($id_ordine, $codice_articolo, $quantita, $magazzino_A, $fornitore = 0, $ubicazione_A, $lotto, $magazzino_P, $ubicazione_P)
     {
-        $lotto = '0';
-        $pedana = DB::select('SELECT * from ARLotto where Cd_AR =  \'' . $codice_articolo . '\' and Cd_ARLotto = \'' . $lotto . '\' ');
-        if (sizeof($pedana) != 0)
-            $pedana = $pedana[0]->xCd_xPallet;
-        else
-            $pedana = '0';
+        $pedana = '0';
         if ($lotto == 'Nessun Lotto') {
             $lotto = '0';
+        }else{
+            $lotto = str_replace("slash", "/", $lotto);
+            $lotto = str_replace("punto", ";", $lotto);
         }
         if ($ubicazione_A == 'ND') {
             $ubicazione_A = '0';
@@ -127,6 +125,7 @@ class ArcaUtilsController extends Controller
                         unset($insert_righe_ordine['Cd_MG_A']);
                 }
 
+
                 /*
                                 $condizione = '';
                                 $condizione .= 'and Cd_ARLotto = \'' . $lotto . '\'';
@@ -179,52 +178,14 @@ class ArcaUtilsController extends Controller
                 if (sizeof($esiste) == 0)
                 {*/
                 DB::table('DORig')->insertGetId($insert_righe_ordine);
-                ArcaUtilsController::calcola_totale_ordine($id_ordine);
+                $nuovaRiga = db::select('SELECT TOP 1 Id_DORig FROM DORig ORDER BY TIMEINS DESC')[0]->Id_DORig;
 
-            }/*
-                else
-                {
-                    $insert_righe_ordine['Qta'] = floatval($quantita) + floatval($esiste[0]->Qta);
-                    $insert_righe_ordine['QtaEvadibile'] = floatval($quantita) + floatval($esiste[0]->QtaEvadibile);/*
-                        $insert_righe_ordine['PrezzoUnitarioV'] = floatval($prezzo) + floatval($esiste[0]->PrezzoUnitarioV);
-                        $insert_righe_ordine['PrezzoTotaleV'] = floatval($prezzo * $quantita) + floatval($esiste[0]->PrezzoTotaleV);*//*
-                    $insert_righe_ordine['Cd_MG_A'] = $magazzino_A;
-                    $insert_righe_ordine['Cd_MG_P'] = $magazzino_P;
-
-                    DB::table('DORig')->where('Id_DORig', $esiste[0]->Id_DORig)->update($insert_righe_ordine);
-                    $Id_DORig = $esiste[0]->Id_DORig;
-                    if ($lotto != '0') {
-                        DB::update("Update DoRig set Cd_ARLotto = '$lotto' where id_dorig = '$Id_DORig' ");
-                    }
-                    if ($ubicazione_A != '0') {
-                        DB::update("Update DoRig set Cd_MGUbicazione_A = '$ubicazione_A' where id_dorig = '$Id_DORig'");
-                    }
-                    if ($ubicazione_P != '0') {
-                        DB::update("Update DoRig set Cd_MGUbicazione_P = '$ubicazione_P' where id_dorig = '$Id_DORig'");
-                    }
-                    if ($pedana != '0'){
-                        DB::update("Update DoRig set xCd_xPallet = '$pedana' where id_dorig = '$Id_DORig'");
-                    }
-                    ArcaUtilsController::calcola_totale_ordine($id_ordine);
+                if ($lotto != '0') {
+                    DB::update("Update DoRig set Cd_ARLotto = '$lotto' where id_dorig = '$nuovaRiga'");
                 }
-
-                if($nuovaRiga != null ){
-                    DB::UPDATE('Update DoRig set QtaEvadibile= \'0\'WHERE Id_DoRig = \''.$nuovaRiga.'\'');
-                    DB::UPDATE('Update DoRig set QtaEvasa= \''.$quantita.'\'WHERE Id_DoRig = \''.$nuovaRiga.'\'');
-                    DB::update('Update dorig set Evasa = \'1\'   where Id_DoRig = \'' . $nuovaRiga . '\' ');
-                    $Id_DoTes_old = DB::SELECT('SELECT * from DoRig where id_dorig = \'' . $nuovaRiga . '\' ')[0]->Id_DOTes;
-                    DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes_old'");
-                    DB::statement("exec asp_DO_End '$Id_DoTes_old'");
-
                 ArcaUtilsController::calcola_totale_ordine($id_ordine);
-                /*
-                $insert_righe_ordine['Id_DoTes'] = $id_ordine;
-                $insert_righe_ordine['Qta'] = $quantita;
-                $insert_righe_ordine['QtaEvadibile'] = $quantita;
-                $insert_righe_ordine['QtaEvasa'] = $quantita;
-                $insert_righe_ordine['Id_DORig_Evade'] = $nuovaRiga;
-                $condizione  .='and Id_DORig_Evade = \''.$nuovaRiga.'\'';*/
-            //}
+
+            }
         }
     }
 

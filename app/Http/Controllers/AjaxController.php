@@ -24,6 +24,10 @@ use Symfony\Component\VarDumper\Cloner\Data;
  */
 class AjaxController extends Controller
 {
+    public function inserisci_scatolone($id_dotes, $ar, $qta)
+    {
+        DB::table('DORIG')->insertGetId(['Cd_AR' => $ar, 'Qta' => $qta, 'Id_DOTes' => $id_dotes, 'Cd_MG_A' => '00001', 'Cd_MG_P' => '00001']);
+    }
 
     public function cerca_articolo($q)
     {
@@ -317,6 +321,8 @@ class AjaxController extends Controller
     {
         $codice = str_replace("slash", "/", $codice);
         $codice = str_replace("punto", ";", $codice);
+        $Cd_ARLotto = str_replace("slash", "/", $Cd_ARLotto);
+        $Cd_ARLotto = str_replace("punto", ";", $Cd_ARLotto);
 
 
         $articoli = DB::select('SELECT AR.Id_AR,AR.Cd_AR,AR.Descrizione,ARAlias.Alias as barcode,ARARMisura.UMFatt,DORig.PrezzoUnitarioV,LSArticolo.Prezzo from AR
@@ -338,14 +344,14 @@ class AjaxController extends Controller
         $magazzini = DB::select('SELECT * from MG WHERE Cd_MG !=\'' . $magazzino_selezionato . '\' ');
 
         //TODO Controllare Data Scadenza togliere i commenti
-        /*
-                $date = date('d/m/Y',strtotime('today')) ;
 
-                IF($Cd_ARLotto!='0')
-                    $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $codice . '\' and Cd_ARLotto !=\''.$Cd_ARLotto.'\' AND DataScadenza > \''.$date.'\' and Cd_ARLotto in (select Cd_ARLotto from MGMov group by Cd_ARLotto having SUM(QuantitaSign) >= 0)  ');
-                else
-                    $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $codice . '\'  AND DataScadenza > \''.$date.'\' and Cd_AR in (select Cd_AR from MGMov group by Cd_AR having SUM(QuantitaSign) >= 0)  ');
-        */
+        $date = date('d/m/Y', strtotime('today'));
+
+        if ($Cd_ARLotto != '0')
+            $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $codice . '\' and Cd_ARLotto !=\'' . $Cd_ARLotto . '\' and Cd_ARLotto in (select Cd_ARLotto from MGMov group by Cd_ARLotto having SUM(QuantitaSign) >= 0)  ');
+        else
+            $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $codice . '\'  and Cd_AR in (select Cd_AR from MGMov group by Cd_AR having SUM(QuantitaSign) >= 0)  ');
+
         if (sizeof($articoli) > 0) {
             $articolo = $articoli[0];
             echo '<h3>    Barcode: ' . $articolo->barcode . '<br>
@@ -362,15 +368,15 @@ class AjaxController extends Controller
                 $('#modal_prezzo').val('<?php echo number_format($articolo->PrezzoUnitarioV, 2, '.', '') ?>');
                 <?php } else { ?>
                 $('#modal_prezzo').val('<?php echo number_format($articolo->Prezzo, 2, '.', '') ?>');
-                <?php } /*?>
+                <?php } ?>
                 $('#modal_lotto').html
-                <?php if($Cd_ARLotto!='0'){ ?>
+                <?php if($Cd_ARLotto != '0'){ ?>
                 ('<option><?php echo $Cd_ARLotto ?></option>')
                 <?php } ?>
-                $('#modal_lotto').append( '<option>Nessun Lotto</option>')
+                $('#modal_lotto').append('<option>Nessun Lotto</option>')
                 <?php foreach($lotto as $l){?>
                 $('#modal_lotto').append('<option><?php echo $l->Cd_ARLotto ?></option>')
-                <?php }*/ ?>
+                <?php } ?>
                 $('#modal_magazzino_P').html
                 <?php  if($magazzino_selezionato != '0'){ ?>
                 ('<option><?php echo $magazzino_selected->Cd_MG . ' - ' . $magazzino_selected->Descrizione?></option>')
@@ -732,30 +738,22 @@ class AjaxController extends Controller
     {
         $q = str_replace("slash", "/", $q);
         $q = str_replace("punto", ";", $q);
-        $qta = 'ND';/*
-            $decoder = new Decoder($delimiter = '');
-            $barcode = $decoder->decode($q);
-            $where = ' where 1=1 ';
-            foreach ($barcode->toArray()['identifiers'] as $field) {
-
-                if ($field['code'] == '01') {
-                    $testo = trim($field['content'], '*,');
-                    $where .= ' and AR.Cd_AR Like \'%' . $testo . '%\'';
-                }
-                if ($field['code'] == '310') {
-                    $decimali = floatval(substr($field['raw_content'],-2));
-                    $qta = floatval(substr($field['raw_content'],0,4))+$decimali/100;
-                }
-                if ($field['code'] == '10') {
-                    $where .= ' and ARLotto.Cd_ARLotto Like \'%' . $field['content'] . '%\'';
-                }
-
-            }
-            $articoli = DB::select('SELECT AR.[Id_AR],AR.[Cd_AR],AR.[Descrizione],ARLotto.[Cd_ARLotto] FROM AR LEFT JOIN ARLotto on AR.Cd_AR = ARLotto.Cd_AR ' . $where . '  Order By Id_AR DESC');
-*/
+        $qta = 'ND';
         $q = explode(';', $q);
+        if (sizeof($q) > 1)
+            $data_scadenza = $q[1];
+        else
+            $data_scadenza = 0;
+        if (sizeof($q) > 2)
+            $lotto = $q[2];
+        else
+            $lotto = 0;
+
         $q = $q[0];
-        $articoli = DB::select('SELECT AR.[Id_AR],AR.[Cd_AR],AR.[Descrizione],ARLotto.[Cd_ARLotto] FROM AR LEFT JOIN ARLotto ON AR.Cd_AR = ARLotto.Cd_ARLotto LEFT JOIN ARAlias ON ARAlias.Cd_AR = AR.Cd_AR where AR.Obsoleto = 0 AND AR.Cd_AR Like \'' . $q . '%\' or  AR.Descrizione Like \'%' . $q . '%\' or AR.CD_AR IN (SELECT CD_AR from ARAlias where Alias LIKE \'%' . $q . '%\') Order By AR.Id_AR DESC');
+        if ($lotto != 0)
+            $articoli = DB::select('SELECT AR.[Id_AR],AR.[Cd_AR],AR.[Descrizione],ARLotto.[Cd_ARLotto] FROM AR LEFT JOIN ARLotto ON AR.Cd_AR = ARLotto.Cd_AR LEFT JOIN ARAlias ON ARAlias.Cd_AR = AR.Cd_AR where ARLotto.Cd_ARLotto = \'' . $lotto . '\' and AR.Obsoleto = 0 AND (AR.Cd_AR Like \'' . $q . '%\' or  AR.Descrizione Like \'%' . $q . '%\' or AR.CD_AR IN (SELECT CD_AR from ARAlias where Alias LIKE \'%' . $q . '%\')) Order By AR.Id_AR DESC');
+        else
+            $articoli = DB::select('SELECT AR.[Id_AR],AR.[Cd_AR],AR.[Descrizione],0 as Cd_ARLotto FROM AR LEFT JOIN ARAlias ON ARAlias.Cd_AR = AR.Cd_AR where AR.Obsoleto = 0 AND (AR.Cd_AR Like \'' . $q . '%\' or  AR.Descrizione Like \'%' . $q . '%\' or AR.CD_AR IN (SELECT CD_AR from ARAlias where Alias LIKE \'%' . $q . '%\')) Order By AR.Id_AR DESC');
         if (sizeof($articoli) > 0) {
             $articolo = $articoli[0];
             ?>
@@ -840,6 +838,8 @@ class AjaxController extends Controller
         $q = str_replace("slash", "/", $q);
         $q = str_replace("punto", ";", $q);
         $q = explode(';', $q);
+        $data_scadenza = $q[1];
+        $lotto = $q[2];
         $q = $q[0];
         $c = $q;
         $q = DB::SELECT('SELECT * FROM ARALias WHERE Alias = \'' . $q . '\' ');
@@ -849,6 +849,21 @@ class AjaxController extends Controller
             $q = $q[0]->Cd_AR;
         else
             $q = $c;
+
+        $articoli = DB::select('SELECT * FROM DoRig WHERE Cd_ARLotto = \'' . $lotto . '\' and Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');
+        if (sizeof($articoli) > 0)
+            $articoli = $articoli[0]; ?>
+        <script type="text/javascript">
+
+            $('#modal_controllo_articolo').val('<?php echo $articoli->Cd_AR ?>');
+            $('#modal_controllo_quantita').val(<?php echo floatval($articoli->Qta) ?>);
+            $('#modal_controllo_lotto').val('<?php echo $articoli->Cd_ARLotto ?>');
+            $('#modal_controllo_dorig').val('<?php echo $articoli->Id_DORig ?>');
+
+
+        </script>
+
+        <?php
         $articoli = DB::select('SELECT * FROM DoRig WHERE Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');
         if (sizeof($articoli) > 0)
             $articoli = $articoli[0]; ?>

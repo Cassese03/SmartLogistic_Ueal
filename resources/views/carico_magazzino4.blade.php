@@ -416,7 +416,8 @@
                 <button
                     style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:red;border: red"
                     class="btn btn-primary" type="button" onclick="conferma_righe('1');">Evadi Righe<input
-                        style="background-color:red;border: red" size='1' class="btn btn-primary" type="text" readonly
+                        style="background-color:red;border: red" size='1' class="btn btn-primary" type="text"
+                        readonly
                         id="button" value="0"> /(<?php echo $righe ?>)
                 </button>
                 <input type="hidden" id="DORIG" value="">
@@ -632,8 +633,25 @@
                 </div>
 
                 <div class="modal-body">
-
-                    <label>Vuoi Salvare il Documento ? </label>
+                    <label>Inserire Numero Scatoloni</label>
+                    <div class="row" style="margin: 2%">
+                        @foreach($scatoli as $s)
+                            <div class="col-xl-4 col-xs-4" style="padding: 1%">
+                                <input type="text" readonly class="form-control"
+                                       id="ar_scatolo_{{$s->Cd_AR}}"
+                                       value="<?php echo $s->Cd_AR ?>">
+                            </div>
+                            <div class="col-xl-6 col-xs-6" style="padding: 1%">
+                                <input type="text" readonly class="form-control"
+                                       id="desc_scatolo_{{$s->Cd_AR}}"
+                                       value="<?php echo $s->Descrizione?>">
+                            </div>
+                            <div class="col-xl-2 col-xs-2" style="padding: 1%">
+                                <input type="number" class="form-control" step="1" min="0" max="99"
+                                       id="qta_scatolo_{{$s->Cd_AR}}" value="0">
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -641,7 +659,7 @@
                             onclick="$('#modal_salva_documento').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
                         No
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="salva_documento()">Si</button>
+                    <button type="button" class="btn btn-primary" onclick="salva_scatoloni()">Si</button>
                 </div>
             </div>
         </form>
@@ -1124,6 +1142,24 @@
                 $('#modal_alertSegnalazione').modal('show');
             });
         }
+    }
+
+    function salva_scatoloni() {
+        @foreach($scatoli as $s)
+            ar = document.getElementById('ar_scatolo_{{$s->Cd_AR}}').value;
+        qta = document.getElementById('qta_scatolo_{{$s->Cd_AR}}').value;
+        if (qta >= 1) {
+
+            $.ajax({
+                url: "<?php echo URL::asset('ajax/inserisci_scatolone') ?>/<?php echo $id_dotes ?>/" + ar + "/" + qta,
+            }).done(function (result) {
+                if (result == 'Errore')
+                    alert('Scatolone non inserito. Prego Riprovare');
+            });
+        }
+        @endforeach
+
+        salva_documento();
     }
 
     function salva_documento() {
