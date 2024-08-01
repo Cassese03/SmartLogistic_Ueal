@@ -1755,17 +1755,10 @@
     }
 
     function invia() {
-        testo = 'Il documento (documento) è stato salvato.<br> Le righe del documento sono:';
-        <?php foreach ($documento->righe as $r){ ?>
-            articolo = '<?php echo $r->Cd_AR ?>';
-        quantita = '<?php echo $r->Qta ?>';
-        prezzo = '<?php echo $r->PrezzoUnitarioV ?>';
-        testo = testo + '<br> Articolo ' + articolo + ' quantita\' ' + Number.parseFloat(quantita).toFixed(2) + ' prezzo ' + prezzo + '<br>';
-        <?php } ?>
         $.ajax({
-            url: "<?php echo URL::asset('ajax/invia_mail') ?>/<?php echo $id_dotes ?>/" + 3 + "/" + testo
+            url: "<?php echo URL::asset('ajax/crea_doc_riordino') ?>/<?php echo $id_dotes ?>",
         }).done(function (result) {
-
+            top.location.href = '/';
         });
     }
 
@@ -1807,7 +1800,6 @@
 
         });
         $('#modal_alertSegnalazione').modal('show');
-        top.location.href = '/';
     }
 
     function segnalazioneControllo1() {
