@@ -18,7 +18,7 @@
         style="position: fixed;top: 0px;left: 0px;width: 100%;height: 100%;background: rgba(255, 255, 255,1);z-index: 1000000000;display: none;"
         id="ajax_loader">
 
-        <img src="<?php echo URL::asset('img/logo.png') ?>" alt="AdminLTE Logo"
+        <img src="<?php echo URL::asset('img/icona_arca.png') ?>" alt="AdminLTE Logo"
              style="width:400px;margin:0 auto;display:block;margin-top:200px;">
         <h2 style="text-align:center;margin-top:10px;">Operazione In Corso....</h2>
     </div>
@@ -415,15 +415,11 @@
                 </button>
                 <button
                     style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:red;border: red"
-                    class="btn btn-primary" type="button" onclick="conferma_righe('1');">Evadi Righe<input
-                        style="background-color:red;border: red" size='1' class="btn btn-primary" type="text"
-                        readonly
-                        id="button" value="0"> /(<?php echo $righe ?>)
+                    class="btn btn-primary" type="button" onclick="evadi_articolo2('1');">Conferma Evasione Righe
                 </button>
                 <input type="hidden" id="DORIG" value="">
                 <input type="hidden" id="lung" value="0">
                 <?php if (sizeof($documento->righe) > 0){ ?>
-
 
                 <div class="row">
 
@@ -433,6 +429,10 @@
                                 <?php foreach ($documento->righe as $r){
                                 $totale = 0; ?>
                                 <?php if ($r->QtaEvadibile > 0){ ?>
+                            <input type="hidden"
+                                   id="qta_max_evad_<?php echo $r->Id_DORig; ?>"
+                                   value="<?php echo $r->QtaEvadibile;?>">
+
                             <li class="list-group-item" id="riga_<?php echo $r->Id_DORig ?>">
                                 <a href="#" onclick="" class="media">
                                     <div class="media-body">
@@ -440,8 +440,14 @@
                                             <div class="col-xs-6 col-sm-6 col-md-6 col-xl-12"
                                                  style="text-align: center;">
 
+                                                <h5 style="text-align: center;color: blue;"
+                                                    id="riga_<?php echo $r->Id_DORig; ?>_counter"></h5>
                                                 <h5 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>><?php echo $r->Cd_AR . ' ' . $r->Descrizione; ?>
                                                     <br><?php echo 'Prezzo :' . round(floatval($r->PrezzoUnitarioV), 2); ?>
+                                                    @if($r->Cd_ARLotto != '')
+                                                            <?php echo '<br> Lotto : ' . $r->Cd_ARLotto; ?>
+                                                    @endif
+
                                                     <br> Qta
                                                     : <?php echo floatval($r->QtaEvadibile) ?><?php /* echo  'Magazzino di Partenza: '.$r->Cd_MG_P;if($r->Cd_MGUbicazione_A != null) echo ' - '.$r->Cd_MGUbicazione_A;?><br><?php echo' Magazzino di Arrivo: '.$r->Cd_MG_A;?><br><?php if($r->Cd_ARLotto != Null)echo 'Lotto: '.$r->Cd_ARLotto;*/ ?>
                                                 </h5>
@@ -482,7 +488,7 @@
                                                     <button style="width:24%;" type="reset" name="evadi_riga"
                                                             value="<?php echo $r->Cd_AR;?>"
                                                             class="btn btn-success btn-sm"
-                                                            onclick="controllo_articolo_smart2('<?php echo $r->Cd_AR?>')">
+                                                            onclick="controllo_articolo_smart2('<?php echo $r->Cd_AR?>;0;<?php echo ($r->Cd_ARLotto) ? $r->Cd_ARLotto :'0' ?>')">
                                                         <i class="bi bi-check-circle">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                                  height="16" fill="currentColor"
@@ -585,7 +591,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body" id="ajax_lista_articoli"></div>
+                <div class="modal-body" style="display: none" id="ajax_lista_articoli"></div>
                 <div class="modal-body">
 
                     <label>Articolo</label>
@@ -593,10 +599,10 @@
                            readonly>
 
                     <label>Quantita</label>
-                    <input class="form-control" type="text" id="modal_controllo_quantita" value="" autocomplete="off"
-                           readonly>
+                    <input class="form-control" type="text" id="modal_controllo_quantita" value="" autocomplete="off">
 
-                    <input class="form-control" type="hidden" id="modal_controllo_lotto" value="" autocomplete="off"
+                    <label>Lotto</label>
+                    <input class="form-control" type="text" id="modal_controllo_lotto" value="" autocomplete="off"
                            readonly>
 
                     <input class="form-control" type="hidden" id="modal_controllo_dorig" value="" autocomplete="off"
@@ -611,7 +617,7 @@
                         Chiudi
                     </button>
                     <button type="button" class="btn btn-primary"
-                            onclick="$('#modal_lista_articoli_daevadere').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus();conferma_righe('0');">
+                            onclick="$('#modal_lista_articoli_daevadere').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus();evadi_articolo2('0');">
                         Evadi Riga
                     </button>
                 </div>
@@ -794,28 +800,6 @@
     </div>
 </div>
 <?php } ?>
-<?php /*
-<div class="modal" id="modal_lista_articoli" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <form method="post">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Carica Articolo</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-
-                <div class="modal-body" id="ajax_lista_articoli"></div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-*/ ?>
 
 
 <div class="modal" id="modal_carico" tabindex="-1" role="dialog" aria-hidden="true">
@@ -969,7 +953,6 @@
                     <button type="button" class="btn btn-primary" style="width: 33%"
                             onclick="evadi_articolo(<?php echo $r->Id_DORig; ?>);">Evadi
                     </button>
-                        <?php //<button type="button" class="btn btn-primary" style="width: 38%" onclick="conferma_righe(<?php echo $r->Id_DORig; ?><?php //);" >Nuovo Doc</button>?>
                 </div>
             </div>
         </form>
@@ -977,6 +960,44 @@
 </div>
 <?php } ?>
 
+<div class="modal" id="modal_conf_riga" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Evadi Articolo <?php echo $r->Cd_AR ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            onclick="$('#modal_conf_riga').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label>Magazzino di Partenza</label>
+                    <input type="text" readonly value="{{$session_mag['cd_mg_p'] }}"
+                           style="width:100%;border:none;font-size:medium;background:transparent;">
+                    <br><br>
+                    <label>Magazzino di Arrivo</label>
+                    <input type="text" readonly value="{{$session_mag['cd_mg_a'] }}"
+                           style="width:100%;border:none;font-size:medium;background:transparent;">
+                    <br><br>
+                    <label>Documento da Evadere in :</label>
+                    <input type="text" readonly value="{{$session_mag['doc_evadi'] }}"
+                           style="width:100%;border:none;font-size:medium;background:transparent;">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" style="width: 33%" data-dismiss="modal"
+                            onclick="$('#modal_conf_riga').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
+                        Chiudi
+                    </button>
+                    <button type="button" class="btn btn-primary" style="width: 33%"
+                            onclick="conferma_righe();">Evadi
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="modal" id="modal_segnalare" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <form method="post">
@@ -1034,7 +1055,15 @@
         <strong>Warning!</strong> <br>La riga è gia' in fase di evasione</a>.
     </div>
 </div>
-
+<div class="modal" id="modal_alertMaxEvasione" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="alert alert-success alert-dismissible fade show">
+        <button type="button" class="close"
+                onclick="$('#modal_alertMaxEvasione').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus() ">
+            &times;
+        </button>
+        <strong>Warning!</strong> <br>La riga ha raggiunto il massimo della quantità evadibile</a>.
+    </div>
+</div>
 <div class="modal" id="modal_alertSegnalazione" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="alert alert-success alert-dismissible fade show">
         <button type="button" class="close" data-dismiss="alert"
@@ -1118,6 +1147,8 @@
 </html>
 <script type="text/javascript">
 
+    var evadi = {};
+
     function change_mag() {
         $('#session').submit();
     }
@@ -1199,50 +1230,123 @@
             }
         }
     }
+    function conferma_righe() {
 
-    function conferma_righe(conf) {
+        $('#ajax_loader').fadeIn();
+
+        cd_do = document.getElementById('doc_evadi').value;
+
+        cd_mg_p = document.getElementById('cd_mg_p').value;
+
+        if (cd_mg_p == '' || cd_mg_p == 'undefined' || cd_mg_p == undefined || cd_mg_p == null || cd_mg_p == 'Scegli il magazzino...')
+            cd_mg_p = 'ND';
+
+        cd_mg_a = document.getElementById('cd_mg_a').value;
+        if (cd_mg_a == '' || cd_mg_a == 'undefined' || cd_mg_a == undefined || cd_mg_a == null || cd_mg_a == 'Scegli il magazzino...')
+            cd_mg_a = 'ND';
+
+        dorig = JSON.stringify(evadi);
+        $.ajax({
+            url: "<?php echo URL::asset('ajax/conferma_righe') ?>/" + 'old' + "/" + cd_mg_a + "/" + cd_mg_p + "/" + cd_do,
+            data: evadi,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+        }).done(function (result) {
+            $('#ajax_loader').fadeOut();
+            location.reload();
+            if (result.length > 1)
+                $('#modal_alertQuantita0').modal('show');
+            else
+                $('#modal_alertEvasa').modal('show');
+        });
+    }
+    function evadi_articolo2(conf) {
 
         if (conf != '1') {
             document.getElementById('cerca_articolo2').value = '';
             text = document.getElementById('modal_controllo_dorig').value;
             dorig = document.getElementById('DORIG').value;
-            if (dorig.search(text) == (-1)) {
-                if (dorig != '')
-                    document.getElementById('DORIG').value = document.getElementById('DORIG').value + "','" + text;
-                if (dorig == '')
-                    document.getElementById('DORIG').value = text;
+            max_evasione = document.getElementById('qta_max_evad_' + text).value;
+            qta_da_evadere = document.getElementById('modal_controllo_quantita').value;
+            if (typeof (evadi[text]) != "undefined" && evadi[text] !== null) {
+                if (parseInt(parseInt(evadi[text]) + parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
+                    evadi[text] = parseInt(evadi[text]) + parseInt(qta_da_evadere);
+                } else {
+                    $('#modal_alertMaxEvasione').modal('show');
+                    return;
+                }
+
             } else {
-                $('#modal_alertEvasione').modal('show');
-                return;
+                if (parseInt(qta_da_evadere) <= parseInt(max_evasione)) {
+                    evadi[text] = parseInt(qta_da_evadere);
+                } else {
+                    $('#modal_alertMaxEvasione').modal('show');
+                    return;
+                }
             }
+            /*if (dorig.search(text) == (-1)) {
+                            if (dorig != '')
+                                document.getElementById('DORIG').value = document.getElementById('DORIG').value + "','" + text;
+                            if (dorig == '')
+                                document.getElementById('DORIG').value = text;
+                        } else {
+                            $('#modal_alertEvasione').modal('show');
+                            return;
+                        }*/
             document.getElementById('cerca_articolo2').focus();
-            righe = document.getElementById('button').value;
-            righe++;
-            document.getElementById('button').value = righe;
-            document.getElementById('button').innerHTML = 'Evadi Righe (' + righe + ')';
-            document.getElementById('riga_' + text).style.backgroundColor = 'green';
+            //righe = document.getElementById('button').value;
+            //righe++;
+            //document.getElementById('button').value = righe;
+            //document.getElementById('button').innerHTML = 'Evadi Righe (' + righe + ')';
+            //document.getElementById('riga_' + text).style.backgroundColor = 'green';
+
+            if (parseInt(evadi[text]) == parseInt(max_evasione))
+                document.getElementById('riga_' + text).style.backgroundColor = 'green';
+            else
+                document.getElementById('riga_' + text).style.backgroundColor = 'yellow';
+
+            document.getElementById('riga_' + text + '_counter').innerHTML = 'Righe in Evasione : ' + evadi[text];
         } else {
-            dorig = document.getElementById('DORIG').value;
-            if (dorig == '') {
+
+
+            if (Object.keys(evadi).length > 0) {
+
+                $('#modal_conf_riga').modal('show');/*
+                $.ajax({
+                    url: "<?php echo URL::asset('ajax/evadi_articolo2') ?>/" + dorig
+                }).done(function (result) {
+                    if (result.length > 1)
+                        $('#modal_alertQuantita0').modal('show');
+                    else
+                        $('#modal_alertEvasa').modal('show');
+                    location.reload();
+                });*/
+            } else {
                 $('#modal_noriga').modal('show');
                 return;
-            } else {
-                $('#ajax_loader').fadeIn();
-
-                cd_do = document.getElementById('doc_evadi').value;
-
-                cd_mg_p = document.getElementById('cd_mg_p').value;
-
-                if (cd_mg_p == '' || cd_mg_p == 'undefined' || cd_mg_p == undefined || cd_mg_p == null || cd_mg_p == 'Scegli il magazzino...')
-                    cd_mg_p = 'ND';
-
-                cd_mg_a = document.getElementById('cd_mg_a').value;
-                if (cd_mg_a == '' || cd_mg_a == 'undefined' || cd_mg_a == undefined || cd_mg_a == null || cd_mg_a == 'Scegli il magazzino...')
-                    cd_mg_a = 'ND';
-
+            }
+            /*
                 dorig = document.getElementById('DORIG').value;
-                $.ajax({
-                    url: "<?php echo URL::asset('ajax/conferma_righe') ?>/" + dorig + "/" + cd_mg_a + "/" + cd_mg_p + "/" + cd_do,
+                if (dorig == '') {
+                    $('#modal_noriga').modal('show');
+                    return;
+                } else {
+                    $('#ajax_loader').fadeIn();
+
+                    cd_do = document.getElementById('doc_evadi').value;
+
+                    cd_mg_p = document.getElementById('cd_mg_p').value;
+
+                    if (cd_mg_p == '' || cd_mg_p == 'undefined' || cd_mg_p == undefined || cd_mg_p == null || cd_mg_p == 'Scegli il magazzino...')
+                        cd_mg_p = 'ND';
+
+                    cd_mg_a = document.getElementById('cd_mg_a').value;
+                    if (cd_mg_a == '' || cd_mg_a == 'undefined' || cd_mg_a == undefined || cd_mg_a == null || cd_mg_a == 'Scegli il magazzino...')
+                        cd_mg_a = 'ND';
+
+                    dorig = document.getElementById('DORIG').value;
+                    $.ajax({
+                        url: "<?php echo URL::asset('ajax/evadi_articolo2') ?>/" + dorig + "/" + cd_mg_a + "/" + cd_mg_p + "/" + cd_do,
                     data: dorig,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -1256,7 +1360,7 @@
                         $('#modal_alertEvasa').modal('show');
 
                 });
-            }
+            }*/
         }
     }
 
@@ -1432,7 +1536,7 @@
                 if (result != '') {
                     $('#modal_cerca_articolo').modal('hide');
                     $('#ajax_lista_articoli').html(result);
-                    conferma_righe('0');
+                    evadi_articolo2('0');
                 } else {
                     $('#modal_segnalare').modal('show');
                     $('#cerca_articolo2').value = '';
@@ -1448,6 +1552,8 @@
     function controllo_articolo_smart2(codice) {
 
         testo = codice;
+        testo = testo.replaceAll(';', 'punto');
+        testo = testo.replaceAll('/', 'slash');
         id_dotes = "<?php echo $id_dotes ?>";
         if (testo != '') {
 

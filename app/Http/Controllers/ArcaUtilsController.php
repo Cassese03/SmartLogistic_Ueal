@@ -34,10 +34,9 @@ class ArcaUtilsController extends Controller
 
     public static function aggiungi_articolo($id_ordine, $codice_articolo, $quantita, $magazzino_A, $fornitore = 0, $ubicazione_A, $lotto, $magazzino_P, $ubicazione_P)
     {
-        $pedana = '0';
         if ($lotto == 'Nessun Lotto') {
             $lotto = '0';
-        }else{
+        } else {
             $lotto = str_replace("slash", "/", $lotto);
             $lotto = str_replace("punto", ";", $lotto);
         }
@@ -47,7 +46,6 @@ class ArcaUtilsController extends Controller
         if ($ubicazione_P == 'ND') {
             $ubicazione_P = '0';
         }
-        $nuovaRiga = null;
         $cf = DB::select('SELECT * from CF Where Cd_CF IN (SELECT Cd_CF from DOTes WHere Id_DoTes = ' . $id_ordine . ')');
         if (sizeof($cf) > 0) {
             $cf = $cf[0];
@@ -107,12 +105,7 @@ class ArcaUtilsController extends Controller
                     $insert_righe_ordine['Cd_CGConto'] = DB::SELECT('SELECT * FROM IMPOSTAZIONE WHERE Id_Impostazione = \'7\'')[0]->Cd_CGConto_2;
                 if ($insert_righe_ordine['Cd_CGConto'] == '')
                     $insert_righe_ordine['Cd_CGConto'] = $cf->Cd_CGConto_Mastro;
-                /*
-                                    $insert_righe_ordine['Cd_Aliquota_R'] = $articolo->Cd_Aliquota_V;
 
-                                    $insert_righe_ordine['PrezzoTotaleV'] = $prezzo * $quantita;
-                                $insert_righe_ordine['Cd_MG_A'] = $magazzino_A;
-                */
                 $insert_righe_ordine['Cd_MG_A'] = $magazzino_A;
 
                 $insert_righe_ordine['Cd_MG_P'] = $magazzino_P;
@@ -124,61 +117,20 @@ class ArcaUtilsController extends Controller
                     if ($check[0]->MagAFlag == 0)
                         unset($insert_righe_ordine['Cd_MG_A']);
                 }
-
-
-                /*
-                                $condizione = '';
-                                $condizione .= 'and Cd_ARLotto = \'' . $lotto . '\'';
-                                if ($ubicazione_A != '0')
-                                    $condizione .= 'and Cd_MGUbicazione_A =\'' . $ubicazione_A . '\'';
-                                if ($ubicazione_P != '0')
-                                    $condizione .= 'and Cd_MGUbicazione_P =\'' . $ubicazione_P . '\'';
-
-                                $tipo1 = DB::SELECT('SELECT * FROM DOTes WHERE Id_DOTes = \'' . $id_ordine . '\'');
-                                $tipo = $tipo1[0]->Cd_Do;
-                                $fornitore = $tipo1[0]->Cd_CF;
-                                if (str_replace(' ','',$tipo) == 'DTG' || str_replace(' ','',$tipo) == 'DTR') {
-                                    $i = '0';
-                                    $id_ordine_1 = DB::SELECT('SELECT * FROM DORig WHERE Id_DOTes=\'' . $id_ordine . '\' ');
-                                    foreach ($id_ordine_1 as $o) {
-                                        if ($o->Id_DORig_Evade != null) {
-                                            $Id_DoTes = $o->Id_DORig_Evade;
-                                            $Id_DoTes = DB::SELECT('SELECT * FROM DORig WHERE Id_DORig = \'' . $Id_DoTes . '\' ')[0]->Id_DOTes;
-                                            $i++;
-                                        }
-                                    }
-
-                                    $nuovo = DB::SELECT('SELECT * FROM DODOPREL WHERE Cd_DO = \'' . $tipo . '\'');
-                                    if ($nuovo != null) {
-                                        $nuovo = $nuovo[0]->Cd_DO_Prelevabile;
-                                        if ($i == 0)
-                                            $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_CF' => $fornitore, 'Cd_Do' => $nuovo]);
-
-                                        $insert_righe_ordine['Id_DoTes'] = $Id_DoTes;
-                                        /*$insert_righe_ordine['QtaEvasa'] = $insert_righe_ordine['Qta'];
-                                        $insert_righe_ordine['QtaEvadibile'] = '0';*//*
-
-
-                        DB::table('DORig')->insertGetId($insert_righe_ordine);
-                        $nuovaRiga = DB::SELECT('SELECT top 1 * FROM DORig order by Id_DORig desc ')[0]->Id_DORig;
-                        if ($lotto != '0') {
-                            DB::update("Update DoRig set Cd_ARLotto = '$lotto' where id_dorig = '$nuovaRiga'");
-                        }
-                        if ($pedana != '0'){
-                            DB::update("Update DoRig set xCd_xPallet = '$pedana' where id_dorig = '$nuovaRiga'");
-                        }
-                        $insert_righe_ordine['Id_DoTes'] = $id_ordine;
-                        $insert_righe_ordine['QtaEvasa'] = $insert_righe_ordine['Qta'];
-                        $insert_righe_ordine['Id_DORig_Evade'] = $nuovaRiga;
-                        ArcaUtilsController::calcola_totale_ordine($id_ordine);
-                    }
+                if ($lotto != '0') {
+                    $esiste = DB::select('SELECT * from DORig where Id_DoTes = ' . $id_ordine . ' and Cd_AR =  \'' . $codice_articolo . '\' and Cd_ARLotto = \'' . $lotto . '\' ');
+                } else {
+                    $esiste = DB::select('SELECT * from DORig where Id_DoTes = ' . $id_ordine . ' and Cd_AR =  \'' . $codice_articolo . '\' and Cd_ARLotto is null');
                 }
-                $esiste = DB::select('SELECT * from DORig where Id_DoTes = ' . $id_ordine . ' and Cd_AR =  \'' . $codice_articolo . '\' and Cd_MG_A = \''.$magazzino_A.'\' and Cd_MG_P = \''.$magazzino_P.'\'  '.$condizione.' ');
+                if (sizeof($esiste) > 0) {
+                    $new_qta = $esiste[0]->Qta + $insert_righe_ordine['Qta'];
+                    DB::UPDATE('UPDATE DORig SET Qta = ' . $new_qta . ' WHERE Id_DORig = ' . $esiste[0]->Id_DORig);
+                    $nuovaRiga = $esiste[0]->Id_DORig;
 
-                if (sizeof($esiste) == 0)
-                {*/
-                DB::table('DORig')->insertGetId($insert_righe_ordine);
-                $nuovaRiga = db::select('SELECT TOP 1 Id_DORig FROM DORig ORDER BY TIMEINS DESC')[0]->Id_DORig;
+                } else {
+                    DB::table('DORig')->insertGetId($insert_righe_ordine);
+                    $nuovaRiga = db::select('SELECT TOP 1 Id_DORig FROM DORig ORDER BY TIMEINS DESC')[0]->Id_DORig;
+                }
 
                 if ($lotto != '0') {
                     DB::update("Update DoRig set Cd_ARLotto = '$lotto' where id_dorig = '$nuovaRiga'");

@@ -371,7 +371,7 @@ class AjaxController extends Controller
                 <?php } ?>
                 $('#modal_lotto').html
                 <?php if($Cd_ARLotto != '0'){ ?>
-                ('<option><?php echo $Cd_ARLotto ?></option>')
+                ('<option value="<?php echo $Cd_ARLotto ?>" selected><?php echo $Cd_ARLotto ?></option>')
                 <?php } ?>
                 $('#modal_lotto').append('<option>Nessun Lotto</option>')
                 <?php foreach($lotto as $l){?>
@@ -543,6 +543,14 @@ class AjaxController extends Controller
 
     public function conferma_righe($Id_DoRig, $cd_mg_a, $cd_mg_p, $cd_do)
     {
+        $insert = [];
+
+        $Id_DoRig = 0;
+
+        foreach ($_GET as $key => $d) {;
+            ${$key} = ($d);
+            $Id_DoRig .= '\',\'' . $key;
+        }
         $Id_DoTes = '';
         $date = date('d/m/Y', strtotime('today'));
         $controllo = DB::SELECT('SELECT * FROM DORIG WHERE Id_DORig in (\'' . $Id_DoRig . '\')')[0]->Id_DOTes;
@@ -557,7 +565,7 @@ class AjaxController extends Controller
         $righe = DB::select('SELECT * FROM DORIG WHERE ID_DORIG IN (\'' . $Id_DoRig . '\')');
         foreach ($righe as $r) {
             $Id_DoRig = $r->Id_DORig;
-            $qtadaEvadere = $r->QtaEvadibile;
+            $qtadaEvadere = ${$r->Id_DORig};
             $magazzino = $r->Cd_MG_A;
             $ubicazione = '0';
             $lotto = $r->Cd_ARLotto;
@@ -838,47 +846,60 @@ class AjaxController extends Controller
         $q = str_replace("slash", "/", $q);
         $q = str_replace("punto", ";", $q);
         $q = explode(';', $q);
-        $data_scadenza = $q[1];
-        $lotto = $q[2];
+        if (sizeof($q) > 1)
+            $data_scadenza = $q[1];
+        else
+            $data_scadenza = 0;
+        if (sizeof($q) > 2)
+            $lotto = ($q[2] != '0') ? $q[2] : 0;
+        else
+            $lotto = 0;
         $q = $q[0];
         $c = $q;
-        $q = DB::SELECT('SELECT * FROM ARALias WHERE Alias = \'' . $q . '\' ');
 
+        $quantita = 1;
 
+        $q = DB::SELECT('SELECT *,(SELECT UMFatt from ARARMisura where Cd_AR = ARAlias.Cd_AR and Cd_ARMisura = ARAlias.Cd_ARMisura) as UMFatt FROM ARALias WHERE Alias = \'' . $q . '\' ');
+        if (sizeof($q) != 0)
+            $quantita = $q[0]->UMFatt;
         if (sizeof($q) != 0)
             $q = $q[0]->Cd_AR;
         else
             $q = $c;
 
-        $articoli = DB::select('SELECT * FROM DoRig WHERE Cd_ARLotto = \'' . $lotto . '\' and Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');
+        if ($lotto == 0)
+            $articoli = DB::select('SELECT * FROM DoRig WHERE Cd_ARLotto is null and Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');
+        else
+            $articoli = DB::select('SELECT * FROM DoRig WHERE Cd_ARLotto = \'' . $lotto . '\' and Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');
+
         if (sizeof($articoli) > 0)
             $articoli = $articoli[0]; ?>
         <script type="text/javascript">
 
             $('#modal_controllo_articolo').val('<?php echo $articoli->Cd_AR ?>');
-            $('#modal_controllo_quantita').val(<?php echo floatval($articoli->Qta) ?>);
+            $('#modal_controllo_quantita').val(<?php echo floatval($quantita) ?>);
             $('#modal_controllo_lotto').val('<?php echo $articoli->Cd_ARLotto ?>');
             $('#modal_controllo_dorig').val('<?php echo $articoli->Id_DORig ?>');
 
 
         </script>
 
-        <?php
-        $articoli = DB::select('SELECT * FROM DoRig WHERE Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');
-        if (sizeof($articoli) > 0)
-            $articoli = $articoli[0]; ?>
+        <!--        <?php
+        /*        $articoli = DB::select('SELECT * FROM DoRig WHERE Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');
+                if (sizeof($articoli) > 0)
+                    $articoli = $articoli[0]; */ ?>
 
         <script type="text/javascript">
 
-            $('#modal_controllo_articolo').val('<?php echo $articoli->Cd_AR ?>');
-            $('#modal_controllo_quantita').val(<?php echo floatval($articoli->Qta) ?>);
-            $('#modal_controllo_lotto').val('<?php echo $articoli->Cd_ARLotto ?>');
-            $('#modal_controllo_dorig').val('<?php echo $articoli->Id_DORig ?>');
+            $('#modal_controllo_articolo').val('<?php /*echo $articoli->Cd_AR */ ?>');
+            $('#modal_controllo_quantita').val(<?php /*echo floatval($articoli->Qta) */ ?>);
+            $('#modal_controllo_lotto').val('<?php /*echo $articoli->Cd_ARLotto */ ?>');
+            $('#modal_controllo_dorig').val('<?php /*echo $articoli->Id_DORig */ ?>');
 
 
         </script>
 
-        <?php
+        --><?php
         //TODO CAMBAIRE GESTIONE EVASIONE A PZ A SECONDA DEL BARCODE
 
     }
