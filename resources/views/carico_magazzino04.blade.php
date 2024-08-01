@@ -483,6 +483,12 @@
                     </div>
 
                     <?php } ?>
+
+                    <button
+                        style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:violet;border: violet"
+                        class="btn btn-primary" onclick="$('#modal_inserisci_scatole').modal('show');">Inserire Scatoli
+                    </button>
+
                     <button
                         style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:#007bff;border: #007bff"
                         class="btn btn-primary" onclick="$('#modal_salva_documento').modal('show');">Salva Documento
@@ -615,6 +621,7 @@
                     <input class="form-control" type="number" id="modal_quantita" value="" required
                            placeholder="Inserisci una Quantità" autocomplete="off">
                     <input class="form-control" type="hidden" id="modal_Cd_AR" value="" required autocomplete="off">
+                    <label>Lotto</label>
                     <select class="form-control" type="text" id="modal_lotto" autocomplete="off">
 
                     </select>
@@ -789,28 +796,28 @@
             </form>
         </div>
     </div>
-    <div class="modal" id="modal_salva_documento" tabindex="-1" role="dialog" aria-hidden="true">
+
+
+
+    <div class="modal" id="modal_inserisci_scatole" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <form method="post">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Salvataggio Documento</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Inserire Scatoloni</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                                onclick="$('#modal_salva_documento').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
+                                onclick="$('#modal_inserisci_scatole').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
 
                     <div class="modal-body">
-
-                        <label>Inserire Numero Scatoloni</label>
-
                         <div class="row" style="margin: 2%">
                             @foreach($scatoli as $s)
                                 <div class="col-xl-4 col-xs-4" style="padding: 1%">
                                     <input type="text" readonly class="form-control"
                                            id="ar_scatolo_{{$s->Cd_AR}}"
-                                           value="<?php echo $s->Cd_AR?>">
+                                           value="<?php echo $s->Cd_AR ?>">
                                 </div>
                                 <div class="col-xl-6 col-xs-6" style="padding: 1%">
                                     <input type="text" readonly class="form-control"
@@ -825,13 +832,42 @@
                         </div>
                     </div>
 
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                onclick="$('#modal_inserisci_scatole').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
+                            No
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="salva_scatoloni()">Si</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="modal" id="modal_salva_documento" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form method="post">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Salvataggio Documento</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                onclick="$('#modal_salva_documento').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <label>Vuoi salvare il documento?</label>
+                    </div>
+
                     <?php //$('#modal_salva_documento').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()?>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal"
                                 onclick="$('#modal_salva_documento').modal('hide');$('#modal_elimina_documento').modal('show');">
                             No
                         </button>
-                        <button type="button" class="btn btn-primary" onclick="salva_scatoloni()">Si</button>
+                        <button type="button" class="btn btn-primary" onclick="salva_documento()">Si</button>
                     </div>
                 </div>
             </form>
@@ -1005,7 +1041,9 @@
         }
         @endforeach
 
-        salva_doc();
+
+        top.location.reload();
+
     }
 
     function elimina() {

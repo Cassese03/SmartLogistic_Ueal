@@ -49,8 +49,7 @@
 
                 <div class="background bg-125"><img src="/img/background.png" alt=""></div>
                 <div class="w-100">
-                    <h1 class="text-center text-white title-background">Lista Documenti (<?php echo $cd_do ?>
-                        )<br><small><?php echo $fornitore->Descrizione ?></small></h1>
+                    <h1 class="text-center text-white title-background">Lista Documenti (<?php echo $cd_do ?>)<br><small><?php echo $fornitore->Descrizione ?></small></h1>
                 </div>
 
                 <div class="row mx-0" style="margin-bottom:10px;">
@@ -159,12 +158,12 @@
                 </div>
 
                 <div class="modal-body">
-                    <h3>Fornitore : <?php echo $fornitore->Cd_CF ?></h3>
+                    <h3><?php echo (substr($fornitore->Cd_CF, 0, 1) == 'F') ? 'Fornitore' : 'Cliente' ?> : <?php echo $fornitore->Cd_CF ?></h3>
                     <?php foreach ($doc_evadi as $d){ ?>
                     <div>
                         <input type="checkbox" id="check" style="height: 30px;width: 30px;text-align:right;float:right"
                                class="form-control" onclick="redirect_plus('<?php echo $d->Id_DoTes?>')">
-                        <label style="text-align:left;float:left">Codice Documento(<?php echo $d->Cd_Do; ?>)</label>
+                        <label style="text-align:left;float:left">Codice Documento (<?php echo str_replace(' ','',$d->Cd_Do); ?>)</label>
                     </div>
                     <input class="form-control" type="number" placeholder="Inserisci Numero Documento" id="NumeroDoc"
                            value="<?php echo $d->Id_DoTes ?>" readonly>
