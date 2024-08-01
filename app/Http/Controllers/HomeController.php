@@ -296,7 +296,7 @@ class HomeController extends Controller
         if (!session()->has('utente')) {
             return Redirect::to('login');
         }
-        $documenti = DB::select('SELECT * FROM DO WHERE Cd_DO in (\'DDT\',\'OVC\') and CliFor = \'C\'');
+        $documenti = DB::select('SELECT * FROM DO WHERE Cd_DO in (\'LP\',\'RMC\',\'OVC\') and CliFor = \'C\'');
         return View::make('attivo', compact('documenti'));
     }
 
@@ -620,18 +620,13 @@ class HomeController extends Controller
             $fornitore = $fornitori[0];
             $date = date('d/m/Y', strtotime('today'));
             foreach ($documenti as $documento)
-                $documento->righe = DB::select('SELECT * from DORig where Id_DoTes in (' . $id_dotes . ') and Qta > \'0\' ORDER BY TimeIns DESC');
+                $documento->righe = DB::select('SELECT *,(SELECT DataScadenza FROM ARLotto where Cd_AR = DORig.Cd_AR and Cd_ARLotto = DORig.CD_ARLotto) as Data_Scadenza from DORig where Id_DoTes in (' . $id_dotes . ') and Qta > \'0\' ORDER BY TimeIns DESC');
 
             foreach ($documento->righe as $r) {
                 $r->lotti = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $r->Cd_AR . '\' ORDER BY TimeIns DESC');
             }
             $righe = DB::select('SELECT count(Riga) as Righe from DORig where Id_DoTes in (' . $id_dotes . ') and QtaEvadibile > \'0\'')[0]->Righe;
-            /* $totali_documento = DB::select('SELECT * from DoTotali where Id_DoTes = \''.$id_dotes.'\'');
-             if(sizeof($totali_documento) > 0) {
-                 $documento->imponibile = $totali_documento[0]->TotImponibileE;
-                 $documento->imposta = $totali_documento[0]->TotImpostaE;
-                 $documento->totale = $totali_documento[0]->TotaPagareE;
-             }*/
+
             $articolo = DB::select('SELECT Cd_AR from DORig where Id_DoTes in (' . $id_dotes . ') group by Cd_AR');
             $flusso = DB::SELECT('select * from DODOPrel where Cd_DO_Prelevabile =\'' . $cd_do . '\'  ');
             if (sizeof($flusso) > 0) {
@@ -723,7 +718,7 @@ class HomeController extends Controller
             $fornitore = $fornitori[0];
             $date = date('d/m/Y', strtotime('today'));
             foreach ($documenti as $documento)
-                $documento->righe = DB::select('SELECT * from DORig where Id_DoTes in (' . $id_dotes . ') and Qta > \'0\'  ORDER BY TimeIns DESC');
+                $documento->righe = DB::select('SELECT *,(SELECT DataScadenza FROM ARLotto where Cd_AR = DORig.Cd_AR and Cd_ARLotto = DORig.CD_ARLotto) as Data_Scadenza  from DORig where Id_DoTes in (' . $id_dotes . ') and Qta > \'0\'  ORDER BY TimeIns DESC');
 
             foreach ($documento->righe as $r) {
                 $r->lotti = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $r->Cd_AR . '\'  ORDER BY TimeIns DESC ');

@@ -395,7 +395,13 @@
                         </div>
                     </div>
                 </form>
-
+                <button
+                    style="margin-top:10px !important;width:80%;margin:auto;display:block;background-color:lightblue;border:lightblue"
+                    class="btn btn-primary" type="button"
+                    onclick="url = window.location.href; pos = url.search('/magazzino'); url = url.substring(0,pos);
+                    top.location.href = url + '/magazzino/carico4/'+'<?php echo $fornitore->Id_CF ?>'+'/'+'<?php echo $id_dotes ?>';">
+                    Cambia Modalitá (Evadi Documento)
+                </button>
                 <button style="margin-top:20px !important;width:80%;margin:0 auto;display:block;margin-bottom:0;"
                         class="btn btn-primary" onclick="$('#modal_cerca_articolo').modal('show');">Aggiungi Prodotto
                 </button>
@@ -422,7 +428,9 @@
                                                             <?php echo '<br> Lotto : ' . $r->Cd_ARLotto; ?>
                                                     @endif
 
-                                                    <br>
+                                                    @if($r->Data_Scadenza != '')
+                                                            <?php echo '<br> Data Scadenza : ' . date('d/m/Y', strtotime($r->Data_Scadenza)); ?>
+                                                    @endif <br>
                                                     Qta: <?php echo floatval($r->QtaEvadibile) ?><?php /* echo  'Magazzino di Partenza: '.$r->Cd_MG_P;if($r->Cd_MGUbicazione_A != null) echo ' - '.$r->Cd_MGUbicazione_A;?><br><?php echo' Magazzino di Arrivo: '.$r->Cd_MG_A;?><br><?php if($r->Cd_ARLotto != Null)echo 'Lotto: '.$r->Cd_ARLotto;*/ ?>
                                                 </h5>
                                             </div>
@@ -538,7 +546,8 @@
                             onclick="$('#modal_cerca_articolo').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
                         Chiudi
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="/*cerca_articolo_smart_manuale();check();*/ cerca_articolo_smart_automatico();">
+                    <button type="button" class="btn btn-primary"
+                            onclick="/*cerca_articolo_smart_manuale();check();*/ cerca_articolo_smart_automatico();">
                         Cerca
                         Articolo
                     </button>
@@ -622,9 +631,9 @@
                            placeholder="Inserisci una Quantità" autocomplete="off">
                     <input class="form-control" type="hidden" id="modal_Cd_AR" value="" required autocomplete="off">
                     <label>Lotto</label>
-                    <select class="form-control" type="text" id="modal_lotto" autocomplete="off">
-
-                    </select>
+                    <select class="form-control" id="modal_lotto" autocomplete="off" onchange="change_scad()"></select>
+                    <label>Data Scadenza</label>
+                    <select class="form-control" id="modal_data_scadenza" autocomplete="off" readonly></select>
                 </div>
 
                 <div class="modal-footer">
@@ -796,7 +805,6 @@
             </form>
         </div>
     </div>
-
 
 
     <div class="modal" id="modal_inserisci_scatole" tabindex="-1" role="dialog" aria-hidden="true">
@@ -1005,6 +1013,18 @@
 </html>
 
 <script type="text/javascript">
+    function change_scad() {
+        lotto = document.getElementById('modal_lotto').value;
+        scadenza = document.getElementById('modal_data_scadenza');
+        scadenze = scadenza.options;
+
+        for (i = 0; i < scadenze.length; i++) {
+            if (scadenze[i].getAttribute('lotto') === lotto) {
+                scadenze[i].selected = true;
+                break;
+            }
+        }
+    }
 
     function change_mag() {
         $('#session').submit();

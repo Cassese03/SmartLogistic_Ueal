@@ -1,3 +1,5 @@
+<?php /* TIN04x5;01/08/2025;0*/
+/* TIN04x5;01/08/2025;13GI24TIN04*/ ?>
 <?php $magazzino_prova = DB::select('SELECT MG.*,MGUbicazione.Cd_MGUbicazione from MG LEFT JOIN MGUbicazione on MGUbicazione.Cd_MG = MG.Cd_MG'); ?>
 <?php $magazzino_ord = DB::select('SELECT * from MG '); //TODO MANCANO GLI ALERT?>
     <!doctype html>
@@ -410,8 +412,12 @@
                 </fieldset>
                 -->
 
-                <button style="width:80%;margin:0 auto;display:block;margin-bottom:0;" class="btn btn-primary"
-                        onclick="$('#modal_cerca_articolo').modal('show');">Aggiungi Prodotto
+                <button
+                    style="margin-top:10px !important;width:80%;margin:auto;display:block;background-color:lightblue;border:lightblue"
+                    class="btn btn-primary" type="button"
+                    onclick="url = window.location.href; pos = url.search('/magazzino'); url = url.substring(0,pos);
+                    top.location.href = url + '/magazzino/carico04/'+'<?php echo $fornitore->Id_CF ?>'+'/'+'<?php echo $id_dotes ?>';">
+                    Cambia Modalitá (Aggiungi a Documento)
                 </button>
                 <button
                     style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:red;border: red"
@@ -440,12 +446,15 @@
                                             <div class="col-xs-6 col-sm-6 col-md-6 col-xl-12"
                                                  style="text-align: center;">
 
-                                                <h5 style="text-align: center;color: blue;"
-                                                    id="riga_<?php echo $r->Id_DORig; ?>_counter"></h5>
+                                                <div style="text-align: center;color: blue;"
+                                                     id="riga_<?php echo $r->Id_DORig; ?>_counter"></div>
                                                 <h5 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>><?php echo $r->Cd_AR . ' ' . $r->Descrizione; ?>
                                                     <br><?php echo 'Prezzo :' . round(floatval($r->PrezzoUnitarioV), 2); ?>
                                                     @if($r->Cd_ARLotto != '')
                                                             <?php echo '<br> Lotto : ' . $r->Cd_ARLotto; ?>
+                                                    @endif
+                                                    @if($r->Data_Scadenza != '')
+                                                            <?php echo '<br> Data Scadenza : ' . date('d/m/Y', strtotime($r->Data_Scadenza)); ?>
                                                     @endif
 
                                                     <br> Qta
@@ -607,8 +616,12 @@
                     <input class="form-control" type="text" id="modal_controllo_quantita" value="" autocomplete="off">
 
                     <label>Lotto</label>
-                    <input class="form-control" type="text" id="modal_controllo_lotto" value="" autocomplete="off"
-                           readonly>
+                    <select class="form-control" id="modal_controllo_lotto" autocomplete="off" onchange="change_scad()">
+                    </select>
+
+                    <label>Data Scadenza</label>
+                    <select class="form-control" id="modal_controllo_data_scadenza" autocomplete="off">
+                    </select>
 
                     <input class="form-control" type="hidden" id="modal_controllo_dorig" value="" autocomplete="off"
                            readonly>
@@ -997,7 +1010,7 @@
         <form method="post">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Evadi Articolo <?php echo $r->Cd_AR ?></h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Evadi Documento</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"
                             onclick="$('#modal_conf_riga').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
                         <span aria-hidden="true">×</span>
@@ -1067,6 +1080,65 @@
     </div>
 </div>
 
+
+<div class="modal" id="modal_numero_colli" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Numero Colli Documento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            onclick="$('#modal_numero_colli').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="ajax_numero_colli">
+                    <label>Vuoi inserire il numero dei colli ?</label>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" style="width: 33%" data-dismiss="modal"
+                            onclick="$('#modal_numero_colli').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
+                        No
+                    </button>
+                    <button type="button" class="btn btn-primary" style="width: 33%"
+                            onclick="invia_numero_colli();">Si
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal" id="modal_peso" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Numero Colli Documento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            onclick="$('#modal_peso').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="ajax_peso">
+                    <label>Vuoi inserire il peso ?</label>
+                    <input type="number" class="form-control" step="0.01" min="0" id="peso_documento" value="0">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" style="width: 33%" data-dismiss="modal"
+                            onclick="$('#modal_peso').modal('hide');top.location.reload();">
+                        No
+                    </button>
+                    <button type="button" class="btn btn-primary" style="width: 33%"
+                            onclick="invia_peso();">Si
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <div class="modal" id="modal_noriga" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="alert alert-warning alert-dismissible fade show">
@@ -1181,6 +1253,47 @@
 
     var evadi = {};
 
+    function invia_numero_colli() {
+        $('#modal_numero_colli').modal('hide');
+        dotes = document.getElementById('ajax_numero_colli').value;
+        $.ajax({
+            url: "<?php echo URL::asset('ajax/inserisci_numero_colli') ?>/" + dotes,
+        }).done(function (result) {
+            if (result == 'Errore')
+                alert('Numero Colli non inserito. Prego comunicare all\'amministrazione!');
+            else
+                top.location.reload();
+        });
+    }
+
+    function invia_peso() {
+        $('#modal_peso').modal('hide');
+
+        dotes = document.getElementById('ajax_peso').value;
+
+        peso = document.getElementById('peso_documento').value;
+
+        $.ajax({
+            url: "<?php echo URL::asset('ajax/inserisci_peso') ?>/" + dotes + "/" + peso,
+        }).done(function (result) {
+            if (result == 'Errore')
+                alert('Peso non inserito. Prego comunicare all\'amministrazione!');
+        });
+    }
+
+    function change_scad() {
+        lotto = document.getElementById('modal_controllo_lotto').value;
+        scadenza = document.getElementById('modal_controllo_data_scadenza');
+        scadenze = scadenza.options;
+
+        for (i = 0; i < scadenze.length; i++) {
+            if (scadenze[i].getAttribute('lotto') === lotto) {
+                scadenze[i].selected = true;
+                break;
+            }
+        }
+    }
+
     function change_mag() {
         $('#session').submit();
     }
@@ -1286,11 +1399,17 @@
             dataType: "json",
         }).done(function (result) {
             $('#ajax_loader').fadeOut();
-            location.reload();
-            if (result.length > 1)
-                $('#modal_alertQuantita0').modal('show');
-            else
-                $('#modal_alertEvasa').modal('show');
+            $('#modal_conf_riga').modal('hide');
+
+            document.getElementById('ajax_numero_colli').value = result;
+            document.getElementById('ajax_peso').value = result;
+            $('#modal_numero_colli').modal('show');
+            $('#modal_peso').modal('show');
+
+            /* if (result.length > 1)
+                 $('#modal_alertQuantita0').modal('show');
+             else
+                 $('#modal_alertEvasa').modal('show');*/
         });
     }
 
@@ -1299,12 +1418,24 @@
         if (conf != '1') {
             document.getElementById('cerca_articolo2').value = '';
             text = document.getElementById('modal_controllo_dorig').value;
+            textXEvasione = document.getElementById('modal_controllo_dorig').value;
+
+            data_scadenza = document.getElementById('modal_controllo_data_scadenza').value;
+            if (data_scadenza == 'Nessuna Scadenza' || data_scadenza == 'undefined' || data_scadenza == null)
+                data_scadenza = 0;
+
+            lotto = document.getElementById('modal_controllo_lotto').value;
+            if (lotto == 'Nessun Lotto' || lotto == 'undefined' || lotto == null)
+                lotto = 0;
+
+            textXEvasione = textXEvasione + ';' + data_scadenza;
+            textXEvasione = textXEvasione + ';' + lotto;
             dorig = document.getElementById('DORIG').value;
             max_evasione = document.getElementById('qta_max_evad_' + text).value;
             qta_da_evadere = document.getElementById('modal_controllo_quantita').value;
-            if (typeof (evadi[text]) != "undefined" && evadi[text] !== null) {
-                if (parseInt(parseInt(evadi[text]) + parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
-                    evadi[text] = parseInt(evadi[text]) + parseInt(qta_da_evadere);
+            if (typeof (evadi[textXEvasione]) != "undefined" && evadi[textXEvasione] !== null) {
+                if (parseInt(parseInt(evadi[textXEvasione]) + parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
+                    evadi[textXEvasione] = parseInt(evadi[textXEvasione]) + parseInt(qta_da_evadere);
                 } else {
                     $('#modal_alertMaxEvasione').modal('show');
                     return;
@@ -1312,7 +1443,7 @@
 
             } else {
                 if (parseInt(qta_da_evadere) <= parseInt(max_evasione)) {
-                    evadi[text] = parseInt(qta_da_evadere);
+                    evadi[textXEvasione] = parseInt(qta_da_evadere);
                 } else {
                     $('#modal_alertMaxEvasione').modal('show');
                     return;
@@ -1334,15 +1465,28 @@
             //document.getElementById('button').innerHTML = 'Evadi Righe (' + righe + ')';
             //document.getElementById('riga_' + text).style.backgroundColor = 'green';
 
-            if (parseInt(evadi[text]) == parseInt(max_evasione))
+            if (parseInt(evadi[textXEvasione]) == parseInt(max_evasione))
                 document.getElementById('riga_' + text).style.backgroundColor = 'green';
             else
                 document.getElementById('riga_' + text).style.backgroundColor = 'yellow';
-
-            document.getElementById('riga_' + text + '_counter').innerHTML = 'Righe in Evasione : ' + evadi[text];
+            var checkElement = document.getElementById('riga_' + textXEvasione + '_counter');
+            if (checkElement === undefined || checkElement === null) {
+                newElement = document.createElement('h5');
+                newElement.style.textAlign = 'center';
+                newElement.style.color = 'blue';
+                newElement.id = 'riga_' + textXEvasione + '_counter';
+                if (lotto !== 0)
+                    newElement.innerHTML = 'Righe in Evasione (' + lotto + '):  ' + evadi[textXEvasione];
+                else
+                    newElement.innerHTML = 'Righe in Evasione : ' + evadi[textXEvasione];
+                document.getElementById('riga_' + text + '_counter').appendChild(newElement);
+            } else {
+                if (lotto !== 0)
+                    document.getElementById('riga_' + textXEvasione + '_counter').innerHTML = 'Righe in Evasione (' + lotto + '):  ' + evadi[textXEvasione];
+                else
+                    document.getElementById('riga_' + textXEvasione + '_counter').innerHTML = 'Righe in Evasione : ' + evadi[textXEvasione];
+            }
         } else {
-
-
             if (Object.keys(evadi).length > 0) {
 
                 $('#modal_conf_riga').modal('show');/*

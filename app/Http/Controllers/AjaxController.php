@@ -24,9 +24,28 @@ use Symfony\Component\VarDumper\Cloner\Data;
  */
 class AjaxController extends Controller
 {
+    public function inserisci_numero_colli($id_dotes)
+    {
+        try {
+            DB::update('UPDATE DOTES SET Colli = (SELECT ISNULL(SUM(Qta),0) from DORig where Id_dotes = ' . $id_dotes . ' and Cd_AR like \'SCATOLO%\') where Id_DOTes = ' . $id_dotes);
+        } catch (Exception $e) {
+            return 'Errore';
+        }
+    }
+
+
+    public function inserisci_peso($id_dotes, $peso)
+    {
+        try {
+            DB::update('UPDATE DOTES SET PesoLordo = ' . $peso . ' where Id_DOTes = ' . $id_dotes);
+        } catch (Exception $e) {
+            return 'Errore';
+        }
+    }
+
     public function inserisci_scatolone($id_dotes, $ar, $qta)
     {
-        DB::table('DORIG')->insertGetId(['Cd_AR' => $ar, 'Qta' => $qta, 'Id_DOTes' => $id_dotes, 'Cd_MG_A' => '00001', 'Cd_MG_P' => '00001']);
+        DB::table('DORIG')->insertGetId(['Cd_AR' => $ar, 'Qta' => $qta, 'Id_DOTes' => $id_dotes, 'Cd_MG_A' => '00001', 'Cd_MG_P' => '00001', 'Cd_CGConto' => '06010101001', 'Cd_Aliquota' => 22]);
     }
 
     public function cerca_articolo($q)
@@ -323,7 +342,10 @@ class AjaxController extends Controller
         $codice = str_replace("punto", ";", $codice);
         $Cd_ARLotto = str_replace("slash", "/", $Cd_ARLotto);
         $Cd_ARLotto = str_replace("punto", ";", $Cd_ARLotto);
-
+        if ($Cd_ARLotto != '0')
+            $scadenza = DB::select('SELECT * FROM ARLotto where Cd_ARLotto = \'' . $Cd_ARLotto . '\'');
+        else
+            $scadenza = [];
 
         $articoli = DB::select('SELECT AR.Id_AR,AR.Cd_AR,AR.Descrizione,ARAlias.Alias as barcode,ARARMisura.UMFatt,DORig.PrezzoUnitarioV,LSArticolo.Prezzo from AR
             LEFT JOIN ARAlias ON AR.Cd_AR = ARAlias.Cd_AR
@@ -350,7 +372,7 @@ class AjaxController extends Controller
         if ($Cd_ARLotto != '0')
             $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $codice . '\' and Cd_ARLotto !=\'' . $Cd_ARLotto . '\' and Cd_ARLotto in (select Cd_ARLotto from MGMov group by Cd_ARLotto having SUM(QuantitaSign) >= 0)  ');
         else
-            $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $codice . '\'  and Cd_AR in (select Cd_AR from MGMov group by Cd_AR having SUM(QuantitaSign) >= 0)  ');
+            $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $codice . '\'  and Cd_ARLotto in (select Cd_ARLotto from MGMov group by Cd_ARLotto having SUM(QuantitaSign) >= 0)  ');
 
         if (sizeof($articoli) > 0) {
             $articolo = $articoli[0];
@@ -376,6 +398,14 @@ class AjaxController extends Controller
                 $('#modal_lotto').append('<option>Nessun Lotto</option>')
                 <?php foreach($lotto as $l){?>
                 $('#modal_lotto').append('<option><?php echo $l->Cd_ARLotto ?></option>')
+                <?php } ?>
+                $('#modal_data_scadenza').html
+                <?php if(sizeof($scadenza) > 0){ ?>
+                ('<option value="<?php echo $scadenza[0]->DataScadenza ?>" lotto="<?php echo $scadenza[0]->Cd_ARLotto ?>" selected><?php echo date('d/m/Y', strtotime($scadenza[0]->DataScadenza));  ?></option>')
+                <?php } ?>
+                ('<option lotto="Nessun Lotto" >Nessuna Scadenza</option>')
+                <?php foreach($lotto as $l){?>
+                $('#modal_data_scadenza').append('<option value="<?php echo $l->DataScadenza;?>" lotto="<?php echo $l->Cd_ARLotto;?>"><?php echo date('d/m/Y', strtotime($l->DataScadenza)) ?></option>')
                 <?php } ?>
                 $('#modal_magazzino_P').html
                 <?php  if($magazzino_selezionato != '0'){ ?>
@@ -547,9 +577,23 @@ class AjaxController extends Controller
 
         $Id_DoRig = 0;
 
-        foreach ($_GET as $key => $d) {;
-            ${$key} = ($d);
-            $Id_DoRig .= '\',\'' . $key;
+        foreach ($_GET as $key => $d) {
+            $q = explode(';', $key);
+            if (sizeof($q) > 1)
+                $data_scadenza = $q[1];
+            else
+                $data_scadenza = 0;
+            if (sizeof($q) > 2)
+                $lotto = $q[2];
+            else
+                $lotto = 0;
+
+            $id_dorig = $q[0];
+
+            ${$id_dorig . '_qta'} = ($d);
+            ${$id_dorig . '_lotto'} = ($lotto);
+            ${$id_dorig . '_data_scadenza'} = ($data_scadenza);
+            $Id_DoRig .= '\',\'' . $id_dorig;
         }
         $Id_DoTes = '';
         $date = date('d/m/Y', strtotime('today'));
@@ -565,10 +609,10 @@ class AjaxController extends Controller
         $righe = DB::select('SELECT * FROM DORIG WHERE ID_DORIG IN (\'' . $Id_DoRig . '\')');
         foreach ($righe as $r) {
             $Id_DoRig = $r->Id_DORig;
-            $qtadaEvadere = ${$r->Id_DORig};
+            $qtadaEvadere = ${$r->Id_DORig . '_qta'};
             $magazzino = $r->Cd_MG_A;
             $ubicazione = '0';
-            $lotto = $r->Cd_ARLotto;
+            $lotto = ${$r->Id_DORig . '_lotto'};
             $cd_cf = $r->Cd_CF;
             $documento = $cd_do;
             $cd_ar = $r->Cd_AR;
@@ -595,8 +639,17 @@ class AjaxController extends Controller
                 $insert_evasione['Cd_MG_P'] = $magazzino;
             if ($insert_evasione['Cd_MG_A'] == null || $insert_evasione['Cd_MG_A'] == '0')
                 $insert_evasione['Cd_MG_A'] = $magazzino_A;
-            if ($lotto != '0')
-                $insert_evasione['Cd_ARLotto'] = $lotto;
+            if ($lotto != '0') {
+                $check_lotto = DB::SELECT('select * from arlotto where Cd_AR = \'' . $r->Cd_AR . '\' and  cd_arlotto = \'' . $lotto . '\'');
+                if (sizeof($check_lotto) > 0) {
+                    $insert_evasione['Cd_ARLotto'] = $lotto;
+                    if ($check_lotto[0]->DataScadenza == null || $check_lotto[0]->DataScadenza == '') {
+                        DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . $data_scadenza . '\' WHERE Cd_AR = \'' . $r->Cd_Ar . '\' and Cd_ARLotto = \'' . $lotto . '\'');
+                    }
+                }
+            } else {
+                if (isset($insert_evasione['Cd_ARLotto'])) unset($insert_evasione['Cd_ARLotto']);
+            }
             $check = DB::SELECT('SELECT * from MGCausale where Cd_MGCausale IN (SELECT Cd_MGCausale FROM DO where cd_do = (SELECT TOP 1 Cd_DO FROM DOTes where Id_DOTes = \'' . $Id_DoTes . '\'))');
             if (sizeof($check) > 0) {
                 if ($check[0]->MagPFlag == 0)
@@ -637,7 +690,7 @@ class AjaxController extends Controller
             DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes1'");
             DB::statement("exec asp_DO_End '$Id_DoTes1'");
         }
-        return true;
+        return $Id_DoTes1;
     }
 
     public
@@ -847,38 +900,64 @@ class AjaxController extends Controller
         $q = str_replace("punto", ";", $q);
         $q = explode(';', $q);
         if (sizeof($q) > 1)
-            $data_scadenza = $q[1];
+            $scadenza = ($q[1] != '0') ? $q[1] : 0;
         else
-            $data_scadenza = 0;
+            $scadenza = 0;
         if (sizeof($q) > 2)
-            $lotto = ($q[2] != '0') ? $q[2] : 0;
+            $lotto_scelto = ($q[2] != '0') ? $q[2] : 0;
         else
-            $lotto = 0;
+            $lotto_scelto = 0;
         $q = $q[0];
         $c = $q;
-
         $quantita = 1;
 
         $q = DB::SELECT('SELECT *,(SELECT UMFatt from ARARMisura where Cd_AR = ARAlias.Cd_AR and Cd_ARMisura = ARAlias.Cd_ARMisura) as UMFatt FROM ARALias WHERE Alias = \'' . $q . '\' ');
+
         if (sizeof($q) != 0)
             $quantita = $q[0]->UMFatt;
         if (sizeof($q) != 0)
             $q = $q[0]->Cd_AR;
         else
             $q = $c;
-
-        if ($lotto == 0)
-            $articoli = DB::select('SELECT * FROM DoRig WHERE Cd_ARLotto is null and Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');
-        else
-            $articoli = DB::select('SELECT * FROM DoRig WHERE Cd_ARLotto = \'' . $lotto . '\' and Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');
+        //if ($lotto == 0)
+        $articoli = DB::select('SELECT * FROM DoRig WHERE /*Cd_ARLotto is null and*/ Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');
+        /*        else
+                    $articoli = DB::select('SELECT * FROM DoRig WHERE Cd_ARLotto = \'' . $lotto . '\' and Cd_AR = \'' . $q . '\' and Id_DoTes in (\'' . $id_dotes . '\') Order By QtaEvadibile DESC');*/
 
         if (sizeof($articoli) > 0)
-            $articoli = $articoli[0]; ?>
+            $articoli = $articoli[0];
+
+        $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $articoli->Cd_AR . '\'  /*and Cd_ARLotto in (select Cd_ARLotto from MGMov group by Cd_ARLotto having SUM(QuantitaSign) >= 0) */ ');
+
+        ?>
         <script type="text/javascript">
 
             $('#modal_controllo_articolo').val('<?php echo $articoli->Cd_AR ?>');
             $('#modal_controllo_quantita').val(<?php echo floatval($quantita) ?>);
-            $('#modal_controllo_lotto').val('<?php echo $articoli->Cd_ARLotto ?>');
+
+            $('#modal_controllo_lotto').html
+            <?php if($lotto_scelto != 0){ ?>
+            ('<option value="<?php echo $lotto_scelto  ?>" selected><?php echo $lotto_scelto ?></option>')
+            <?php }else{ ?>
+            ('<option>Nessun Lotto</option>');
+            <?php } ?>
+            <?php foreach($lotto as $l){?>
+            <?php if($l->Cd_ARLotto != $articoli->Cd_ARLotto){?>
+            $('#modal_controllo_lotto').append('<option value="<?php echo $l->Cd_ARLotto;?>"><?php echo $l->Cd_ARLotto ?></option>')
+            <?php } ?>
+            <?php } ?>
+
+            $('#modal_controllo_data_scadenza').html
+            <?php if($scadenza != 0){ ?>
+            ('<option value="<?php echo date('d/m/Y', strtotime($scadenza)) ?>" lotto="<?php echo $articoli->Cd_ARLotto ?>" selected><?php echo date('d/m/Y', strtotime($scadenza));  ?></option>')
+            <?php }else{ ?>
+            ('<option lotto="Nessun Lotto" >Nessuna Scadenza</option>')
+            <?php }?>
+            <?php foreach($lotto as $l){?>
+            $('#modal_controllo_data_scadenza').append('<option value="<?php echo date('d/m/Y', strtotime($l->DataScadenza));?>" lotto="<?php echo $l->Cd_ARLotto;?>"><?php echo date('d/m/Y', strtotime($l->DataScadenza)) ?></option>')
+            <?php } ?>
+
+            //$('#modal_controllo_lotto').val('<?php echo $articoli->Cd_ARLotto ?>');
             $('#modal_controllo_dorig').val('<?php echo $articoli->Id_DORig ?>');
 
 
