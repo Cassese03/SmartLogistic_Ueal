@@ -286,7 +286,7 @@ class HomeController extends Controller
         if (!session()->has('utente')) {
             return Redirect::to('login');
         }
-        $documenti = DB::select('SELECT * FROM DO WHERE Cd_Do in (\'DCF\',\'OAF\') and CliFor = \'F\'');
+        $documenti = DB::select('SELECT * FROM DO WHERE Cd_Do in (\'CMF\',\'OAF\') and CliFor = \'F\'');
         return View::make('passivi', compact('documenti'));
     }
 
@@ -620,7 +620,7 @@ class HomeController extends Controller
             $fornitore = $fornitori[0];
             $date = date('d/m/Y', strtotime('today'));
             foreach ($documenti as $documento)
-                $documento->righe = DB::select('SELECT *,(SELECT DataScadenza FROM ARLotto where Cd_AR = DORig.Cd_AR and Cd_ARLotto = DORig.CD_ARLotto) as Data_Scadenza from DORig where Id_DoTes in (' . $id_dotes . ') and Qta > \'0\' ORDER BY TimeIns DESC');
+                $documento->righe = DB::select('SELECT *,(SELECT DataScadenza FROM ARLotto where Cd_AR = DORig.Cd_AR and Cd_ARLotto = DORig.CD_ARLotto) as Data_Scadenza from DORig where Id_DoTes in (' . $id_dotes . ') and Qta > \'0\' ORDER BY Cd_AR DESC');
 
             foreach ($documento->righe as $r) {
                 $r->lotti = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $r->Cd_AR . '\' ORDER BY TimeIns DESC');
@@ -718,7 +718,7 @@ class HomeController extends Controller
             $fornitore = $fornitori[0];
             $date = date('d/m/Y', strtotime('today'));
             foreach ($documenti as $documento)
-                $documento->righe = DB::select('SELECT *,(SELECT DataScadenza FROM ARLotto where Cd_AR = DORig.Cd_AR and Cd_ARLotto = DORig.CD_ARLotto) as Data_Scadenza  from DORig where Id_DoTes in (' . $id_dotes . ') and Qta > \'0\'  ORDER BY TimeIns DESC');
+                $documento->righe = DB::select('SELECT *,(SELECT DataScadenza FROM ARLotto where Cd_AR = DORig.Cd_AR and Cd_ARLotto = DORig.CD_ARLotto) as Data_Scadenza  from DORig where Id_DoTes in (' . $id_dotes . ') and Qta > \'0\'  ORDER BY Cd_AR DESC');
 
             foreach ($documento->righe as $r) {
                 $r->lotti = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $r->Cd_AR . '\'  ORDER BY TimeIns DESC ');

@@ -430,7 +430,7 @@
                 <div class="row">
 
                     <div class="col-sm-6 col-xl-12" style="margin-top:5px;">
-                        <ul class="list-group">
+                        <ul class="list-group" id="lista">
 
                                 <?php foreach ($documento->righe as $r){
                                 $totale = 0; ?>
@@ -616,8 +616,9 @@
                     <input class="form-control" type="text" id="modal_controllo_quantita" value="" autocomplete="off">
 
                     <label>Lotto</label>
-                    <select class="form-control" id="modal_controllo_lotto" autocomplete="off" onchange="change_scad()">
-                    </select>
+                    <input class="form-control" list="modal_list_controllo_lotto" id="modal_controllo_lotto"
+                           onchange="change_scad()">
+                    <datalist id="modal_list_controllo_lotto"></datalist>
 
                     <label>Data Scadenza</label>
                     <select class="form-control" id="modal_controllo_data_scadenza" autocomplete="off">
@@ -1115,7 +1116,7 @@
         <form method="post">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Numero Colli Documento</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Inserire Peso</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"
                             onclick="$('#modal_peso').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
                         <span aria-hidden="true">×</span>
@@ -1253,16 +1254,10 @@
 
     var evadi = {};
 
-    function invia_numero_colli() {
-        $('#modal_numero_colli').modal('hide');
-        dotes = document.getElementById('ajax_numero_colli').value;
+    function invia_numero_colli(dotes) {
         $.ajax({
             url: "<?php echo URL::asset('ajax/inserisci_numero_colli') ?>/" + dotes,
         }).done(function (result) {
-            if (result == 'Errore')
-                alert('Numero Colli non inserito. Prego comunicare all\'amministrazione!');
-            else
-                top.location.reload();
         });
     }
 
@@ -1271,13 +1266,18 @@
 
         dotes = document.getElementById('ajax_peso').value;
 
+        invia_numero_colli(dotes);
+
         peso = document.getElementById('peso_documento').value;
+
 
         $.ajax({
             url: "<?php echo URL::asset('ajax/inserisci_peso') ?>/" + dotes + "/" + peso,
         }).done(function (result) {
             if (result == 'Errore')
                 alert('Peso non inserito. Prego comunicare all\'amministrazione!');
+            else
+                top.location.href = '';
         });
     }
 
@@ -1465,9 +1465,12 @@
             //document.getElementById('button').innerHTML = 'Evadi Righe (' + righe + ')';
             //document.getElementById('riga_' + text).style.backgroundColor = 'green';
 
-            if (parseInt(evadi[textXEvasione]) == parseInt(max_evasione))
+            if (parseInt(evadi[textXEvasione]) == parseInt(max_evasione)) {
                 document.getElementById('riga_' + text).style.backgroundColor = 'green';
-            else
+                newElement2 = document.getElementById('riga_' + text);
+                document.getElementById('riga_' + text).remove();
+                document.getElementById('lista').appendChild(newElement2);
+            } else
                 document.getElementById('riga_' + text).style.backgroundColor = 'yellow';
             var checkElement = document.getElementById('riga_' + textXEvasione + '_counter');
             if (checkElement === undefined || checkElement === null) {
@@ -1769,13 +1772,14 @@
         quantita = $('#modal_Qta_c_<?php echo $r->Id_DORig ?>').val();
         lotto = $('#modal_Cd_ARLotto_c_<?php echo $r->Id_DORig ?>').val();
         quantita_evasa = $('#modal_QtaEvasa_c_<?php echo $r->Id_DORig ?>').val();
+        quantita = parseFloat(quantita) - parseFloat(quantita_evasa);
         id_dorig = '00000';
         if (quantita_evasa != '0') {
             if (articolo != '' && quantita != '') {
                 if (lotto != '')
-                    testo = 'Articolo ' + articolo + '******  del lotto ' + lotto + ' con quantita ' + quantita + ' non evaso ';
+                    testo = 'Articolo ' + articolo + ' del lotto ' + lotto + ' con quantita ' + quantita + ' non evaso ';
                 else
-                    testo = 'Articolo ' + articolo + '******  con quantita ' + quantita + ' non evaso ';
+                    testo = 'Articolo ' + articolo + ' con quantita ' + quantita + ' non evaso ';
 
                 $.ajax({
                     url: "<?php echo URL::asset('ajax/segnalazione_salva') ?>/<?php echo $id_dotes ?>/" + id_dorig + "/" + testo,
@@ -1787,18 +1791,6 @@
         }
         <?php } ?>
 
-        if (segnalazioni != '<br>') {
-            $.ajax({
-                url: "<?php echo URL::asset('ajax/invia_mail') ?>/<?php echo $id_dotes ?>/" + 2 + "/" + segnalazioni
-            }).done(function (result) {
-
-            });
-        }
-        $.ajax({
-            url: "<?php echo URL::asset('ajax/id_dotes') ?>/<?php echo $id_dotes ?>"
-        }).done(function (result) {
-
-        });
         $('#modal_alertSegnalazione').modal('show');
     }
 

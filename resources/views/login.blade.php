@@ -24,12 +24,12 @@
         <div class="page-content">
             <div class="content-sticky-footer">
 
-                <div class="row" style="height:750px;overflow-y: none;">
+                <div class="row" style="height:100vh;overflow-y: none;">
                     <div class="col-md-6">
                         <div class="background bg-250" style="height:100%;" ><img src="img/background.png" alt="" style="height:100%;" ></div>
                         <div class="w-100">
 
-                            <img src="img/logo_arca.png" style="width:80%;padding:10%;margin:0 auto; display:block;">
+                            <img src="img/logo_arca.png" style="width:100%;padding:10%;margin:0 auto; display:block;">
 
                             <h1 class="text-center text-white title-background" style="margin-top:0">
                                 <small>SMART LOGISTIC<br></small>

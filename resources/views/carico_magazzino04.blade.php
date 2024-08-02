@@ -631,7 +631,9 @@
                            placeholder="Inserisci una Quantità" autocomplete="off">
                     <input class="form-control" type="hidden" id="modal_Cd_AR" value="" required autocomplete="off">
                     <label>Lotto</label>
-                    <select class="form-control" id="modal_lotto" autocomplete="off" onchange="change_scad()"></select>
+                    <input class="form-control" list="modal_list_lotto" id="modal_lotto" autocomplete="off"
+                           onchange="change_scad()">
+                    <datalist id="modal_list_lotto"></datalist>
                     <label>Data Scadenza</label>
                     <select class="form-control" id="modal_data_scadenza" autocomplete="off" readonly></select>
                 </div>

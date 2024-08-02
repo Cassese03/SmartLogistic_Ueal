@@ -263,13 +263,16 @@ class AjaxController extends Controller
     public function segnalazione_salva($id_dotes, $id_dorig, $testo)
     {
         $testo = str_replace('*', '', $testo);
-        $esiste = DB::SELECT('SELECT * FROM DoTes WHERE Id_DoTes = \'' . $id_dotes . '\' ')[0]->NotePiede;
-        if ($esiste != null) {
-            $esiste .= '                                    ';
-            $esiste .= $testo;
-            DB::update('Update DoTes set NotePiede = \'' . $esiste . '\' where Id_DoTes = \'' . $id_dotes . '\' ');
-        } else
-            DB::update('Update DOTes set NotePiede = \'' . $testo . '\' where Id_DoTes = \'' . $id_dotes . '\' ');
+        $id_dorig_evade = DB::select('SELECT * FROM DORig where Id_DORig_EVade = \'' . $id_dorig . '\'');
+        if (sizeof($id_dorig_evade) > 0) {
+            $esiste = DB::SELECT('SELECT * FROM DoTes WHERE Id_DoTes = \'' . $id_dotes . '\' ')[0]->NotePiede;
+            if ($esiste != null) {
+                $esiste .= '                                    ';
+                $esiste .= $testo;
+                DB::update('Update DoTes set NotePiede = \'' . $esiste . '\' where Id_DoTes = \'' . $id_dorig_evade[0]->id_dotes . '\' ');
+            } else
+                DB::update('Update DOTes set NotePiede = \'' . $testo . '\' where Id_DoTes = \'' . $id_dorig_evade[0]->id_dotes . '\' ');
+        }
     }
 
     public function segnalazione($id_dotes, $id_dorig, $testo)
@@ -419,7 +422,7 @@ class AjaxController extends Controller
             LEFT JOIN ARARMisura ON ARARMisura.Cd_AR = ARAlias.CD_AR and  ARARMisura.CD_ARMisura = ARAlias.CD_ARMisura
             LEFT JOIN LSArticolo ON LSArticolo.Cd_AR = AR.Cd_AR
             LEFT JOIN DORig ON DOrig.Cd_CF LIKE \'' . $cd_cf . '\' and DORig.Cd_AR = AR.Cd_AR
-            where ARAlias.Alias Like \'' . $codice . '\'
+            where ARAlias.Alias Like \'' . $codice . '\' or AR.Cd_AR like \'' . $codice . '\'
             order by DORig.DataDoc DESC');
 
         $magazzino_selected = DB::select('SELECT MgMov.Cd_MG, Mg.Descrizione from MGMov LEFT JOIN MG ON MG.Cd_MG = MgMov.Cd_MG WHERE MgMov.Cd_ARLotto = \'' . $Cd_ARLotto . '\'  and MgMov.Cd_AR = \'' . $codice . '\' and MgMov.Cd_MGEsercizio = YEAR(GETDATE()) ');
@@ -437,9 +440,10 @@ class AjaxController extends Controller
         $date = date('d/m/Y', strtotime('today'));
 
         if ($Cd_ARLotto != '0')
-            $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $codice . '\' and Cd_ARLotto !=\'' . $Cd_ARLotto . '\' and Cd_ARLotto in (select Cd_ARLotto from MGMov group by Cd_ARLotto having SUM(QuantitaSign) >= 0)  ');
+            $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $articoli[0]->Cd_AR . '\' and Cd_ARLotto !=\'' . $Cd_ARLotto . '\'  ');
         else
-            $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $codice . '\'  and Cd_ARLotto in (select Cd_ARLotto from MGMov group by Cd_ARLotto having SUM(QuantitaSign) >= 0)  ');
+            $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $articoli[0]->Cd_AR . '\'');
+
         if (sizeof($articoli) > 0) {
             $articolo = $articoli[0];
             echo '<h3>    Barcode: ' . $articolo->barcode . '<br>
@@ -447,6 +451,7 @@ class AjaxController extends Controller
                           Descrizione:<br>' . $articolo->Descrizione . '</h3>';
             ?>
             <script type="text/javascript">
+
                 $('#modal_quantita').val(<?php echo intval($articolo->UMFatt) ?>);
                 $('#modal_Cd_AR').val('<?php echo $articolo->Cd_AR ?>');
 
@@ -458,13 +463,16 @@ class AjaxController extends Controller
                 <?php } else { ?>
                 $('#modal_prezzo').val('<?php echo number_format($articolo->Prezzo, 2, '.', '') ?>');
                 <?php } ?>
-                $('#modal_lotto').html
+                $('#modal_list_lotto').html
                 <?php if($Cd_ARLotto != '0'){ ?>
                 ('<option value="<?php echo $Cd_ARLotto ?>" selected><?php echo $Cd_ARLotto ?></option>')
+                document.getElementById('modal_lotto').value = '<?php echo $Cd_ARLotto ?>';
+                <?php } else {?>
+                ('<option>Nessun Lotto</option>')
+                document.getElementById('modal_lotto').value = 'Nessun Lotto';
                 <?php } ?>
-                $('#modal_lotto').append('<option>Nessun Lotto</option>')
                 <?php foreach($lotto as $l){?>
-                $('#modal_lotto').append('<option><?php echo $l->Cd_ARLotto ?></option>')
+                $('#modal_list_lotto').append('<option><?php echo $l->Cd_ARLotto ?></option>')
                 <?php } ?>
                 $('#modal_data_scadenza').html
                 <?php if(sizeof($scadenza) > 0){ ?>
@@ -549,7 +557,6 @@ class AjaxController extends Controller
                 $('#modal_Cd_ARLotto_c_<?php echo $riga->Id_DORig ?>').val('<?php echo $riga->Cd_ARLotto ?>');
                 $('#modal_Qta_c_<?php echo $riga->Id_DORig ?>').val('<?php echo $riga->Qta ?>');
                 $('#modal_QtaEvasa_c_<?php echo $riga->Id_DORig ?>').val('<?php echo $riga->QtaEvasa ?>');
-                $('#modal_QtaEvasa_c_<?php echo $riga->Id_DORig ?>').val('<?php echo $riga->PrezzoUnitarioV ?>');
             </script>
         <?php }
     }
@@ -999,15 +1006,15 @@ class AjaxController extends Controller
             $('#modal_controllo_articolo').val('<?php echo $articoli->Cd_AR ?>');
             $('#modal_controllo_quantita').val(<?php echo floatval($quantita) ?>);
 
-            $('#modal_controllo_lotto').html
-            <?php if($lotto_scelto != 0){ ?>
-            ('<option value="<?php echo $lotto_scelto  ?>" selected><?php echo $lotto_scelto ?></option>')
-            <?php }else{ ?>
-            ('<option>Nessun Lotto</option>');
-            <?php } ?>
+            $('#modal_controllo_lotto').val(
+            <?php if ($lotto_scelto != 0) {
+                echo $lotto_scelto;
+            } else {
+                echo '\'Nessun Lotto\'';
+            } ?>)
             <?php foreach($lotto as $l){?>
             <?php if($l->Cd_ARLotto != $articoli->Cd_ARLotto){?>
-            $('#modal_controllo_lotto').append('<option value="<?php echo $l->Cd_ARLotto;?>"><?php echo $l->Cd_ARLotto ?></option>')
+                $('#modal_list_controllo_lotto').append('<option value="<?php echo $l->Cd_ARLotto;?>"><?php echo $l->Cd_ARLotto ?></option>')
             <?php } ?>
             <?php } ?>
 
@@ -1043,7 +1050,7 @@ class AjaxController extends Controller
         </script>
 
         --><?php
-        //TODO CAMBAIRE GESTIONE EVASIONE A PZ A SECONDA DEL BARCODE
+//TODO CAMBAIRE GESTIONE EVASIONE A PZ A SECONDA DEL BARCODE
 
     }
 
