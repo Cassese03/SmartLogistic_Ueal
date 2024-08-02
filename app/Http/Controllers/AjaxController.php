@@ -263,15 +263,17 @@ class AjaxController extends Controller
     public function segnalazione_salva($id_dotes, $id_dorig, $testo)
     {
         $testo = str_replace('*', '', $testo);
-        $id_dorig_evade = DB::select('SELECT * FROM DORig where Id_DORig_EVade = \'' . $id_dorig . '\'');
+        $testo = str_replace("slash", "/", $testo);
+        $testo = str_replace("punto", ";", $testo);
+        $id_dorig_evade = DB::select('SELECT * FROM DORig where Cd_DO != \'RVC\' AND Id_DORig_EVade in (SELECT Id_DORig from Dorig where id_dotes = \'' . $id_dotes . '\')');
         if (sizeof($id_dorig_evade) > 0) {
-            $esiste = DB::SELECT('SELECT * FROM DoTes WHERE Id_DoTes = \'' . $id_dotes . '\' ')[0]->NotePiede;
+            $esiste = DB::SELECT('SELECT * FROM DoTes WHERE Id_DoTes = \'' . $id_dorig_evade[0]->Id_DOTes . '\' ')[0]->NotePiede;
             if ($esiste != null) {
                 $esiste .= '                                    ';
                 $esiste .= $testo;
-                DB::update('Update DoTes set NotePiede = \'' . $esiste . '\' where Id_DoTes = \'' . $id_dorig_evade[0]->id_dotes . '\' ');
+                DB::update('Update DoTes set NotePiede = \'' . $esiste . '\' where Id_DoTes = \'' . $id_dorig_evade[0]->Id_DOTes . '\' ');
             } else
-                DB::update('Update DOTes set NotePiede = \'' . $testo . '\' where Id_DoTes = \'' . $id_dorig_evade[0]->id_dotes . '\' ');
+                DB::update('Update DOTes set NotePiede = \'' . $testo . '\' where Id_DoTes = \'' . $id_dorig_evade[0]->Id_DOTes . '\' ');
         }
     }
 
@@ -557,6 +559,7 @@ class AjaxController extends Controller
                 $('#modal_Cd_ARLotto_c_<?php echo $riga->Id_DORig ?>').val('<?php echo $riga->Cd_ARLotto ?>');
                 $('#modal_Qta_c_<?php echo $riga->Id_DORig ?>').val('<?php echo $riga->Qta ?>');
                 $('#modal_QtaEvasa_c_<?php echo $riga->Id_DORig ?>').val('<?php echo $riga->QtaEvasa ?>');
+                $('#modal_QtaEvadibile_c_<?php echo $riga->Id_DORig ?>').val('<?php echo $riga->QtaEvadibile ?>');
             </script>
         <?php }
     }
@@ -998,7 +1001,7 @@ class AjaxController extends Controller
         if (sizeof($articoli) > 0)
             $articoli = $articoli[0];
 
-        $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $articoli->Cd_AR . '\'  /*and Cd_ARLotto in (select Cd_ARLotto from MGMov group by Cd_ARLotto having SUM(QuantitaSign) >= 0) */ ');
+        $lotto = DB::select('SELECT * FROM ARLotto WHERE Cd_AR = \'' . $articoli->Cd_AR . '\' and Cd_ARLotto in (select Cd_ARLotto from MGMov group by Cd_ARLotto having SUM(QuantitaSign) >= 0)');
 
         ?>
         <script type="text/javascript">
@@ -1007,15 +1010,14 @@ class AjaxController extends Controller
             $('#modal_controllo_quantita').val(<?php echo floatval($quantita) ?>);
 
             $('#modal_controllo_lotto').val(
-            <?php if ($lotto_scelto != 0) {
-                echo $lotto_scelto;
-            } else {
-                echo '\'Nessun Lotto\'';
-            } ?>)
+                <?php if ($lotto_scelto != 0) {
+                    echo '\''.$lotto_scelto.'\'';
+                } else {
+                    echo '\'Nessun Lotto\'';
+                } ?>)
+            $('#modal_list_controllo_lotto').html('<option value="Nessun Lotto">Nessun Lotto</option>')
             <?php foreach($lotto as $l){?>
-            <?php if($l->Cd_ARLotto != $articoli->Cd_ARLotto){?>
-                $('#modal_list_controllo_lotto').append('<option value="<?php echo $l->Cd_ARLotto;?>"><?php echo $l->Cd_ARLotto ?></option>')
-            <?php } ?>
+            $('#modal_list_controllo_lotto').append('<option value="<?php echo $l->Cd_ARLotto;?>"><?php echo $l->Cd_ARLotto ?></option>')
             <?php } ?>
 
             $('#modal_controllo_data_scadenza').html
@@ -1030,7 +1032,7 @@ class AjaxController extends Controller
 
             //$('#modal_controllo_lotto').val('<?php echo $articoli->Cd_ARLotto ?>');
             $('#modal_controllo_dorig').val('<?php echo $articoli->Id_DORig ?>');
-
+            change_scad();
 
         </script>
 

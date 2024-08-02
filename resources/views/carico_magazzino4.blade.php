@@ -771,7 +771,9 @@
                 <input type="hidden" name="modal_Qta_c_<?php echo $r->Id_DORig?>"
                        id="modal_Qta_c_<?php echo $r->Id_DORig?>">
                 <input type="hidden" name="modal_QtaEvasa_c_<?php echo $r->Id_DORig?>"
-                       id="modal_Qta_c_<?php echo $r->Id_DORig?>">
+                       id="modal_QtaEvasa_c_<?php echo $r->Id_DORig?>">
+                <input type="hidden" name="modal_QtaEvadibile_c_<?php echo $r->Id_DORig?>"
+                       id="modal_QtaEvadibile_c_<?php echo $r->Id_DORig?>">
                 <input type="hidden" name="modal_Prezzo_c_<?php echo $r->Id_DORig?>"
                        id="modal_Prezzo_c_<?php echo $r->Id_DORig?>">
                 <?php } ?>
@@ -1769,17 +1771,21 @@
         segnalazioni = '<br>';
         <?php foreach ($documento->righe as $r){ ?>
             articolo = $('#modal_Cd_AR_c_<?php echo $r->Id_DORig ?>').val();
+        articolo = articolo.replaceAll(';', 'punto');
+        articolo = articolo.replaceAll('/', 'slash');
         quantita = $('#modal_Qta_c_<?php echo $r->Id_DORig ?>').val();
         lotto = $('#modal_Cd_ARLotto_c_<?php echo $r->Id_DORig ?>').val();
+        lotto = lotto.replaceAll(';', 'punto');
+        lotto = lotto.replaceAll('/', 'slash');
         quantita_evasa = $('#modal_QtaEvasa_c_<?php echo $r->Id_DORig ?>').val();
-        quantita = parseFloat(quantita) - parseFloat(quantita_evasa);
+        quantitaEvadibile =  $('#modal_QtaEvadibile_c_<?php echo $r->Id_DORig ?>').val();
         id_dorig = '00000';
         if (quantita_evasa != '0') {
             if (articolo != '' && quantita != '') {
                 if (lotto != '')
-                    testo = 'Articolo ' + articolo + ' del lotto ' + lotto + ' con quantita ' + quantita + ' non evaso ';
+                    testo = 'Articolo ' + articolo + ' del lotto ' + lotto + ' con quantita ' + quantitaEvadibile + ' non evaso ';
                 else
-                    testo = 'Articolo ' + articolo + ' con quantita ' + quantita + ' non evaso ';
+                    testo = 'Articolo ' + articolo + ' con quantita ' + quantitaEvadibile + ' non evaso ';
 
                 $.ajax({
                     url: "<?php echo URL::asset('ajax/segnalazione_salva') ?>/<?php echo $id_dotes ?>/" + id_dorig + "/" + testo,
