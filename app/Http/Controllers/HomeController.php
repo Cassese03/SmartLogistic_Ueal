@@ -634,7 +634,7 @@ class HomeController extends Controller
                     $check_mg = DB::SELECT('SELECT * FROM MGCausale where Cd_MGCausale in (select Cd_MGCausale from do where Cd_Do =  \'' . $flusso[0]->Cd_DO . '\')');
                     if (sizeof($check_mg) > 0) {
                         $session = array('cd_mg_a' => $check_mg[0]->Cd_MG_A, 'cd_mg_p' => $check_mg[0]->Cd_MG_P, 'doc_evadi' => $flusso[0]->Cd_DO);
-                    }else{
+                    } else {
                         $session = array('cd_mg_a' => null, 'cd_mg_p' => null, 'doc_evadi' => null);
                     }
                     session(['\'' . $id_dotes . '\'' => $session]);
@@ -666,7 +666,7 @@ class HomeController extends Controller
             }
             $session_mag = session('\'' . $id_dotes . '\'');
             $scatoli = DB::SELECT('SELECT * FROM AR WHERE Cd_AR LIKE \'SCATOLO%\'');
-            return View::make('carico_magazzino4', compact('scatoli','articolo', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo', 'flusso', 'righe'));
+            return View::make('carico_magazzino4', compact('scatoli', 'articolo', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo', 'flusso', 'righe'));
 
         }
 
@@ -747,7 +747,7 @@ class HomeController extends Controller
             }
             $session_mag = session('\'' . $id_dotes . '\'');
             $scatoli = DB::SELECT('SELECT * FROM AR WHERE Cd_AR LIKE \'SCATOLO%\'');
-            return View::make('carico_magazzino04', compact('scatoli','session_mag', 'magazzini_selected', 'magazzini','fornitore', 'id_dotes', 'documento', 'articolo'));
+            return View::make('carico_magazzino04', compact('scatoli', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo'));
 
         }
 
@@ -1028,6 +1028,22 @@ class HomeController extends Controller
     public function phpinfo()
     {
         phpinfo();
+    }
+
+    public function qrcode()
+    {
+        return View::make('qrcode');
+    }
+
+    public function resultqrcode($alias, $scadenza, $lotto)
+    {
+        $alias = str_replace('slash', '/', $alias);
+        $alias = str_replace('punto', ';', $alias);
+        $scadenza = str_replace('slash', '/', $scadenza);
+        $scadenza = str_replace('punto', ';', $scadenza);
+        $lotto = str_replace('slash', '/', $lotto);
+        $lotto = str_replace('punto', ';', $lotto);
+        return View::make('qrcoderesult', compact('alias', 'scadenza', 'lotto'));
     }
 
     public function calcola_totali_ordine()

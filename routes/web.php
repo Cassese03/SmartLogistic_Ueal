@@ -19,6 +19,8 @@ Route::any('', 'HomeController@index');
 Route::any('login', 'HomeController@login');
 Route::any('logout', 'HomeController@logout');
 
+Route::any('qrcode', 'HomeController@qrcode');
+Route::any('resultqrcode/{alias}/{scadenza}/{lotto}', 'HomeController@resultqrcode');
 
 Route::any('articoli', 'HomeController@articoli');
 Route::any('modifica_articolo/{id}', 'HomeController@modifica_articolo');
