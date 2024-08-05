@@ -128,13 +128,14 @@ class ArcaUtilsController extends Controller
                     $nuovaRiga = $esiste[0]->Id_DORig;
 
                 } else {
+                    if ($lotto != '0') {
+                        $insert_righe_ordine['Cd_ARLotto'] = $lotto;
+                    }
                     DB::table('DORig')->insertGetId($insert_righe_ordine);
                     $nuovaRiga = db::select('SELECT TOP 1 Id_DORig FROM DORig ORDER BY TIMEINS DESC')[0]->Id_DORig;
                 }
 
-                if ($lotto != '0') {
-                    DB::update("Update DoRig set Cd_ARLotto = '$lotto' where id_dorig = '$nuovaRiga'");
-                }
+
                 ArcaUtilsController::calcola_totale_ordine($id_ordine);
 
             }

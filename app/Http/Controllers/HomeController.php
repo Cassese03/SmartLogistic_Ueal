@@ -631,18 +631,20 @@ class HomeController extends Controller
             $flusso = DB::SELECT('select * from DODOPrel where Cd_DO_Prelevabile =\'' . $cd_do . '\'  ');
             if (sizeof($flusso) > 0) {
                 if (!session()->has('\'' . $id_dotes . '\'')) {
-                    $check_mg = DB::SELECT('SELECT * FROM MGCausale where Cd_MGCausale = (select Cd_MGCausale from do where Cd_Do =  \'' . $flusso[0]->Cd_DO . '\')');
+                    $check_mg = DB::SELECT('SELECT * FROM MGCausale where Cd_MGCausale in (select Cd_MGCausale from do where Cd_Do =  \'' . $flusso[0]->Cd_DO . '\')');
                     if (sizeof($check_mg) > 0) {
                         $session = array('cd_mg_a' => $check_mg[0]->Cd_MG_A, 'cd_mg_p' => $check_mg[0]->Cd_MG_P, 'doc_evadi' => $flusso[0]->Cd_DO);
+                    }else{
+                        $session = array('cd_mg_a' => null, 'cd_mg_p' => null, 'doc_evadi' => null);
                     }
-                    $session = array('cd_mg_a' => null, 'cd_mg_p' => null, 'doc_evadi' => null);
-
                     session(['\'' . $id_dotes . '\'' => $session]);
                     session()->save();
                 } else {
                     $session = session('\'' . $id_dotes . '\'');
+
                     if ($session['doc_evadi'] == null) {
-                        $check_mg = DB::SELECT('SELECT * FROM MGCausale where Cd_MGCausale = (select Cd_MGCausale from do where Cd_Do =  \'' . $flusso[0]->Cd_DO . '\')');
+                        $check_mg = DB::SELECT('SELECT * FROM MGCausale where Cd_MGCausale in (select Cd_MGCausale from do where Cd_Do =  \'' . $flusso[0]->Cd_DO . '\')');
+
                         if (sizeof($check_mg) > 0) {
                             $session = array('cd_mg_a' => $check_mg[0]->Cd_MG_A, 'cd_mg_p' => $check_mg[0]->Cd_MG_P, 'doc_evadi' => $flusso[0]->Cd_DO);
                         }
