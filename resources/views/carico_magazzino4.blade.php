@@ -296,7 +296,7 @@
     }
 </style>
 
-<body class="color-theme-blue push-content-right theme-light">
+<body class="color-theme-blue push-content-right theme-light" style="font-size: 18px;">
 
 <div class="loader justify-content-center ">
     <div class="maxui-roller align-self-center">
@@ -448,7 +448,9 @@
 
                                                 <div style="text-align: center;color: blue;"
                                                      id="riga_<?php echo $r->Id_DORig; ?>_counter"></div>
-                                                <h5 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>><?php echo $r->Cd_AR . '<br> ' . $r->Descrizione; ?>
+                                                <h4><?php echo $r->Cd_AR . '<br> '; ?> </h4>
+                                                <h5 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>>
+                                                        <?php echo $r->Descrizione; ?>
                                                     <br><?php echo 'Prezzo :' . round(floatval($r->PrezzoUnitarioV), 2); ?>
                                                     @if($r->Cd_ARLotto != '')
                                                             <?php echo '<br> Lotto : ' . $r->Cd_ARLotto; ?>
@@ -537,11 +539,11 @@
 
 
                 <?php } ?>
-{{--
-                <button
-                    style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:violet;border: violet"
-                    class="btn btn-primary" onclick="$('#modal_inserisci_scatole').modal('show');">Inserire Scatoli
-                </button>--}}
+                {{--
+                                <button
+                                    style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:violet;border: violet"
+                                    class="btn btn-primary" onclick="$('#modal_inserisci_scatole').modal('show');">Inserire Scatoli
+                                </button>--}}
                 <?php if (sizeof($documento->righe) > 0){ ?>
                 <button
                     style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:#007bff;border: #007bff"
@@ -1324,7 +1326,7 @@
 
     function salva_scatoloni() {
         @foreach($scatoli as $s)
-        ar = document.getElementById('ar_scatolo_{{$s->Cd_AR}}').value;
+            ar = document.getElementById('ar_scatolo_{{$s->Cd_AR}}').value;
         qta = document.getElementById('qta_scatolo_{{$s->Cd_AR}}').value;
         if (qta >= 1) {
 
