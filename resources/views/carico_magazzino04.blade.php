@@ -422,7 +422,9 @@
                                         <div class="row">
                                             <div class=" col-xl-12 col-xs-6 col-sm-6 col-md-6"
                                                  style="text-align: center">
-                                                <h5 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>><?php echo $r->Cd_AR . '<br> ' . $r->Descrizione; ?>
+                                                <h4 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>><?php echo $r->Cd_AR . '<br> '; ?> </h4>
+                                                <h5 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>>
+                                                    <?php echo $r->Descrizione; ?>
                                                     <br><?php echo 'Prezzo : ' . round(floatval($r->PrezzoUnitarioV), 2); ?>
                                                     @if($r->Cd_ARLotto != '')
                                                             <?php echo '<br> Lotto : ' . $r->Cd_ARLotto; ?>

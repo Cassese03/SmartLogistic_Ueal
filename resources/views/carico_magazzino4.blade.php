@@ -448,8 +448,9 @@
 
                                                 <div style="text-align: center;color: blue;"
                                                      id="riga_<?php echo $r->Id_DORig; ?>_counter"></div>
-                                                <h4><?php echo $r->Cd_AR . '<br> '; ?> </h4>
+                                                <h4 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>><?php echo $r->Cd_AR . '<br> '; ?> </h4>
                                                 <h5 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>>
+
                                                         <?php echo $r->Descrizione; ?>
                                                     <br><?php echo 'Prezzo :' . round(floatval($r->PrezzoUnitarioV), 2); ?>
                                                     @if($r->Cd_ARLotto != '')
