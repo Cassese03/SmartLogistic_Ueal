@@ -115,6 +115,17 @@ class AjaxController extends Controller
         DB::table('DORIG')->insertGetId(['Cd_AR' => $ar, 'Qta' => $qta, 'Id_DOTes' => $id_dotes, 'Cd_MG_A' => '00001', 'Cd_MG_P' => '00001', 'Cd_CGConto' => '06010101001', 'Cd_Aliquota' => 22]);
     }
 
+    public function inserisci_scatolone_in_doc_evaso($id_dotes, $ar, $qta)
+    {
+        $id_dotes = DB::SELECT('select * from dorig where cd_do != \'RVC\' and id_dorig_evade in (SELECT Id_DOrig from dorig where id_dotes = \'' . $id_dotes . '\')');
+        if (sizeof($id_dotes) > 0) {
+            $id_dotes = $id_dotes[0]->Id_DOTes;
+            DB::table('DORIG')->insertGetId(['Cd_AR' => $ar, 'Qta' => $qta, 'Id_DOTes' => $id_dotes, 'Cd_MG_A' => '00001', 'Cd_MG_P' => '00001', 'Cd_CGConto' => '06010101001', 'Cd_Aliquota' => 22]);
+        } else {
+            return 'error';
+        }
+    }
+
     public function cerca_articolo($q)
     {
 // PAGINA ARTICOLI
@@ -1011,7 +1022,7 @@ class AjaxController extends Controller
 
             $('#modal_controllo_lotto').val(
                 <?php if ($lotto_scelto != 0) {
-                    echo '\''.$lotto_scelto.'\'';
+                    echo '\'' . $lotto_scelto . '\'';
                 } else {
                     echo '\'Nessun Lotto\'';
                 } ?>)

@@ -296,7 +296,7 @@ class HomeController extends Controller
         if (!session()->has('utente')) {
             return Redirect::to('login');
         }
-        $documenti = DB::select('SELECT * FROM DO WHERE Cd_DO in (\'LP\',\'RMC\',\'OVC\') and CliFor = \'C\'');
+        $documenti = DB::select('SELECT * FROM DO WHERE Cd_DO in (\'LP\',\'RMC\',\'RVC\',\'OVC\') and CliFor = \'C\'');
         return View::make('attivo', compact('documenti'));
     }
 

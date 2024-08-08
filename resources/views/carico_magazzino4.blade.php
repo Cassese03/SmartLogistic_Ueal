@@ -448,7 +448,7 @@
 
                                                 <div style="text-align: center;color: blue;"
                                                      id="riga_<?php echo $r->Id_DORig; ?>_counter"></div>
-                                                <h5 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>><?php echo $r->Cd_AR . ' ' . $r->Descrizione; ?>
+                                                <h5 <?php if ($r->QtaEvadibile == 0) echo 'style="color: red"' ?>><?php echo $r->Cd_AR . '<br> ' . $r->Descrizione; ?>
                                                     <br><?php echo 'Prezzo :' . round(floatval($r->PrezzoUnitarioV), 2); ?>
                                                     @if($r->Cd_ARLotto != '')
                                                             <?php echo '<br> Lotto : ' . $r->Cd_ARLotto; ?>
@@ -537,11 +537,11 @@
 
 
                 <?php } ?>
-
+{{--
                 <button
                     style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:violet;border: violet"
                     class="btn btn-primary" onclick="$('#modal_inserisci_scatole').modal('show');">Inserire Scatoli
-                </button>
+                </button>--}}
                 <?php if (sizeof($documento->righe) > 0){ ?>
                 <button
                     style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:#007bff;border: #007bff"
@@ -1324,20 +1324,22 @@
 
     function salva_scatoloni() {
         @foreach($scatoli as $s)
-            ar = document.getElementById('ar_scatolo_{{$s->Cd_AR}}').value;
+        ar = document.getElementById('ar_scatolo_{{$s->Cd_AR}}').value;
         qta = document.getElementById('qta_scatolo_{{$s->Cd_AR}}').value;
         if (qta >= 1) {
 
             $.ajax({
-                url: "<?php echo URL::asset('ajax/inserisci_scatolone') ?>/<?php echo $id_dotes ?>/" + ar + "/" + qta,
+                url: "<?php echo URL::asset('ajax/inserisci_scatolone_in_doc_evaso') ?>/<?php echo $id_dotes ?>/" + ar + "/" + qta,
             }).done(function (result) {
                 if (result == 'Errore')
                     alert('Scatolone non inserito. Prego Riprovare');
             });
         }
         @endforeach
+        $('#modal_inserisci_scatole').modal('hide');
+        $('#modal_peso').modal('show');
 
-        top.location.reload();
+        //top.location.reload();
     }
 
     function salva_documento() {
@@ -1405,9 +1407,10 @@
 
             document.getElementById('ajax_numero_colli').value = result;
             document.getElementById('ajax_peso').value = result;
-            $('#modal_numero_colli').modal('show');
-            $('#modal_peso').modal('show');
 
+            $('#modal_inserisci_scatole').modal('show');
+
+//            $('#modal_numero_colli').modal('show');
             /* if (result.length > 1)
                  $('#modal_alertQuantita0').modal('show');
              else

@@ -9,17 +9,14 @@
     <title>QRCode</title>
 </head>
 <body>
-<div style="display: flex;height: 16mm;width: 38mm;margin:0;overflow: hidden;">
+<div style="display: flex;height: 16mm;width: 38mm;margin:0;padding-left:5%;overflow: hidden;">
     <img id='barcode'
          src="https://api.qrserver.com/v1/create-qr-code/?data={{$alias.';'.$scadenza.';'.$lotto}}&amp;size=50x50"
          alt="QRCode" title="QRCode" width="50" height="50"/>
     <div style="display:flex;flex-direction:column">
-        <div style="padding:4%;padding-left: 15%!important;"><a
-                style="font-size:10px;font-weight: bolder;">{{$alias}}</a></div>
-        <div style="padding:4%;padding-left: 15%!important;"><a
-                style="font-size:10px;font-weight: bolder;">{{$scadenza}}</a></div>
-        <div style="padding:4%;padding-left: 15%!important;"><a
-                style="font-size:10px;font-weight: bolder;">{{$lotto}}</a></div>
+        <div style="padding-left: 5%!important;"><a style="font-size:14px;font-weight: bolder;">{{$alias}}</a></div>
+        <div style="padding-left: 5%!important;"><a style="font-size:14px;font-weight: bolder;">{{$lotto}}</a></div>
+        <div style="padding-left: 5%!important;"><a style="font-size:14px;font-weight: bolder;">{{$scadenza}}</a></div>
     </div>
 </div>
 </body>

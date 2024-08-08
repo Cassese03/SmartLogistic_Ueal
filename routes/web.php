@@ -77,6 +77,7 @@ Route::any('ajax/cerca_articolo_smart_manuale/{q}/{cd_cf}', 'AjaxController@cerc
 Route::any('ajax/controllo_articolo_smart/{q}/{id_dotes}', 'AjaxController@controllo_articolo_smart');
 Route::any('ajax/stampe/{id_dotes}', 'AjaxController@stampe');
 Route::any('ajax/inserisci_scatolone/{id_dotes}/{ar}/{qta}', 'AjaxController@inserisci_scatolone');
+Route::any('ajax/inserisci_scatolone_in_doc_evaso/{id_dotes}/{ar}/{qta}', 'AjaxController@inserisci_scatolone_in_doc_evaso');
 
 Route::any('ajax/inserisci_lotto/{lotto}/{cd_ar}/{fornitore}/{descrizione}/{fornitore_pallet}/{pallet}', 'AjaxController@inserisci_lotto');
 Route::any('ajax/visualizza_lotti/{cd_ar}', 'AjaxController@visualizza_lotti');
