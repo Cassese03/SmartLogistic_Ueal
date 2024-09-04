@@ -747,7 +747,7 @@ class AjaxController extends Controller
                 if (sizeof($check_lotto) > 0) {
                     $insert_evasione['Cd_ARLotto'] = $lotto;
                     if ($check_lotto[0]->DataScadenza == null || $check_lotto[0]->DataScadenza == '') {
-                        DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . $data_scadenza . '\' WHERE Cd_AR = \'' . $r->Cd_Ar . '\' and Cd_ARLotto = \'' . $lotto . '\'');
+                        DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . $data_scadenza . '\' WHERE Cd_AR = \'' . $r->Cd_AR . '\' and Cd_ARLotto = \'' . $lotto . '\'');
                     }
                 }
             } else {
