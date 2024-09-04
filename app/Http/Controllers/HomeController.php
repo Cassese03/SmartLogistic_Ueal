@@ -1032,7 +1032,8 @@ class HomeController extends Controller
 
     public function qrcode()
     {
-        return View::make('qrcode');
+        $ultimi = DB::SELECT('SELECT TOP 10 * FROM xQRCode ORDER BY TimeIns DESC');
+        return View::make('qrcode', compact('ultimi'));
     }
 
     public function resultqrcode($alias, $scadenza, $lotto)

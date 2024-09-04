@@ -24,6 +24,24 @@ use Symfony\Component\VarDumper\Cloner\Data;
  */
 class AjaxController extends Controller
 {
+    public function barcode_add($codice, $scadenza, $lotto)
+    {
+        $codice = str_replace('slash', '/', $codice);
+        $lotto = str_replace('slash', '/', $lotto);
+        $scadenza = str_replace('slash', '/', $scadenza);
+
+        DB::table('xQRCode')->insertGetId(['Codice' => $codice, 'Scadenza' => $scadenza, 'Lotto' => $lotto]);
+
+        $rowCount = DB::table('xQRCode')->count();
+
+        if ($rowCount > 10) {
+            DB::table('xQRCode')
+                ->orderBy('id')
+                ->limit($rowCount - 10)
+                ->delete();
+        }
+    }
+
     public function inserisci_numero_colli($id_dotes)
     {
         try {
@@ -1132,11 +1150,17 @@ class AjaxController extends Controller
     {
 
         try {
+            $lotto = str_replace('slash', '/', $lotto);
+            $codice = str_replace('slash', '/', $codice);
             DB::beginTransaction();
 
             $id_MGMovInt = DB::table('MGMovInt')->insertGetId(array('Tipo' => 0, 'DataMov' => date('Ymd'), 'Descrizione' => 'Movimenti Rettifica'));
-            DB::insert('INSERT INTO MGMoV(DataMov,PartenzaArrivo,PadreComponente,Cd_MGEsercizio,Cd_AR,Cd_MG,Quantita,Ret,Id_MgMovInt,Cd_ARLotto) VALUES (\'' . date('Ymd') . '\',\'A\',\'P\',' . date('Y') . ',\'' . $codice . '\',\'' . $magazzino . '\',' . $quantita . ',1,' . $id_MGMovInt . ',\'' . $lotto . '\' )');
-            echo 'Quantit?? Rettificata con Successo';
+            if ($lotto != 0) {
+                DB::insert('INSERT INTO MGMoV(DataMov,PartenzaArrivo,PadreComponente,Cd_MGEsercizio,Cd_AR,Cd_MG,Quantita,Ret,Id_MgMovInt,Cd_ARLotto) VALUES (\'' . date('Ymd') . '\',\'A\',\'P\',' . date('Y') . ',\'' . $codice . '\',\'' . $magazzino . '\',' . $quantita . ',1,' . $id_MGMovInt . ',\'' . $lotto . '\' )');
+            } else {
+                DB::insert('INSERT INTO MGMoV(DataMov,PartenzaArrivo,PadreComponente,Cd_MGEsercizio,Cd_AR,Cd_MG,Quantita,Ret,Id_MgMovInt) VALUES (\'' . date('Ymd') . '\',\'A\',\'P\',' . date('Y') . ',\'' . $codice . '\',\'' . $magazzino . '\',' . $quantita . ',1,' . $id_MGMovInt . ' )');
+            }
+            echo 'Quantità Rettificata con Successo';
 
             DB::commit();
         } catch (\PDOException $e) {
@@ -1152,24 +1176,21 @@ class AjaxController extends Controller
     function cerca_articolo_smart_inventario($q, $tipo)
     {
         $Cd_ARLotto = 'NESSUN LOTTO';
-        if ($tipo == 'GS1') {
+        if ($tipo == 'QRCode') {
 
-            $decoder = new Decoder($delimiter = '');
-            $barcode = $decoder->decode($q);
+            $q = explode(';', $q);
+
+            if (sizeof($q) > 1)
+                $data_scadenza = $q[1];
+            else
+                $data_scadenza = 0;
+            if (sizeof($q) > 2 && $q[2] != '')
+                $Cd_ARLotto = $q[2];
+            else
+                $Cd_ARLotto = 'Nessun Lotto';
+
             $where = ' where 1=1 ';
-
-            foreach ($barcode->toArray()['identifiers'] as $field) {
-
-                if ($field['code'] == '01') {
-                    $testo = trim($field['content'], '*,');
-                    $where .= ' and AR.Cd_AR Like \'%' . $testo . '%\'';
-
-                }
-                if ($field['code'] == '10') {
-                    $Cd_ARLotto = $field['content'];
-                }
-
-            }
+            $where .= ' and AR.Cd_AR Like \'%' . $q[0] . '%\'';
 
             $articoli = DB::select('SELECT [Id_AR],[Cd_AR],[Descrizione] FROM AR ' . $where . '  Order By Id_AR DESC');
             if (sizeof($articoli) > 0) {
@@ -1229,9 +1250,11 @@ class AjaxController extends Controller
             ?>
             <script type="text/javascript">
                 $('#modal_Cd_AR').val('<?php echo $articolo->Cd_AR ?>');
-                $('#modal_Cd_ARLotto').html('<option value="">Nessun Lotto</option>');
+                $('#modal_Cd_ARLotto').html('<option magazzino="00001" value="" quantita="<?php if (sizeof($disponibilita) > 0) {
+                    echo $disponibilita[0]->disponibilita;
+                } else echo 0;?>">Nessun Lotto</option>');
                 <?php foreach($prova as $l){?>
-                $('#modal_Cd_ARLotto').append('<option quantita="<?php echo floatval($l->disponibilita) ?>" magazzino="<?php echo $l->Cd_MG ?>" <?php echo ($Cd_ARLotto == $l->Cd_ARLotto) ? 'selected' : '' ?>><?php echo $l->Cd_ARLotto . ' - ' . $l->Cd_MG ?></option>')
+                $('#modal_Cd_ARLotto').append('<option quantita="<?php echo floatval($l->disponibilita) ?>" magazzino="<?php echo $l->Cd_MG ?>" <?php echo ($Cd_ARLotto == $l->Cd_ARLotto) ? 'selected' : '' ?> value="<?php echo $l->Cd_ARLotto;?>"><?php echo $l->Cd_ARLotto . ' - ' . $l->Cd_MG ?></option>')
                 <?php } ?>
 
                 cambioLotto();

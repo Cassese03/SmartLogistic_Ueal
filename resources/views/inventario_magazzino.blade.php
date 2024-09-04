@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
     @include('common.header')
     <title>SMART LOGISTIC</title>
 </head>
@@ -119,28 +120,34 @@
         margin: 0;
         padding: 0;
     }
+
     /* line 19, ../sass/_viewport.scss */
     .controls .input-group {
         float: left;
     }
+
     /* line 21, ../sass/_viewport.scss */
     .controls .input-group input, .controls .input-group button {
         display: block;
     }
+
     /* line 25, ../sass/_viewport.scss */
     .controls .reader-config-group {
         float: right;
     }
+
     /* line 28, ../sass/_viewport.scss */
     .controls .reader-config-group label {
         display: block;
     }
+
     /* line 30, ../sass/_viewport.scss */
     .controls .reader-config-group label span {
         width: 9rem;
         display: inline-block;
         text-align: right;
     }
+
     /* line 37, ../sass/_viewport.scss */
     .controls:after {
         content: '';
@@ -155,6 +162,7 @@
         border-bottom: 1px solid #EEE;
         padding: 10px 0;
     }
+
     /* line 28, ../sass/_viewport.scss */
     #result_strip ul.thumbnails {
         padding: 0;
@@ -165,26 +173,31 @@
         overflow-y: hidden;
         white-space: nowrap;
     }
+
     /* line 37, ../sass/_viewport.scss */
     #result_strip ul.thumbnails > li {
         display: inline-block;
         vertical-align: middle;
         width: 160px;
     }
+
     /* line 41, ../sass/_viewport.scss */
     #result_strip ul.thumbnails > li .thumbnail {
         padding: 5px;
         margin: 4px;
         border: 1px dashed #CCC;
     }
+
     /* line 46, ../sass/_viewport.scss */
     #result_strip ul.thumbnails > li .thumbnail img {
         max-width: 140px;
     }
+
     /* line 49, ../sass/_viewport.scss */
     #result_strip ul.thumbnails > li .thumbnail .caption {
         white-space: normal;
     }
+
     /* line 51, ../sass/_viewport.scss */
     #result_strip ul.thumbnails > li .thumbnail .caption h4 {
         text-align: center;
@@ -192,6 +205,7 @@
         height: 40px;
         margin: 0px;
     }
+
     /* line 61, ../sass/_viewport.scss */
     #result_strip ul.thumbnails:after {
         content: "";
@@ -208,6 +222,7 @@
             box-shadow: none;
         }
     }
+
     @media (max-width: 603px) {
         /* line 5, ../sass/phone/_viewport.scss */
         .reader-config-group {
@@ -243,12 +258,14 @@
         #result_strip ul.thumbnails > li {
             width: 150px;
         }
+
         /* line 27, ../sass/phone/_viewport.scss */
         #result_strip ul.thumbnails > li .thumbnail .imgWrapper {
             width: 130px;
             height: 130px;
             overflow: hidden;
         }
+
         /* line 31, ../sass/phone/_viewport.scss */
         #result_strip ul.thumbnails > li .thumbnail .imgWrapper img {
             margin-top: -25px;
@@ -256,6 +273,7 @@
             height: 180px;
         }
     }
+
     #\31  {
         background: hotpink;
     }
@@ -264,7 +282,16 @@
 <body class="color-theme-blue push-content-right theme-light">
 
 <div class="loader justify-content-center ">
-    <div class="maxui-roller align-self-center"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="maxui-roller align-self-center">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
 </div>
 <div class="wrapper">
 
@@ -273,20 +300,24 @@
         <form class="searchcontrol">
             <div class="input-group">
                 <div class="input-group-prepend">
-                    <button type="button" class="input-group-text close-search"><i class="material-icons">keyboard_backspace</i></button>
+                    <button type="button" class="input-group-text close-search"><i class="material-icons">keyboard_backspace</i>
+                    </button>
                 </div>
-                <input type="text" id="cerca" class="form-control border-0" placeholder="Cerca Fornitore..." aria-label="Username">
+                <input type="text" id="cerca" class="form-control border-0" placeholder="Cerca Fornitore..."
+                       aria-label="Username">
             </div>
         </form>
         <header class="row m-0 fixed-header">
             <div class="left">
-                <a style="padding-left:20px;" href="/magazzino" ><i class="material-icons">arrow_back_ios</i></a>
+                <a style="padding-left:20px;" href="/magazzino"><i class="material-icons">arrow_back_ios</i></a>
             </div>
             <div class="col center">
-                <a href="#" class="logo"><figure><img src="/img/logo_arca.png" alt=""></figure>Rettifica Quantit&agrave;</a>
+                <a href="#" class="logo">
+                    <figure><img src="/img/logo_arca.png" alt=""></figure>
+                    Rettifica Quantit&agrave;</a>
             </div>
             <div class="right">
-                <a style="padding-left:20px;" href="/" ><i class="material-icons">home</i></a>
+                <a style="padding-left:20px;" href="/"><i class="material-icons">home</i></a>
             </div>
         </header>
 
@@ -298,8 +329,10 @@
                 </div>
 
                 <!-- <div id="interactive" class="viewport" style="position: relative;margin-top:30px;"></div> -->
-                <input type="text" id="cerca_articolo"   onkeyup="cerca_articolo_smart2()"  autofocus autocomplete="off">
-                <button class="btn btn-primary" style="margin:0 auto;display:block;margin-top: 100px" onclick="$('#modal_cerca_articolo').modal('show');">Scegli Prodotto</button>
+                <input type="text" id="cerca_articolo" onkeyup="cerca_articolo_smart2()" autofocus autocomplete="off">
+                <button class="btn btn-primary" style="margin:0 auto;display:block;margin-top: 100px"
+                        onclick="$('#modal_cerca_articolo').modal('show');">Scegli Prodotto
+                </button>
 
             </div>
         </div>
@@ -316,7 +349,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Carica Articolo</h5>
-                    <button type="button" class="close" data-dismiss="modal" onclick="location.reload()" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" onclick="location.reload()"
+                            aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
@@ -324,19 +358,24 @@
                 <div class="modal-body">
 
                     <label>Cerca Articolo</label>
-                    <input class="form-control" type="text" id="cerca_articolo1" placeholder="Inserisci barcode,codice o nome dell'articolo" autocomplete="off" autofocus>
+                    <input class="form-control" type="text" id="cerca_articolo1"
+                           placeholder="Inserisci barcode,codice o nome dell'articolo" autocomplete="off" autofocus>
 
                     <label>Tipo Ricerca</label>
                     <select class="form-control" type="text" id="tipo_articolo">
-                        <option value="GS1">GS1</option>
+                        <option value="QRCode">QRCode</option>
                         <option value="EAN">Codice Articolo o Barcode</option>
                     </select>
 
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()">Chiudi</button>
-                    <button type="button" class="btn btn-primary" onclick="cerca_articolo_smart_automatico();check();">Cerca Articolo</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()">
+                        Chiudi
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="cerca_articolo_smart_automatico();check();">
+                        Cerca Articolo
+                    </button>
                 </div>
             </div>
         </form>
@@ -358,14 +397,14 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-                    <button type="button" class="btn btn-primary" onclick="cerca_articolo_smart_automatico();">Carica Articolo</button>
+                    <button type="button" class="btn btn-primary" onclick="cerca_articolo_smart_automatico();">Carica
+                        Articolo
+                    </button>
                 </div>
             </div>
         </form>
     </div>
 </div>
-
-
 
 
 <div class="modal" id="modal_carico" tabindex="-1" role="dialog" aria-hidden="true">
@@ -374,29 +413,35 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Carica Articolo</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="location.reload()">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            onclick="location.reload()">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div id="ajax_modal_carico"></div>
-                        <label>Articolo</label>
-                        <input class="form-control" type="text" id="modal_Cd_AR" readonly>
-                        <label>Lotto</label>
-                        <select class="form-control" id="modal_Cd_ARLotto" onchange="cambioLotto()">
-                        </select>
-                        <label>Magazzino</label>
-                        <input class="form-control" type="text" id="modal_Cd_MG" readonly>
-                        <label>Quantita Sistema</label>
-                        <input class="form-control" type="number" id="modal_quantita" readonly>
-                        <label>Quantita Rilevata</label>
-                        <input class="form-control" type="number" id="modal_quantita_rilevata" value="" required placeholder="Inserisci la Quantità rilevata" onkeyup="modifica_quantita()" step="0.01">
-                        <label>Quantità da Rettificare (&euro;)</label>
-                        <input class="form-control" type="number" readonly id="modal_quantita_da_rettificare" value="" required placeholder="Quantità da rettificare">
-                     </div>
+                    <label>Articolo</label>
+                    <input class="form-control" type="text" id="modal_Cd_AR" readonly>
+                    <label>Lotto</label>
+                    <select class="form-control" id="modal_Cd_ARLotto" onchange="cambioLotto()">
+                    </select>
+                    <label>Magazzino</label>
+                    <input class="form-control" type="text" id="modal_Cd_MG" readonly>
+                    <label>Quantita Sistema</label>
+                    <input class="form-control" type="number" id="modal_quantita" readonly>
+                    <label>Quantita Rilevata</label>
+                    <input class="form-control" type="number" id="modal_quantita_rilevata" value="" required
+                           placeholder="Inserisci la Quantità rilevata" onkeyup="modifica_quantita()" step="0.01">
+                    <label>Quantità da Rettificare (&euro;)</label>
+                    <input class="form-control" type="number" readonly id="modal_quantita_da_rettificare" value=""
+                           required placeholder="Quantità da rettificare">
+                </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()">Chiudi</button>
-                    <button type="button" class="btn btn-primary" onclick="rettifica_articolo();">Carica Articolo</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()">
+                        Chiudi
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="rettifica_articolo();">Carica Articolo
+                    </button>
                 </div>
             </div>
         </form>
@@ -418,13 +463,14 @@
                     <div id="ajax_modal_carico2"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.reload();">Ricarica Pagina</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="location.reload();">
+                        Ricarica Pagina
+                    </button>
                 </div>
             </div>
         </form>
     </div>
 </div>
-
 
 
 <div class="modal" id="modal_inserimento" tabindex="-1" role="dialog" aria-hidden="true">
@@ -452,9 +498,6 @@
 </div>
 
 
-
-
-
 <!-- Optional JavaScript -->
 <!-- jQuery first, Popper.js, then Bootstrap JS -->
 @include('common.footer')
@@ -469,29 +512,30 @@
 
 <script type="text/javascript">
 
-    $('.modal').on('shown.bs.modal', function() {
+    $('.modal').on('shown.bs.modal', function () {
         $(this).find('[autofocus]').focus();
     });
 
-    function check(){
+    function check() {
         check = document.getElementById('cerca_articolo').value;
         lunghezza = check.length;
-        if(check.substring(0,3)==']C1'){
-            document.getElementById('cerca_articolo').value=check.substring(3,lunghezza);
-            check = document.getElementById('cerca_articolo').value;
-            alert('GS1 Code aggiustato riprovare a cercare');
-        }
+        /*        if(check.substring(0,3)==']C1'){
+                    document.getElementById('cerca_articolo').value=check.substring(3,lunghezza);
+                    check = document.getElementById('cerca_articolo').value;
+                    alert('QrCode aggiustato riprovare a cercare');
+                }*/
 
 
     }
-    function modifica_quantita(){
+
+    function modifica_quantita() {
 
         quantita = $('#modal_quantita').val();
         quantita_rilevata = $('#modal_quantita_rilevata').val();
-        $('#modal_quantita_da_rettificare').val(parseFloat(quantita_rilevata)-parseFloat(quantita));
+        $('#modal_quantita_da_rettificare').val(parseFloat(quantita_rilevata) - parseFloat(quantita));
     }
 
-    function cambioLotto(){
+    function cambioLotto() {
         lotto = $('#modal_Cd_ARLotto').val();
         magazzino = $('#modal_Cd_ARLotto option:selected').attr('magazzino');
         quantita = $('#modal_Cd_ARLotto option:selected').attr('quantita');
@@ -501,23 +545,23 @@
 
     }
 
-    function cerca_articolo_smart_automatico(){
+    function cerca_articolo_smart_automatico() {
 
         testo = $('#cerca_articolo1').val();
+        testo = testo.replaceAll('/','slash');
 
-        tipo  = $('#tipo_articolo').val();
-        if(testo != '') {
+        tipo = $('#tipo_articolo').val();
+        if (testo != '') {
 
             $.ajax({
-                url: "<?php echo URL::asset('/ajax/cerca_articolo_smart_inventario') ?>/" + encodeURIComponent(testo)+"/"+encodeURIComponent(tipo),
+                url: "<?php echo URL::asset('/ajax/cerca_articolo_smart_inventario') ?>/" + encodeURIComponent(testo) + "/" + encodeURIComponent(tipo),
                 context: document.body
             }).done(function (result) {
-                if(result != '') {
+                if (result != '') {
                     $('#modal_cerca_articolo').modal('hide');
                     $('#modal_lista_articoli').modal('show');
                     $('#ajax_lista_articoli').html(result);
-                }
-                else {
+                } else {
                     alert('nessun prodotto trovato');
                     location.reload();
                 }
@@ -526,16 +570,16 @@
         }
     }
 
-    function cerca_articolo_smart2(){
+    function cerca_articolo_smart2() {
 
         testo = $('#cerca_articolo').val();
-        if(testo != '') {
+        if (testo != '') {
 
             $.ajax({
                 url: "<?php echo URL::asset('/ajax/cerca_articolo_inventario') ?>/" + testo,
                 context: document.body
             }).done(function (result) {
-                if(result != '') {
+                if (result != '') {
                     $('#modal_cerca_articolo').modal('hide');
                     $('#modal_carico').modal('show');
                     $('#ajax_lista_articoli').html(result);
@@ -549,19 +593,22 @@
 
     }
 
-    function rettifica_articolo(){
+    function rettifica_articolo() {
 
         quantita_da_rettificare = $('#modal_quantita_da_rettificare').val();
         codice = $('#modal_Cd_AR').val();
         lotto = $('#modal_Cd_ARLotto').val();
-        position  = lotto.search("-");
         magazzino = $('#modal_Cd_MG').val();
+        if (lotto == '')
+            lotto = 0;
+        codice = codice.replaceAll('/', 'slash');
+        lotto = lotto.replaceAll('/', 'slash');
 
 
-        if(quantita_da_rettificare != ''){
+        if (quantita_da_rettificare != '') {
             $.ajax({
-                url: "<?php echo URL::asset('/ajax/rettifica_articolo') ?>/"+codice+"/"+quantita_da_rettificare+"/"+lotto.substring(0,position)+"/"+magazzino
-            }).done(function(result) {
+                url: "<?php echo URL::asset('/ajax/rettifica_articolo') ?>/" + codice + "/" + quantita_da_rettificare + "/" + lotto + "/" + magazzino
+            }).done(function (result) {
                 alert(result);
                 location.reload();
             });
@@ -570,21 +617,21 @@
             alert('Inserire Una Quantità');
     }
 
-    function crea_articolo(){
+    function crea_articolo() {
 
         barcode = $('#modal_inserimento_barcode').val();
-        if(barcode != '') {
+        if (barcode != '') {
             top.location.href = '/magazzino/nuovo_articolo?redirect=/magazzino/inventario&barcode=' + barcode;
         }
     }
 
-    function cerca_articolo_inventario_codice(code,lotto){
+    function cerca_articolo_inventario_codice(code, lotto) {
         $.ajax({
-            url: "/ajax/cerca_articolo_inventario_codice/"+code+"/"+lotto,
+            url: "/ajax/cerca_articolo_inventario_codice/" + code + "/" + lotto,
             context: document.body
-        }).done(function(result) {
+        }).done(function (result) {
 
-            if(result != '') {
+            if (result != '') {
                 $('#modal_carico').modal('show');
                 $('#ajax_modal_carico').html(result);
             } else {
@@ -623,29 +670,29 @@
     });*/
 
 
-   /* $(document).scannerDetection({
+    /* $(document).scannerDetection({
 
-        //https://github.com/kabachello/jQuery-Scanner-Detection
+         //https://github.com/kabachello/jQuery-Scanner-Detection
 
-        timeBeforeScanTest: 200, // wait for the next character for upto 200ms
-        avgTimeByChar: 40, // it's not a barcode if a character takes longer than 100ms
-        preventDefault: true,
+         timeBeforeScanTest: 200, // wait for the next character for upto 200ms
+         avgTimeByChar: 40, // it's not a barcode if a character takes longer than 100ms
+         preventDefault: true,
 
-        endChar: [13],
-        onComplete: function(barcode, qty){
-            validScan = true;
+         endChar: [13],
+         onComplete: function(barcode, qty){
+             validScan = true;
 
-            alert(barcode);
+             alert(barcode);
 
-        } // main callback function ,
-        ,
-        onError: function(string, qty) {
+         } // main callback function ,
+         ,
+         onError: function(string, qty) {
 
-            alert(string);
-
-
-        }
+             alert(string);
 
 
-    });*/
+         }
+
+
+     });*/
 </script>

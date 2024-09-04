@@ -46,7 +46,7 @@
         </header>
         <div class="page-content">
 
-            <div class="content-sticky-footer" >
+            <div class="content-sticky-footer">
                 <div class="row mx-0" style="margin-top: 2%">
 
                     <div class="col-xl-4 col-sm-4 col-xs-12">
@@ -62,9 +62,33 @@
                         <input class="form-control" type="text" id="lotto" placeholder="Lotto">
                     </div>
 
-                    <button class="btn-primary" style="width: 100%;margin: 5%;" onclick="generateBarCode()">Invia Dati
+                    <button class="btn-primary" style="width: 100%;margin:3% 5% 2% 5%;" onclick="generateBarCode()">Invia
+                        Dati
                     </button>
 
+                </div>
+                <div style="width:100vw;">
+                    <h3 style="text-align: center;"> Ultime Etichette</h3>
+                    <div class="row">
+                        @foreach($ultimi as $u)
+                            <div class="col-2" style="margin-bottom: 1%;"></div>
+                            <div class="col-8" style="margin-bottom: 1%;" id="{{$u->Id_xQRCode}}"
+                                 onclick="replayQRCode('{{$u->Id_xQRCode}}')">
+                                <div class="row">
+                                    <input class="col-4 form-control" type="text" readonly
+                                           value="{{$u->Codice}}"
+                                           id="codice_{{$u->Id_xQRCode}}">
+                                    <input class="col-4 form-control" type="text" readonly
+                                           value="{{$u->Scadenza}}"
+                                           id="scadenza_{{$u->Id_xQRCode}}">
+                                    <input class="col-4 form-control" type="text" readonly
+                                           value="{{$u->Lotto}}"
+                                           id="lotto_{{$u->Id_xQRCode}}">
+                                </div>
+                            </div>
+                            <div class="col-2" style="margin-bottom: 1%;"></div>
+                        @endforeach
+                    </div>
                 </div>
 
 
@@ -80,6 +104,30 @@
                 <script src="/vendor/swiper/js/swiper.min.js"></script>
                 <script src="/js/main.js"></script>
                 <script type="text/javascript">
+                    function convertDateFormat(dateString) {
+                        // Dividi la stringa originale nel formato "dd/MM/yyyy"
+                        var parts = dateString.split('/');
+                        var day = parts[0];
+                        var month = parts[1];
+                        var year = parts[2];
+
+                        // Crea la nuova stringa nel formato "yyyy-MM-dd"
+                        var formattedDate = year + '-' + month + '-' + day;
+                        return formattedDate;
+                    }
+
+                    function replayQRCode(id) {
+                        codice = document.getElementById('codice_' + id).value;
+                        scadenza = document.getElementById('scadenza_' + id).value;
+                        lotto = document.getElementById('lotto_' + id).value;
+
+                        scadenza = convertDateFormat(scadenza);
+
+                        $('#alias').val(codice);
+                        $('#scadenza').val(scadenza);
+                        $('#lotto').val(lotto);
+                    }
+
                     function generateBarCode() {
                         var nric = $('#alias').val();
                         if (nric != '' || $('#alias').val() != undefined) {
@@ -96,7 +144,11 @@
                                     scadenza = scadenza.replaceAll('/', 'slash');
                                     lotto = lotto.replaceAll(';', 'punto');
                                     lotto = lotto.replaceAll('/', 'slash');
-                                    top.location.href = '/resultqrcode/' + nric + '/' + scadenza + '/' + lotto;
+                                    $.ajax({
+                                        url: "<?php echo URL::asset('ajax/barcode_add') ?>/" + nric + '/' + scadenza + '/' + lotto,
+                                    }).done(function (result) {
+                                        top.location.href = '/resultqrcode/' + nric + '/' + scadenza + '/' + lotto;
+                                    });
                                 }
                             }
                         }

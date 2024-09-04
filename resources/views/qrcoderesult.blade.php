@@ -8,6 +8,8 @@
     </style>
     <title>QRCode</title>
 </head>
+<?php if ($scadenza == 'undefined/undefined/') $scadenza = ''; ?>
+
 <body>
 <div style="display: flex;height: 16mm;width: 38mm;margin:0;padding-left:5%;overflow: hidden;">
     <img id='barcode'
@@ -16,7 +18,8 @@
     <div style="display:flex;flex-direction:column">
         <div style="padding-left: 5%!important;"><a style="font-size:14px;font-weight: bolder;">{{$alias}}</a></div>
         <div style="padding-left: 5%!important;"><a style="font-size:14px;font-weight: bolder;">{{$lotto}}</a></div>
-        <div style="padding-left: 5%!important;"><a style="font-size:14px;font-weight: bolder;">{{$scadenza}}</a></div>
+        <div style="padding-left: 5%!important;"><a
+                    style="font-size:14px;font-weight: bolder;">{{$scadenza}}</a></div>
     </div>
 </div>
 </body>

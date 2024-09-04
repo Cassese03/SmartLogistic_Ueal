@@ -298,6 +298,16 @@
 
 <body class="color-theme-blue push-content-right theme-light" style="font-size: 18px;">
 
+<audio controls hidden="hidden" id="successAudio">
+    <source src="/audio/success.mp3" type="audio/mpeg">
+    Your browser does not support the audio tag.
+</audio>
+
+<audio controls hidden="hidden" id="errorAudio">
+    <source src="/audio/error.mp3" type="audio/mpeg">
+    Your browser does not support the audio tag.
+</audio>
+
 <div class="loader justify-content-center ">
     <div class="maxui-roller align-self-center">
         <div></div>
@@ -350,7 +360,7 @@
                         <br><small><?php echo $documento->Cd_Do ?> N.<?php echo $documento->NumeroDoc ?>
                             Del <?php echo date('d/m/Y', strtotime($documento->DataDoc)) ?></small></h1>
                 </div>
-                <form method="post" id="session" style="margin: 2%;">
+                <form method="post" id="session" style="margin: 2%;display: none">
                     <input type="hidden" name="change_mg_session" value="change_mg_session">
                     <div style="width: 90%;display: flex;gap: 5%;margin:2% 5% 0 5%">
                         <div style="width: 90%;">
@@ -469,62 +479,68 @@
                                                  style="padding-left: 10px">
                                                 <form method="post"
                                                       onsubmit="return confirm('Vuoi Eliminare Questa Riga ?')">
-                                                    <input type="hidden" id="codice" value="<?php echo $r->Cd_AR ?>">
-                                                    <button style="width:24%;" type="reset" name="segnalazione" value=""
-                                                            class="btn btn-warning btn-sm"
-                                                            onclick="$('#modal_segnalazione<?php echo $r->Id_DORig?>').modal('show');">
-                                                        <i class="fa fa-exclamation-triangle" aria-hidden="true">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                 height="16" fill="currentColor"
-                                                                 class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
-                                                                <path
-                                                                    d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
-                                                                <path
-                                                                    d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
-                                                            </svg>
-                                                        </i>
-                                                    </button>
-                                                    <button style="width:24%;" type="reset" name="modifica_riga"
-                                                            value="<?php echo $r->Cd_AR;?>"
-                                                            class="btn btn-primary btn-sm"
-                                                            onclick="$('#modal_modifica_<?php echo $r->Id_DORig ?>').modal('show');">
-                                                        <i class="bi bi-pencil">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                 height="16" fill="currentColor" class="bi bi-pencil"
-                                                                 viewBox="0 0 16 16">
-                                                                <path
-                                                                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                                                            </svg>
-                                                        </i>
-                                                    </button>
-                                                    <button style="width:24%;" type="reset" name="evadi_riga"
-                                                            value="<?php echo $r->Cd_AR;?>"
-                                                            class="btn btn-success btn-sm"
-                                                            onclick="controllo_articolo_smart2('<?php echo $r->Cd_AR?>;0;<?php echo ($r->Cd_ARLotto) ? $r->Cd_ARLotto :'0' ?>')">
-                                                        <i class="bi bi-check-circle">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                 height="16" fill="currentColor"
-                                                                 class="bi bi-check-circle" viewBox="0 0 16 16">
-                                                                <path
-                                                                    d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                                                <path
-                                                                    d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-                                                            </svg>
-                                                        </i>
-                                                    </button>
-                                                    <input type="hidden" name="Id_DORig"
-                                                           value="<?php echo $r->Id_DORig ?>">
-                                                    <button style="width:24%;" type="submit" name="elimina_riga"
-                                                            value="Elimina" class="btn btn-danger btn-sm">
-                                                        <i class="bi bi-trash-fill">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                 height="16" fill="currentColor"
-                                                                 class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                                <path
-                                                                    d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                                                            </svg>
-                                                        </i>
-                                                    </button>
+                                                    <div class="row">
+                                                        <input type="hidden" id="codice"
+                                                               value="<?php echo $r->Cd_AR ?>">
+                                                        <button type="reset" name="segnalazione"
+                                                                value=""
+                                                                class="btn btn-warning btn-sm col-3"
+                                                                onclick="$('#modal_segnalazione<?php echo $r->Id_DORig?>').modal('show');">
+                                                            <i class="fa fa-exclamation-triangle" aria-hidden="true">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                     height="16" fill="currentColor"
+                                                                     class="bi bi-exclamation-triangle"
+                                                                     viewBox="0 0 16 16">
+                                                                    <path
+                                                                        d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+                                                                    <path
+                                                                        d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+                                                                </svg>
+                                                            </i>
+                                                        </button>
+                                                        <button type="reset" name="modifica_riga"
+                                                                value="<?php echo $r->Cd_AR;?>"
+                                                                class="btn btn-primary btn-sm col-3"
+                                                                onclick="$('#modal_modifica_<?php echo $r->Id_DORig ?>').modal('show');">
+                                                            <i class="bi bi-pencil">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                     height="16" fill="currentColor"
+                                                                     class="bi bi-pencil"
+                                                                     viewBox="0 0 16 16">
+                                                                    <path
+                                                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                                                </svg>
+                                                            </i>
+                                                        </button>
+                                                        <button type="reset" name="evadi_riga"
+                                                                value="<?php echo $r->Cd_AR;?>"
+                                                                class="btn btn-success btn-sm col-3"
+                                                                onclick="controllo_articolo_smart2('<?php echo $r->Cd_AR?>;0;<?php echo ($r->Cd_ARLotto) ? $r->Cd_ARLotto :'0' ?>')">
+                                                            <i class="bi bi-check-circle">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                     height="16" fill="currentColor"
+                                                                     class="bi bi-check-circle" viewBox="0 0 16 16">
+                                                                    <path
+                                                                        d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                                    <path
+                                                                        d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                                                </svg>
+                                                            </i>
+                                                        </button>
+                                                        <input type="hidden" name="Id_DORig"
+                                                               value="<?php echo $r->Id_DORig ?>">
+                                                        <button type="submit" name="elimina_riga"
+                                                                value="Elimina" class="btn btn-danger btn-sm col-3">
+                                                            <i class="bi bi-trash-fill">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                     height="16" fill="currentColor"
+                                                                     class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                                    <path
+                                                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                                                </svg>
+                                                            </i>
+                                                        </button>
+                                                    </div>
                                                 </form>
 
                                             </div>
@@ -1233,8 +1249,7 @@
         <button type="button" class="close" data-dismiss="alert"
                 onclick="$('#modal_alertTrovare').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
             &times;
-        </button>
-        <strong>Alert!</strong><br> Nessun Articolo Trovato </a>.
+            <strong>Alert!</strong><br> Nessun Articolo Trovato </a>.
     </div>
 </div>
 
@@ -1254,8 +1269,22 @@
 <script src="/js/jquery.scannerdetection.js" type="text/javascript"></script>
 
 </body>
-</html>
+</html><script>
+    window.addEventListener('beforeunload', function (e) {
+        var confirmationMessage = 'Sei sicuro di voler lasciare questa pagina?';
+
+        // Mostra il messaggio di conferma
+        e.preventDefault(); // Necessario per mostrare il dialogo
+        e.returnValue = confirmationMessage; // Compatibilità con alcuni browser
+        return confirmationMessage; // Compatibilità con alcuni browser
+    });
+</script>
+
 <script type="text/javascript">
+
+    errorAudio = document.getElementById('errorAudio');
+
+    successAudio = document.getElementById('successAudio');
 
     var evadi = {};
 
@@ -1445,6 +1474,7 @@
                 if (parseInt(parseInt(evadi[textXEvasione]) + parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
                     evadi[textXEvasione] = parseInt(evadi[textXEvasione]) + parseInt(qta_da_evadere);
                 } else {
+                    errorAudio.play();
                     $('#modal_alertMaxEvasione').modal('show');
                     return;
                 }
@@ -1453,25 +1483,13 @@
                 if (parseInt(qta_da_evadere) <= parseInt(max_evasione)) {
                     evadi[textXEvasione] = parseInt(qta_da_evadere);
                 } else {
+                    errorAudio.play();
                     $('#modal_alertMaxEvasione').modal('show');
                     return;
                 }
             }
-            /*if (dorig.search(text) == (-1)) {
-                            if (dorig != '')
-                                document.getElementById('DORIG').value = document.getElementById('DORIG').value + "','" + text;
-                            if (dorig == '')
-                                document.getElementById('DORIG').value = text;
-                        } else {
-                            $('#modal_alertEvasione').modal('show');
-                            return;
-                        }*/
+
             document.getElementById('cerca_articolo2').focus();
-            //righe = document.getElementById('button').value;
-            //righe++;
-            //document.getElementById('button').value = righe;
-            //document.getElementById('button').innerHTML = 'Evadi Righe (' + righe + ')';
-            //document.getElementById('riga_' + text).style.backgroundColor = 'green';
 
             if (parseInt(evadi[textXEvasione]) == parseInt(max_evasione)) {
                 document.getElementById('riga_' + text).style.backgroundColor = 'green';
@@ -1480,6 +1498,7 @@
                 document.getElementById('lista').appendChild(newElement2);
             } else
                 document.getElementById('riga_' + text).style.backgroundColor = 'yellow';
+
             var checkElement = document.getElementById('riga_' + textXEvasione + '_counter');
             if (checkElement === undefined || checkElement === null) {
                 newElement = document.createElement('h5');
@@ -1497,59 +1516,16 @@
                 else
                     document.getElementById('riga_' + textXEvasione + '_counter').innerHTML = 'Righe in Evasione : ' + evadi[textXEvasione];
             }
+            successAudio.play();
         } else {
             if (Object.keys(evadi).length > 0) {
-
-                $('#modal_conf_riga').modal('show');/*
-                $.ajax({
-                    url: "<?php echo URL::asset('ajax/evadi_articolo2') ?>/" + dorig
-                }).done(function (result) {
-                    if (result.length > 1)
-                        $('#modal_alertQuantita0').modal('show');
-                    else
-                        $('#modal_alertEvasa').modal('show');
-                    location.reload();
-                });*/
+                $('#modal_conf_riga').modal('show');
             } else {
+                errorAudio.play();
                 $('#modal_noriga').modal('show');
                 return;
             }
-            /*
-                dorig = document.getElementById('DORIG').value;
-                if (dorig == '') {
-                    $('#modal_noriga').modal('show');
-                    return;
-                } else {
-                    $('#ajax_loader').fadeIn();
 
-                    cd_do = document.getElementById('doc_evadi').value;
-
-                    cd_mg_p = document.getElementById('cd_mg_p').value;
-
-                    if (cd_mg_p == '' || cd_mg_p == 'undefined' || cd_mg_p == undefined || cd_mg_p == null || cd_mg_p == 'Scegli il magazzino...')
-                        cd_mg_p = 'ND';
-
-                    cd_mg_a = document.getElementById('cd_mg_a').value;
-                    if (cd_mg_a == '' || cd_mg_a == 'undefined' || cd_mg_a == undefined || cd_mg_a == null || cd_mg_a == 'Scegli il magazzino...')
-                        cd_mg_a = 'ND';
-
-                    dorig = document.getElementById('DORIG').value;
-                    $.ajax({
-                        url: "<?php echo URL::asset('ajax/evadi_articolo2') ?>/" + dorig + "/" + cd_mg_a + "/" + cd_mg_p + "/" + cd_do,
-                    data: dorig,
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                }).done(function (result) {
-                    console.log(result);
-                    $('#ajax_loader').fadeOut();
-                    location.reload();
-                    if (result.length > 1)
-                        $('#modal_alertQuantita0').modal('show');
-                    else
-                        $('#modal_alertEvasa').modal('show');
-
-                });
-            }*/
         }
     }
 
@@ -1727,6 +1703,7 @@
                     $('#ajax_lista_articoli').html(result);
                     evadi_articolo2('0');
                 } else {
+                    errorAudio.play();
                     $('#modal_segnalare').modal('show');
                     $('#cerca_articolo2').value = '';
                     document.getElementById('Segnalazione_C').value = testo;
@@ -1755,6 +1732,7 @@
                     $('#modal_lista_articoli_daevadere').modal('show');
                     $('#ajax_lista_articoli').html(result);
                 } else {
+                    errorAudio.play();
                     $('#modal_segnalare').modal('show');
                     document.getElementById('Segnalazione_C').value = testo;
                     document.getElementById('id_dotes_C').value = id_dotes;
