@@ -699,7 +699,7 @@ class AjaxController extends Controller
             $Id_DoRig .= '\',\'' . $id_dorig;
         }
         $Id_DoTes = '';
-        $date = date('d/m/Y', strtotime('today'));
+        $date = date('Y-m-d H:i:s', strtotime('today'));
         $controllo = DB::SELECT('SELECT * FROM DORIG WHERE Id_DORig in (\'' . $Id_DoRig . '\')')[0]->Id_DOTes;
         $controlli = DB::SELECT('SELECT * FROM DORIG WHERE Id_DOTes = \'' . $controllo . '\'');
         foreach ($controlli as $c) {
@@ -708,6 +708,7 @@ class AjaxController extends Controller
                 if ($testata[0]->DataDoc == $date)
                     $Id_DoTes = $testata[0]->Id_DOTes;
         }
+        $date = date('d/m/Y', strtotime('today'));
 
         $righe = DB::select('SELECT * FROM DORIG WHERE ID_DORIG IN (\'' . $Id_DoRig . '\')');
         foreach ($righe as $r) {
