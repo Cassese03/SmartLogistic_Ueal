@@ -724,9 +724,11 @@ class AjaxController extends Controller
             $magazzino = $cd_mg_p; //magazzino di default
             $insert_evasione['Cd_MG_P'] = '';
             $insert_evasione['Cd_MG_A'] = '';
+            $agente = ($r->Cd_Agente_1) ? $r->Cd_Agente_1 : null;
+            $agente_2 = ($r->Cd_Agente_2) ? $r->Cd_Agente_2 : null;
 
             if ($Id_DoTes == '') {
-                DB::table('DOTes')->insertGetId(['Cd_CF' => $cd_cf, 'Cd_Do' => $documento]);
+                DB::table('DOTes')->insertGetId(['Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2]);
                 $Id_DoTes = DB::SELECT('SELECT TOP 1 Id_DOTes from DOTes ORDER BY TimeIns Desc')[0]->Id_DOTes;
                 if ($ubicazione != '0')
                     $insert_evasione['Cd_MGUbicazione_P'] = $ubicazione;
@@ -747,7 +749,7 @@ class AjaxController extends Controller
                 $check_lotto = DB::SELECT('select * from arlotto where Cd_AR = \'' . $r->Cd_AR . '\' and  cd_arlotto = \'' . $lotto . '\'');
                 if (sizeof($check_lotto) > 0) {
                     $insert_evasione['Cd_ARLotto'] = $lotto;
-                    if ($check_lotto[0]->DataScadenza == null || $check_lotto[0]->DataScadenza == '') {
+                    if (($check_lotto[0]->DataScadenza == null || $check_lotto[0]->DataScadenza == '') && $data_scadenza != 0) {
                         DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . $data_scadenza . '\' WHERE Cd_AR = \'' . $r->Cd_AR . '\' and Cd_ARLotto = \'' . $lotto . '\'');
                     }
                 }
@@ -770,6 +772,12 @@ class AjaxController extends Controller
 
             $Riga = DB::SELECT('SELECT * FROM DoRig where Id_DoRig=\'' . $Id_DoRig . '\'');
             $insert_evasione['Cd_Aliquota'] = $r->Cd_Aliquota;
+            if ($r->ProvvigionRiga_1 != '')
+                $insert_evasione['ProvvigionRiga_1'] = $r->ProvvigionRiga_1;
+            if ($r->ProvvigionRiga_2 != '')
+                $insert_evasione['ProvvigionRiga_2'] = $r->ProvvigionRiga_2;
+            if ($r->ScontoRiga != '')
+                $insert_evasione['ScontoRiga'] = $r->ScontoRiga;
             $insert_evasione['Cd_CGConto'] = $r->Cd_CGConto;
             $insert_evasione['Id_DoTes'] = $Id_DoTes1;
 
