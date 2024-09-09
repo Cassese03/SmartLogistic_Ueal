@@ -724,9 +724,15 @@ class AjaxController extends Controller
             $magazzino = $cd_mg_p; //magazzino di default
             $insert_evasione['Cd_MG_P'] = '';
             $insert_evasione['Cd_MG_A'] = '';
-            $agente = ($r->Cd_Agente_1) ? $r->Cd_Agente_1 : null;
-            $agente_2 = ($r->Cd_Agente_2) ? $r->Cd_Agente_2 : null;
+            $old_dotes = DB::SELECT('select * from dotes where Id_DOTes = \'' . $r->Id_DOTes . '\'');
+            if (sizeof($old_dotes) > 0) {
+                $agente = ($old_dotes[0]->Cd_Agente_1) ? $r->Cd_Agente_1 : null;
+                $agente_2 = ($old_dotes[0]->Cd_Agente_2) ? $r->Cd_Agente_2 : null;
+            } else {
+                $agente = null;
+                $agente_2 = null;
 
+            }
             if ($Id_DoTes == '') {
                 DB::table('DOTes')->insertGetId(['Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2]);
                 $Id_DoTes = DB::SELECT('SELECT TOP 1 Id_DOTes from DOTes ORDER BY TimeIns Desc')[0]->Id_DOTes;
