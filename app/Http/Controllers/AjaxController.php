@@ -778,10 +778,10 @@ class AjaxController extends Controller
 
             $Riga = DB::SELECT('SELECT * FROM DoRig where Id_DoRig=\'' . $Id_DoRig . '\'');
             $insert_evasione['Cd_Aliquota'] = $r->Cd_Aliquota;
-            if ($r->ProvvigionRiga_1 != '')
-                $insert_evasione['ProvvigionRiga_1'] = $r->ProvvigionRiga_1;
-            if ($r->ProvvigionRiga_2 != '')
-                $insert_evasione['ProvvigionRiga_2'] = $r->ProvvigionRiga_2;
+            if ($r->ProvvigioneRiga_1 != '')
+                $insert_evasione['ProvvigioneRiga_1'] = $r->ProvvigioneRiga_1;
+            if ($r->ProvvigioneRiga_1 != '')
+                $insert_evasione['ProvvigioneRiga_2'] = $r->ProvvigioneRiga_1;
             if ($r->ScontoRiga != '')
                 $insert_evasione['ScontoRiga'] = $r->ScontoRiga;
             $insert_evasione['Cd_CGConto'] = $r->Cd_CGConto;
