@@ -726,8 +726,8 @@ class AjaxController extends Controller
             $insert_evasione['Cd_MG_A'] = '';
             $old_dotes = DB::SELECT('select * from dotes where Id_DOTes = \'' . $r->Id_DOTes . '\'');
             if (sizeof($old_dotes) > 0) {
-                $agente = ($old_dotes[0]->Cd_Agente_1) ? $r->Cd_Agente_1 : null;
-                $agente_2 = ($old_dotes[0]->Cd_Agente_2) ? $r->Cd_Agente_2 : null;
+                $agente = ($old_dotes[0]->Cd_Agente_1) ? $old_dotes[0]->Cd_Agente_1 : null;
+                $agente_2 = ($old_dotes[0]->Cd_Agente_1) ? $old_dotes[0]->Cd_Agente_1 : null;
             } else {
                 $agente = null;
                 $agente_2 = null;
