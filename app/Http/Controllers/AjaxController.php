@@ -761,6 +761,7 @@ class AjaxController extends Controller
                             $evasione_dorig_spesa[$key] = $value;
                         }
                         $evasione_dorig_spesa['Id_DoTes'] = $Id_DoTes;
+                        $evasione_dorig_spesa['DataDoc'] = str_replace('-', '', $evasione_dorig_spesa['DataDoc']);
                         unset($evasione_dorig_spesa['TimeIns']);
                         unset($evasione_dorig_spesa['TimeUpd']);
                         unset($evasione_dorig_spesa['UserIns']);
