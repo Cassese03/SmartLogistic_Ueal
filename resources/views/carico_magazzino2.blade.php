@@ -74,7 +74,7 @@
                     <li class="list-group-item">
                         <a <?php if (str_replace(' ', '', $documenti) == 'LPL' || str_replace(' ', '', $documenti) == 'PRV' || str_replace(' ', '', $documenti) == 'DDT' || str_replace(' ', '', $documenti) == 'RCF') echo 'href="/magazzino/carico03/' . $f->Id_CF . '/' . $documenti . '"'; else echo 'href="/magazzino/carico3/' . $f->Id_CF . '/' . $documenti . '"'; ?> class="media">
                             <div class="media-body">
-                                <h5><?php echo $f->Cd_CF ?> (<?php echo $f->doc_da_lavorare ?>)</h5>
+                                <h5><?php echo $f->Cd_CF ?> (<?php echo number_format($f->doc_da_lavorare,0); ?>)</h5>
                                 <p>Nome: <?php echo $f->Descrizione ?></p>
                             </div>
                         </a>
