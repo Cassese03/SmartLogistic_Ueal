@@ -324,7 +324,7 @@ class HomeController extends Controller
         if (!session()->has('utente')) {
             return Redirect::to('login');
         }
-        $fornitori = DB::select('SELECT TOP 50 *,(SELECT COUNT(*) FROM DORIG WHERE ID_DOTES IN (SELECT Id_DOTes FROM DOTes WHERE Cd_DO = \'' . $documenti . '\' AND Cd_CF = CF.Cd_CF and Prelevabile = 1 and RigheEvadibili > 0)) as doc_da_lavorare from CF where Id_CF in(SELECT r.Id_CF FROM DORig d,Cf r WHERE d.Cd_CF=r.Cd_CF and Cd_DO = \'' . $documenti . '\' and QtaEvadibile > \'0\' and (SELECT Prelevabile FROM DOTES WHERE Id_DOTes = d.Id_DOTes) = 1 and Cd_MGEsercizio = YEAR(GETDATE()) group by r.Id_CF ) and Cliente=\'1\'');
+        $fornitori = DB::select('SELECT TOP 50 *,(SELECT SUM(QtaEvadibile) FROM DORIG WHERE ID_DOTES IN (SELECT Id_DOTes FROM DOTes WHERE Cd_DO = \'' . $documenti . '\' AND Cd_CF = CF.Cd_CF and Prelevabile = 1 and RigheEvadibili > 0)) as doc_da_lavorare from CF where Id_CF in(SELECT r.Id_CF FROM DORig d,Cf r WHERE d.Cd_CF=r.Cd_CF and Cd_DO = \'' . $documenti . '\' and QtaEvadibile > \'0\' and (SELECT Prelevabile FROM DOTES WHERE Id_DOTes = d.Id_DOTes) = 1 and Cd_MGEsercizio = YEAR(GETDATE()) group by r.Id_CF ) and Cliente=\'1\'');
 
         return View::make('carico_magazzino2', compact('documenti', 'fornitori'));
 
@@ -336,7 +336,7 @@ class HomeController extends Controller
         if (!session()->has('utente')) {
             return Redirect::to('login');
         }
-        $fornitori = DB::select('SELECT TOP 50 *,(SELECT COUNT(*) FROM DORIG WHERE ID_DOTES IN (SELECT Id_DOTes FROM DOTes WHERE Cd_DO = \'' . $documenti . '\' AND Cd_CF = CF.Cd_CF and Prelevabile = 1 and RigheEvadibili > 0)) as doc_da_lavorare  from CF where Id_CF in(SELECT r.Id_CF FROM DOTes d,Cf r WHERE d.Cd_CF = r.Cd_CF and Cd_DO = \'' . $documenti . '\' and RigheEvadibili > \'0\' and Cd_MGEsercizio =YEAR(GETDATE())  group by r.Id_CF ) and Fornitore=\'1\'');
+        $fornitori = DB::select('SELECT TOP 50 *,(SELECT SUM(QtaEvadibile) FROM DORIG WHERE ID_DOTES IN (SELECT Id_DOTes FROM DOTes WHERE Cd_DO = \'' . $documenti . '\' AND Cd_CF = CF.Cd_CF and Prelevabile = 1 and RigheEvadibili > 0)) as doc_da_lavorare  from CF where Id_CF in(SELECT r.Id_CF FROM DOTes d,Cf r WHERE d.Cd_CF = r.Cd_CF and Cd_DO = \'' . $documenti . '\' and RigheEvadibili > \'0\' and Cd_MGEsercizio =YEAR(GETDATE())  group by r.Id_CF ) and Fornitore=\'1\'');
         if (sizeof($fornitori) > 0) {
             $fornitore = $fornitori[0];
             return View::make('carico_magazzino02', compact('documenti', 'fornitori'));
