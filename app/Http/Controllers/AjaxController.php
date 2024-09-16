@@ -728,15 +728,16 @@ class AjaxController extends Controller
                 $old_dotes = DB::SELECT('select * from dotes where Id_DOTes = \'' . $r->Id_DOTes . '\'');
                 if (sizeof($old_dotes) > 0) {
                     $agente = ($old_dotes[0]->Cd_Agente_1) ? $old_dotes[0]->Cd_Agente_1 : null;
-                    $pagamento = ($old_dotes[0]->Cd_PG) ? $old_dotes[0]->Cd_PG : null;
                     $agente_2 = ($old_dotes[0]->Cd_Agente_2) ? $old_dotes[0]->Cd_Agente_2 : null;
                     $notepiede = ($old_dotes[0]->NotePiede) ? $old_dotes[0]->NotePiede : null;
+                    $pagamento = ($old_dotes[0]->Cd_PG) ? $old_dotes[0]->Cd_PG : null;
                     $ScontoCassa = ($old_dotes[0]->ScontoCassa) ? $old_dotes[0]->ScontoCassa : null;
                 } else {
                     $agente = null;
                     $agente_2 = null;
                     $notepiede = null;
                     $pagamento = null;
+                    $ScontoCassa = null;
                 }
 
                 if ($Id_DoTes == '') {
