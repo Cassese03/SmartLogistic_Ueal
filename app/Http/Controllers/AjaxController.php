@@ -704,7 +704,7 @@ class AjaxController extends Controller
             $controllo = DB::SELECT('SELECT * FROM DORIG WHERE Id_DORig in (\'' . $Id_DoRig . '\')')[0]->Id_DOTes;
             $controlli = DB::SELECT('SELECT * FROM DORIG WHERE Id_DOTes = \'' . $controllo . '\'');
             foreach ($controlli as $c) {
-                $testata = DB::SELECT('SELECT * FROM DORIG WHERE Id_DORig_Evade = \'' . $c->Id_DORig . '\'');
+                $testata = DB::SELECT('SELECT * FROM DORIG WHERE Cd_DO != \'' . $cd_do . '\' and Id_DORig_Evade = \'' . $c->Id_DORig . '\'');
                 if ($testata != null)
                     if ($testata[0]->DataDoc == $date)
                         $Id_DoTes = $testata[0]->Id_DOTes;
