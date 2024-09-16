@@ -1061,7 +1061,7 @@
         $.ajax({
             url: "<?php echo URL::asset('ajax/salva') ?>/<?php echo $id_dotes ?>"
         }).done(function (result) {
-            top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi'; ?>';
+            top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi' ?>'
 
         });
     }
@@ -1092,7 +1092,7 @@
         }).done(function (result) {
             if (result == 'Eliminato')
                 alert('Documento Eliminato Correttamente');
-            top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi'; ?>';
+            top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi'?>'
 
         });
     }

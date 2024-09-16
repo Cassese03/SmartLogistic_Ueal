@@ -1491,7 +1491,7 @@
             if (result == 'Errore')
                 alert('Peso non inserito. Prego comunicare all\'amministrazione!');
             else
-                top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi'; ?>';
+                top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi' ?>'
         });
     }
 
@@ -1679,19 +1679,19 @@
                 }
 
             } else {
-                if(somma > 0){
-                    if ((parseInt(qta_da_evadere)+parseInt(somma)) <= parseInt(max_evasione)) {
+                if (somma > 0) {
+                    if ((parseInt(qta_da_evadere) + parseInt(somma)) <= parseInt(max_evasione)) {
                         evadi[textXEvasione] = parseInt(qta_da_evadere);
-                    }else {
+                    } else {
                         errorAudio.play();
                         $('#modal_alertMaxEvasione').modal('show');
                         return;
                     }
-                } else{
+                } else {
 
                     if ((parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
                         evadi[textXEvasione] = parseInt(qta_da_evadere);
-                    }else {
+                    } else {
                         errorAudio.play();
                         $('#modal_alertMaxEvasione').modal('show');
                         return;
@@ -1967,7 +1967,7 @@
         $.ajax({
             url: "<?php echo URL::asset('ajax/crea_doc_riordino') ?>/<?php echo $id_dotes ?>",
         }).done(function (result) {
-            top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi'; ?>;';
+            top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi' ?>'
         });
     }
 
