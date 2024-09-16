@@ -1019,7 +1019,7 @@
     <script src="/js/jquery.scannerdetection.js" type="text/javascript"></script>
 
 </body>
-</html>
+</html>{{--
 <script>
     window.addEventListener('beforeunload', function (e) {
         var confirmationMessage = 'Sei sicuro di voler lasciare questa pagina?';
@@ -1029,7 +1029,7 @@
         e.returnValue = confirmationMessage; // Compatibilità con alcuni browser
         return confirmationMessage; // Compatibilità con alcuni browser
     });
-</script>
+</script>--}}
 <script type="text/javascript">
 
     function change_scad() {
@@ -1061,7 +1061,8 @@
         $.ajax({
             url: "<?php echo URL::asset('ajax/salva') ?>/<?php echo $id_dotes ?>"
         }).done(function (result) {
-            top.location.href = '/';
+            top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi'; ?>';
+
         });
     }
 
@@ -1091,7 +1092,8 @@
         }).done(function (result) {
             if (result == 'Eliminato')
                 alert('Documento Eliminato Correttamente');
-            top.location.href = '/';
+            top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi'; ?>';
+
         });
     }
 

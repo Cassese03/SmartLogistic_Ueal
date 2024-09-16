@@ -485,7 +485,7 @@
                                                         <button type="reset" name="segnalazione"
                                                                 value=""
                                                                 class="btn btn-warning btn-sm col-3"
-                                                                onclick="$('#modal_segnalazione<?php echo $r->Id_DORig?>').modal('show');">
+                                                                onclick="rimuoviLotto('<?php echo $r->Id_DORig?>')">
                                                             <i class="fa fa-exclamation-triangle" aria-hidden="true">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                                      height="16" fill="currentColor"
@@ -868,6 +868,37 @@
 </div>
 <?php } ?>
 
+<?php foreach ($documento->righe as $r){ ?>
+<div class="modal" id="modal_rimuovi_lotto_<?php echo $r->Id_DORig?>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Rimuovi Lotto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            onclick="$('#modal_rimuovi_lotto_<?php echo $r->Id_DORig?>').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="ajax_rimuovi_lotti<?php echo $r->Id_DORig ?>"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            onclick="$('#modal_rimuovi_lotto_<?php echo $r->Id_DORig?>').modal('hide');$('#cerca_articolo2').val('');$('#cerca_articolo2').focus()">
+                        Chiudi
+                    </button>
+                    {{--<button type="button" class="btn btn-primary" onclick="">Cambia Lotti</button>--}}
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+<?php } ?>
+
 
 <div class="modal" id="modal_carico" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -943,6 +974,7 @@
                     <label>Quantita</label>
                     <input class="form-control" type="number" name="Qta" value="<?php echo floatval($r->Qta) ?>"
                            required placeholder="Inserisci una Quantità" autocomplete="off" step="0.01">
+
                         <?php /*
                     <label>Quantita Evadibile</label>
                     <input class="form-control" type="number" name="QtaEvadibile" value="<?php echo floatval($r->QtaEvadibile) ?>" required placeholder="Inserisci una Quantità" autocomplete="off" step="0.01" >
@@ -1050,6 +1082,8 @@
                     <label>Documento da Evadere in :</label>
                     <input type="text" readonly value="{{$session_mag['doc_evadi'] }}"
                            style="width:100%;border:none;font-size:medium;background:transparent;">
+                    <br><br>
+                    <div id="error_evasione"></div>
 
                 </div>
                 <div class="modal-footer">
@@ -1269,7 +1303,8 @@
 <script src="/js/jquery.scannerdetection.js" type="text/javascript"></script>
 
 </body>
-</html><script>
+</html>{{--
+<script>
     window.addEventListener('beforeunload', function (e) {
         var confirmationMessage = 'Sei sicuro di voler lasciare questa pagina?';
 
@@ -1278,7 +1313,7 @@
         e.returnValue = confirmationMessage; // Compatibilità con alcuni browser
         return confirmationMessage; // Compatibilità con alcuni browser
     });
-</script>
+</script>--}}
 
 <script type="text/javascript">
 
@@ -1293,6 +1328,151 @@
             url: "<?php echo URL::asset('ajax/inserisci_numero_colli') ?>/" + dotes,
         }).done(function (result) {
         });
+    }
+
+    function rimuoviLotto(id_dorig) {
+
+        document.getElementById('ajax_rimuovi_lotti' + id_dorig).innerHTML = '';
+
+
+        let lotti = Object.keys(evadi).filter(key => key.startsWith(id_dorig)).map(key => ({
+            key: key,
+            value: evadi[key]
+        }));
+
+        newElement = document.createElement('div');
+        newElement.classList.add('row');
+        newElement.style.marginBottom = '2%';
+
+        lotto = document.createElement('button');
+        lotto.classList.add('btn');
+        lotto.classList.add('btn-sm');
+        lotto.classList.add('btn-primary');
+        lotto.classList.add('col-3');
+        lotto.disabled = 'true';
+        lotto.innerHTML = 'Lotto';
+
+        scadenza = document.createElement('button');
+        scadenza.classList.add('btn');
+        scadenza.classList.add('btn-sm');
+        scadenza.classList.add('btn-primary');
+        scadenza.classList.add('col-3');
+        scadenza.disabled = 'true';
+        scadenza.value = 'Scadenza';
+        scadenza.innerHTML = 'Scadenza';
+
+        codice = document.createElement('button');
+        codice.classList.add('btn');
+        codice.classList.add('btn-sm');
+        codice.classList.add('btn-primary');
+        codice.classList.add('col-3');
+        codice.disabled = 'true';
+        codice.value = 'Id Riga';
+        codice.innerHTML = 'Id Riga';
+
+        rimuovi = document.createElement('button');
+        rimuovi.classList.add('btn');
+        rimuovi.classList.add('btn-sm');
+        rimuovi.classList.add('btn-danger');
+        rimuovi.classList.add('col-3');
+        codice.disabled = 'true';
+        rimuovi.value = 'Rimuovi';
+        rimuovi.innerHTML = 'Rimuovi';
+
+
+        newElement.appendChild(codice);
+        newElement.appendChild(lotto);
+        newElement.appendChild(scadenza);
+        newElement.appendChild(rimuovi);
+
+        document.getElementById('ajax_rimuovi_lotti' + id_dorig).appendChild(newElement);
+
+        lotti.forEach(item => {
+                const result = item.key.split(';');
+                newElement = document.createElement('div');
+                newElement.classList.add('row');
+
+                lotto = document.createElement('button');
+                lotto.classList.add('btn');
+                lotto.classList.add('btn-sm');
+                lotto.classList.add('btn-primary');
+                lotto.classList.add('col-3');
+                lotto.disabled = 'true';
+                lotto.value = result[2];
+                lotto.innerHTML = result[2];
+
+                scadenza = document.createElement('button');
+                scadenza.classList.add('btn');
+                scadenza.classList.add('btn-sm');
+                scadenza.classList.add('btn-primary');
+                scadenza.classList.add('col-3');
+                scadenza.disabled = 'true';
+                scadenza.value = result[1];
+                scadenza.innerHTML = result[1];
+
+                codice = document.createElement('button');
+                codice.classList.add('btn');
+                codice.classList.add('btn-sm');
+                codice.classList.add('btn-primary');
+                codice.classList.add('col-3');
+                codice.disabled = 'true';
+                codice.value = result[0];
+                codice.innerHTML = result[0];
+
+                rimuovi = document.createElement('button');
+                rimuovi.classList.add('btn');
+                rimuovi.classList.add('btn-sm');
+                rimuovi.classList.add('btn-danger');
+                rimuovi.classList.add('col-3');
+                rimuovi.onclick = function () {
+                    eliminaLotto(item.key);
+                };
+                rimuovi.value = 'Rimuovi';
+                rimuovi.type = 'Button';
+                rimuovi.innerHTML = 'Rimuovi';
+
+                newElement.appendChild(codice);
+                newElement.appendChild(lotto);
+                newElement.appendChild(scadenza);
+                newElement.appendChild(rimuovi);
+
+                // newElement.innerHTML = 'Vuoi eliminare Lotto ' + result[2] + ' con valore : ' + item.value;
+
+
+                document.getElementById('ajax_rimuovi_lotti' + id_dorig).appendChild(newElement);
+            }
+        );
+        $('#modal_rimuovi_lotto_' + id_dorig).modal('show');
+
+    }
+
+    function eliminaLotto(identificativo) {
+
+        delete evadi[identificativo];
+
+        document.getElementById('riga_' + identificativo + '_counter').remove();
+
+        let id_riga = identificativo.split(';');
+
+        id_riga = id_riga[0];
+
+        let lotti = Object.keys(evadi).filter(key => key.startsWith(id_riga)).map(key => ({
+            key: key,
+            value: evadi[key]
+        }));
+
+        let somma = lotti.reduce((acc, item) => acc + item.value, 0);
+
+        if (parseInt(somma) > 0) {
+            document.getElementById('riga_' + text).style.backgroundColor = 'yellow';
+            newElement2 = document.getElementById('riga_' + text);
+            document.getElementById('riga_' + text).remove();
+            document.getElementById('lista').insertBefore(newElement2, document.getElementById('lista').firstChild);
+        } else {
+            document.getElementById('riga_' + text).style.backgroundColor = 'white';
+            newElement2 = document.getElementById('riga_' + text);
+        }
+        $('#modal_rimuovi_lotto_' + id_riga).modal('hide');
     }
 
     function invia_peso() {
@@ -1311,7 +1491,7 @@
             if (result == 'Errore')
                 alert('Peso non inserito. Prego comunicare all\'amministrazione!');
             else
-                top.location.href = '';
+                top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi'; ?>';
         });
     }
 
@@ -1447,6 +1627,12 @@
                  $('#modal_alertQuantita0').modal('show');
              else
                  $('#modal_alertEvasa').modal('show');*/
+        }).fail(function (result) {
+            $('#ajax_loader').fadeOut();
+            newElement = document.createElement('h5');
+            newElement.style.textAlign = 'center';
+            newElement.innerHTML = 'Errore durante l\'evasione ->' + result.responseText;
+            document.getElementById('error_evasione').appendChild(newElement);
         });
     }
 
@@ -1467,11 +1653,19 @@
 
             textXEvasione = textXEvasione + ';' + data_scadenza;
             textXEvasione = textXEvasione + ';' + lotto;
+
             dorig = document.getElementById('DORIG').value;
             max_evasione = document.getElementById('qta_max_evad_' + text).value;
             qta_da_evadere = document.getElementById('modal_controllo_quantita').value;
-            if (typeof (evadi[textXEvasione]) != "undefined" && evadi[textXEvasione] !== null) {
-                if (parseInt(parseInt(evadi[textXEvasione]) + parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
+
+            let lotti = Object.keys(evadi).filter(key => key.startsWith(text)).map(key => ({
+                key: key,
+                value: evadi[key]
+            }));
+            let somma = lotti.reduce((acc, item) => acc + item.value, 0);
+
+            if (typeof (evadi[textXEvasione]) != "undefined" && evadi[textXEvasione] !== null && somma === 0) {
+                if (parseInt(parseInt(somma) + parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
                     evadi[textXEvasione] = parseInt(evadi[textXEvasione]) + parseInt(qta_da_evadere);
                 } else {
                     errorAudio.play();
@@ -1480,7 +1674,7 @@
                 }
 
             } else {
-                if (parseInt(qta_da_evadere) <= parseInt(max_evasione)) {
+                if (parseInt(qta_da_evadere) + parseInt(somma) <= parseInt(max_evasione)) {
                     evadi[textXEvasione] = parseInt(qta_da_evadere);
                 } else {
                     errorAudio.play();
@@ -1491,14 +1685,17 @@
 
             document.getElementById('cerca_articolo2').focus();
 
-            if (parseInt(evadi[textXEvasione]) == parseInt(max_evasione)) {
+            if (parseInt(evadi[textXEvasione]) + parseInt(somma) === parseInt(max_evasione)) {
                 document.getElementById('riga_' + text).style.backgroundColor = 'green';
                 newElement2 = document.getElementById('riga_' + text);
                 document.getElementById('riga_' + text).remove();
                 document.getElementById('lista').appendChild(newElement2);
-            } else
+            } else {
                 document.getElementById('riga_' + text).style.backgroundColor = 'yellow';
-
+                newElement2 = document.getElementById('riga_' + text);
+                document.getElementById('riga_' + text).remove();
+                document.getElementById('lista').insertBefore(newElement2, document.getElementById('lista').firstChild);
+            }
             var checkElement = document.getElementById('riga_' + textXEvasione + '_counter');
             if (checkElement === undefined || checkElement === null) {
                 newElement = document.createElement('h5');
@@ -1747,7 +1944,7 @@
         $.ajax({
             url: "<?php echo URL::asset('ajax/crea_doc_riordino') ?>/<?php echo $id_dotes ?>",
         }).done(function (result) {
-            top.location.href = '/';
+            top.location.href = '<?php echo ($do[0]->CliFor == 'C') ? '/magazzino/attivo' : '/magazzino/passivi'; ?>;';
         });
     }
 

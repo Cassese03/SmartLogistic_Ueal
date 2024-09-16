@@ -91,7 +91,7 @@ class HomeController extends Controller
             return Redirect::to('login');
         }
 
-        $articoli = DB::select('SELECT TOP 10 [Id_AR],[Cd_AR],[Descrizione] FROM AR Order By Id_AR DESC');
+        $articoli = DB::select('SELECT TOP 50 [Id_AR],[Cd_AR],[Descrizione] FROM AR Order By Id_AR DESC');
 
         return View::make('articoli', compact('articoli'));
     }
@@ -296,7 +296,7 @@ class HomeController extends Controller
         if (!session()->has('utente')) {
             return Redirect::to('login');
         }
-        $documenti = DB::select('SELECT * FROM DO WHERE Cd_DO in (\'LP\',\'RMC\',\'RVC\',\'OVC\',\'OVW\') and CliFor = \'C\'');
+        $documenti = DB::select('SELECT *,(SELECT COUNT(*) FROM DOTes WHERE Cd_DO = DO.Cd_DO and Prelevabile = 1 and RigheEvadibili > 0) as doc_da_lavorare FROM DO WHERE Cd_DO in (\'LP\',\'RMC\',\'OVC\',\'OVW\') and CliFor = \'C\'');
         return View::make('attivo', compact('documenti'));
     }
 
@@ -325,15 +325,10 @@ class HomeController extends Controller
         if (!session()->has('utente')) {
             return Redirect::to('login');
         }
-        $fornitori = DB::select('SELECT TOP 10 * from CF where Id_CF in(SELECT r.Id_CF FROM DORig d,Cf r WHERE d.Cd_CF=r.Cd_CF and Cd_DO = \'' . $documenti . '\' and QtaEvadibile > \'0\' and Cd_MGEsercizio = YEAR(GETDATE()) group by r.Id_CF ) and Cliente=\'1\'');
-        if (sizeof($fornitori) > 0) {
-            $fornitore = $fornitori[0];
-            return View::make('carico_magazzino2', compact('documenti', 'fornitori'));
-        } else {
-            $fornitori = DB::select('SELECT TOP 10 * from CF WHERE Cliente=\'1\'');
-            $fornitore = $fornitori[0];
-            return View::make('carico_magazzino2', compact('documenti', 'fornitori'));
-        }
+        $fornitori = DB::select('SELECT TOP 50 *,(SELECT COUNT(*) FROM DOTes WHERE Cd_DO = \'' . $documenti . '\' AND Cd_CF = CF.Cd_CF and Prelevabile = 1 and RigheEvadibili > 0) as doc_da_lavorare from CF where Id_CF in(SELECT r.Id_CF FROM DORig d,Cf r WHERE d.Cd_CF=r.Cd_CF and Cd_DO = \'' . $documenti . '\' and QtaEvadibile > \'0\' and (SELECT Prelevabile FROM DOTES WHERE Id_DOTes = d.Id_DOTes) = 1 and Cd_MGEsercizio = YEAR(GETDATE()) group by r.Id_CF ) and Cliente=\'1\'');
+
+        return View::make('carico_magazzino2', compact('documenti', 'fornitori'));
+
 
     }
 
@@ -342,7 +337,7 @@ class HomeController extends Controller
         if (!session()->has('utente')) {
             return Redirect::to('login');
         }
-        $fornitori = DB::select('SELECT TOP 10 * from CF where Id_CF in(SELECT r.Id_CF FROM DOTes d,Cf r WHERE d.Cd_CF = r.Cd_CF and Cd_DO = \'' . $documenti . '\' and RigheEvadibili > \'0\' and Cd_MGEsercizio =YEAR(GETDATE())  group by r.Id_CF ) and Fornitore=\'1\'');
+        $fornitori = DB::select('SELECT TOP 50 *,(SELECT COUNT(*) FROM DOTes WHERE Cd_DO = \'' . $documenti . '\' AND Cd_CF = CF.Cd_CF and Prelevabile = 1 and RigheEvadibili > 0) as doc_da_lavorare  from CF where Id_CF in(SELECT r.Id_CF FROM DOTes d,Cf r WHERE d.Cd_CF = r.Cd_CF and Cd_DO = \'' . $documenti . '\' and RigheEvadibili > \'0\' and Cd_MGEsercizio =YEAR(GETDATE())  group by r.Id_CF ) and Fornitore=\'1\'');
         if (sizeof($fornitori) > 0) {
             $fornitore = $fornitori[0];
             return View::make('carico_magazzino02', compact('documenti', 'fornitori'));
@@ -360,8 +355,9 @@ class HomeController extends Controller
 
         $fornitori = DB::select('SELECT * from CF where Id_CF = ' . $id_fornitore . ' order by Id_CF desc');
         if (sizeof($fornitori) > 0) {
+            $where = ($cd_do == 'OVC') ? ' and Prelevabile = 1 ' : '';
             $fornitore = $fornitori[0];
-            $documenti = DB::select(' SELECT TOP 10 * from DOTes where Cd_CF = \'' . $fornitore->Cd_CF . '\' and Cd_DO = \'' . $cd_do . '\' and RigheEvadibili > \'0\' order by Id_DOTes DESC');
+            $documenti = DB::select(' SELECT TOP 50 * from DOTes where Cd_CF = \'' . $fornitore->Cd_CF . '\' and Cd_DO = \'' . $cd_do . '\' and RigheEvadibili > \'0\' ' . $where . ' order by Id_DOTes DESC');
             $numero_documento = DB::select('SELECT MAX(numeroDoc)+1 as num from DOTes WHERE Cd_MGEsercizio = YEAR(GETDATE()) and Cd_DO = \'' . $cd_do . '\' ')[0]->num;
             return View::make('carico_magazzino3', compact('fornitore', 'documenti', 'cd_do', 'numero_documento'));
 
@@ -393,7 +389,7 @@ class HomeController extends Controller
         $fornitori = DB::select('SELECT * from CF where Id_CF = ' . $id_fornitore . ' order by Id_CF desc');
         if (sizeof($fornitori) > 0) {
             $fornitore = $fornitori[0];
-            $documenti = DB::select('SELECT TOP 10 [Id_DoTes],[NumeroDoc],[DataDoc],[NumeroDocRif],[DataDocRif]  from DOTes where Cd_CF = \'' . $fornitore->Cd_CF . '\' and Cd_DO = \'' . $cd_do . '\' AND  DATEDIFF(DAY,GETDATE(),TimeIns) > -7 order by Id_DOTes DESC');
+            $documenti = DB::select('SELECT TOP 50 [Id_DoTes],[NumeroDoc],[DataDoc],[NumeroDocRif],[DataDocRif]  from DOTes where Cd_CF = \'' . $fornitore->Cd_CF . '\' and Cd_DO = \'' . $cd_do . '\' AND  DATEDIFF(DAY,GETDATE(),TimeIns) > -7 order by Id_DOTes DESC');
             $numero_documento = DB::select('SELECT MAX(numeroDoc)+1 as num from DOTes WHERE Cd_MGEsercizio = YEAR(GETDATE()) and Cd_DO = \'' . $cd_do . '\'')[0]->num;
             $dodo = DB::SELECT('select * from DODOPrel where Cd_DO = \'' . $cd_do . '\'');
             foreach ($dodo as $d) {
@@ -436,7 +432,7 @@ class HomeController extends Controller
         }
         public function trasporto_documento($cd_do,$cd_cf){
 
-            $documenti = DB::SELECT('SELECT TOP 10 [NumeroDoc],[DataDoc],[Id_DoTes] FROM DoTes where Cd_DO=\''.$cd_do.'\' and Cd_CF = \''.$cd_cf.'\' order by NumeroDoc desc');
+            $documenti = DB::SELECT('SELECT TOP 50 [NumeroDoc],[DataDoc],[Id_DoTes] FROM DoTes where Cd_DO=\''.$cd_do.'\' and Cd_CF = \''.$cd_cf.'\' order by NumeroDoc desc');
             $numero_documento = DB::select('SELECT MAX(numeroDoc)+1 as num from DOTes where Cd_Do = \''.$cd_do.'\'')[0]->num;
 
 
@@ -452,7 +448,7 @@ class HomeController extends Controller
     }
         public function trasporto_magazzino($documenti,$Cd_Cf,$Id_DoTes){
 
-            $articoli = DB::select('SELECT TOP 10 ar.[Id_AR],ar.[Cd_AR],ar.[Descrizione],ARLotto.[Cd_ARLotto] FROM AR LEFT JOIN ARLotto ON ar.Cd_AR = ARLotto.Cd_AR Order By Id_AR DESC');
+            $articoli = DB::select('SELECT TOP 50 ar.[Id_AR],ar.[Cd_AR],ar.[Descrizione],ARLotto.[Cd_ARLotto] FROM AR LEFT JOIN ARLotto ON ar.Cd_AR = ARLotto.Cd_AR Order By Id_AR DESC');
 
             return View::make('trasporto',compact('articoli','documenti','Cd_Cf', 'Id_DoTes'));
         }
@@ -654,6 +650,7 @@ class HomeController extends Controller
                 }
             }
             $magazzini_selected = DB::SELECT('SELECT * from MGCausale where Cd_MGCausale = (SELECT TOP 1 Cd_MGCausale FROM DO where cd_do = \'' . $cd_do . '\')');
+            $do = DB::SELECT('SELECT * FROM DO where cd_do = \'' . $cd_do . '\'');
             $magazzini = DB::SELECT('SELECT * from MG');
             if (!session()->has('\'' . $id_dotes . '\'')) {
                 if (sizeof($magazzini_selected) > 0) {
@@ -666,7 +663,7 @@ class HomeController extends Controller
             }
             $session_mag = session('\'' . $id_dotes . '\'');
             $scatoli = DB::SELECT('SELECT * FROM AR WHERE Cd_AR LIKE \'SCATOLO%\'');
-            return View::make('carico_magazzino4', compact('scatoli', 'articolo', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo', 'flusso', 'righe'));
+            return View::make('carico_magazzino4', compact('scatoli', 'do', 'articolo', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo', 'flusso', 'righe'));
 
         }
 
@@ -746,8 +743,9 @@ class HomeController extends Controller
                 session()->save();
             }
             $session_mag = session('\'' . $id_dotes . '\'');
+            $do = DB::SELECT('SELECT * FROM DO where cd_do = \'' . $cd_do . '\'');
             $scatoli = DB::SELECT('SELECT * FROM AR WHERE Cd_AR LIKE \'SCATOLO%\'');
-            return View::make('carico_magazzino04', compact('scatoli', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo'));
+            return View::make('carico_magazzino04', compact('scatoli', 'do', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo'));
 
         }
 
@@ -768,7 +766,7 @@ class HomeController extends Controller
 
         public function scarico_magazzino2($documenti){
 
-            $fornitori = DB::select('SELECT TOP 10 * from CF where Id_CF in(SELECT r.Id_CF FROM DORig d,Cf r WHERE d.Cd_CF=r.Cd_CF and Cd_DO = \''.$documenti  .'\' and QtaEvadibile != \'0\' group by r.Id_CF ) and Cliente = \'1\' order by Id_CF desc');
+            $fornitori = DB::select('SELECT TOP 50 * from CF where Id_CF in(SELECT r.Id_CF FROM DORig d,Cf r WHERE d.Cd_CF=r.Cd_CF and Cd_DO = \''.$documenti  .'\' and QtaEvadibile != \'0\' group by r.Id_CF ) and Cliente = \'1\' order by Id_CF desc');
 
             if(sizeof($fornitori) > 0) {
                 $fornitore = $fornitori[0];
@@ -778,7 +776,7 @@ class HomeController extends Controller
         }
 
         public function scarico_magazzino02($documenti){
-            $fornitori = DB::select('SELECT TOP 10 * from CF where Id_CF in(SELECT r.Id_CF FROM DORig d,Cf r WHERE d.Cd_CF=r.Cd_CF and Cd_DO = \''.$documenti  .'\' and QtaEvadibile != \'0\' group by r.Id_CF ) and Cliente = \'1\' order by Id_CF desc');
+            $fornitori = DB::select('SELECT TOP 50 * from CF where Id_CF in(SELECT r.Id_CF FROM DORig d,Cf r WHERE d.Cd_CF=r.Cd_CF and Cd_DO = \''.$documenti  .'\' and QtaEvadibile != \'0\' group by r.Id_CF ) and Cliente = \'1\' order by Id_CF desc');
             if(sizeof($fornitori) > 0) {
                 $fornitore = $fornitori[0];
                 return View::make('scarico_magazzino02', compact('documenti','fornitori'));
@@ -833,7 +831,7 @@ class HomeController extends Controller
         $clienti = DB::select('SELECT * from CF where Id_CF = '.$id_cliente.' order by Id_CF desc');
         if(sizeof($clienti) > 0) {
             $cliente = $clienti[0];
-            $documenti = DB::select('SELECT TOP 10 [Id_DoTes],[NumeroDoc],[DataDoc],[NumeroDocRif],[DataDocRif] from DOTes where Cd_CF = \''.$cliente->Cd_CF.'\' and Cd_DO = \''.$cd_do.'\' order by Id_DOTes DESC');
+            $documenti = DB::select('SELECT TOP 50 [Id_DoTes],[NumeroDoc],[DataDoc],[NumeroDocRif],[DataDocRif] from DOTes where Cd_CF = \''.$cliente->Cd_CF.'\' and Cd_DO = \''.$cd_do.'\' order by Id_DOTes DESC');
             $numero_documento = DB::select('SELECT MAX(numeroDoc)+1 as num from DOTes where Cd_Do = \''.$cd_do.'\'')[0]->num;
             return View::make('scarico_magazzino3',compact('cliente','documenti','cd_do','numero_documento'));
 
@@ -845,7 +843,7 @@ class HomeController extends Controller
         $clienti = DB::select('SELECT * from CF where Id_CF = '.$id_cliente.' order by Id_CF desc');
         if(sizeof($clienti) > 0) {
             $cliente = $clienti[0];
-            $documenti = DB::select('SELECT TOP 10 [Id_DoTes],[NumeroDoc],[DataDoc],[NumeroDocRif],[DataDocRif] from DOTes where Cd_CF = \''.$cliente->Cd_CF.'\' and Cd_DO = \''.$cd_do.'\' order by Id_DOTes DESC');
+            $documenti = DB::select('SELECT TOP 50 [Id_DoTes],[NumeroDoc],[DataDoc],[NumeroDocRif],[DataDocRif] from DOTes where Cd_CF = \''.$cliente->Cd_CF.'\' and Cd_DO = \''.$cd_do.'\' order by Id_DOTes DESC');
             $numero_documento = DB::select('SELECT MAX(numeroDoc)+1 as num from DOTes where Cd_Do = \''.$cd_do.'\'')[0]->num;
             $doc_evadi = DB::SELECT('SELECT * FROM DoTes where Cd_CF = \''.$cliente->Cd_CF.'\' and Cd_DO=\'OVC\' and RigheEvadibili >\'0\' order by Id_DoTes desc ');
 
@@ -1032,7 +1030,7 @@ class HomeController extends Controller
 
     public function qrcode()
     {
-        $ultimi = DB::SELECT('SELECT TOP 10 * FROM xQRCode ORDER BY TimeIns DESC');
+        $ultimi = DB::SELECT('SELECT TOP 50 * FROM xQRCode ORDER BY TimeIns DESC');
         return View::make('qrcode', compact('ultimi'));
     }
 
