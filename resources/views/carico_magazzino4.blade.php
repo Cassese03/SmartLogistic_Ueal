@@ -1663,8 +1663,12 @@
                 value: evadi[key]
             }));
             let somma = lotti.reduce((acc, item) => acc + item.value, 0);
+            console.log('qta da evadere + somma ');
+            console.log((parseInt(qta_da_evadere) + parseInt(somma)));
+            console.log('max evasione : ');
+            console.log(parseInt(max_evasione));
 
-            if (typeof (evadi[textXEvasione]) != "undefined" && evadi[textXEvasione] !== null && somma === 0) {
+            if (typeof (evadi[textXEvasione]) != "undefined" && evadi[textXEvasione] !== null && somma != 0) {
                 if (parseInt(parseInt(somma) + parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
                     evadi[textXEvasione] = parseInt(evadi[textXEvasione]) + parseInt(qta_da_evadere);
                 } else {
@@ -1674,7 +1678,7 @@
                 }
 
             } else {
-                if (parseInt(qta_da_evadere) + parseInt(somma) <= parseInt(max_evasione)) {
+                if (parseInt(qta_da_evadere) <= parseInt(max_evasione)) {
                     evadi[textXEvasione] = parseInt(qta_da_evadere);
                 } else {
                     errorAudio.play();
@@ -1685,7 +1689,14 @@
 
             document.getElementById('cerca_articolo2').focus();
 
-            if (parseInt(evadi[textXEvasione]) + parseInt(somma) === parseInt(max_evasione)) {
+            let newlotti = Object.keys(evadi).filter(key => key.startsWith(text)).map(key => ({
+                key: key,
+                value: evadi[key]
+            }));
+            let newsomma = newlotti.reduce((acc, item) => acc + item.value, 0);
+            console.log('new somma');
+            console.log(newsomma);
+            if (parseInt(newsomma) === parseInt(max_evasione)) {
                 document.getElementById('riga_' + text).style.backgroundColor = 'green';
                 newElement2 = document.getElementById('riga_' + text);
                 document.getElementById('riga_' + text).remove();
