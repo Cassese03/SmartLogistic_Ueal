@@ -1669,7 +1669,8 @@
             console.log(parseInt(max_evasione));
 
             if (typeof (evadi[textXEvasione]) != "undefined" && evadi[textXEvasione] !== null && somma != 0) {
-                if (parseInt(parseInt(somma) + parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
+
+                if ((parseInt(qta_da_evadere) + parseInt(somma)) <= parseInt(max_evasione)) {
                     evadi[textXEvasione] = parseInt(evadi[textXEvasione]) + parseInt(qta_da_evadere);
                 } else {
                     errorAudio.play();
@@ -1678,12 +1679,23 @@
                 }
 
             } else {
-                if (parseInt(qta_da_evadere) <= parseInt(max_evasione)) {
-                    evadi[textXEvasione] = parseInt(qta_da_evadere);
-                } else {
-                    errorAudio.play();
-                    $('#modal_alertMaxEvasione').modal('show');
-                    return;
+                if(somma > 0){
+                    if ((parseInt(qta_da_evadere)+parseInt(somma)) <= parseInt(max_evasione)) {
+                        evadi[textXEvasione] = parseInt(qta_da_evadere);
+                    }else {
+                        errorAudio.play();
+                        $('#modal_alertMaxEvasione').modal('show');
+                        return;
+                    }
+                } else{
+
+                    if ((parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
+                        evadi[textXEvasione] = parseInt(qta_da_evadere);
+                    }else {
+                        errorAudio.play();
+                        $('#modal_alertMaxEvasione').modal('show');
+                        return;
+                    }
                 }
             }
 
