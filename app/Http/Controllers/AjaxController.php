@@ -754,7 +754,7 @@ class AjaxController extends Controller
                     DB::statement("exec asp_DO_End $Id_DoTes");
 
                     $evasione_dorig_spesa = [];
-                    $dorig_spesa = DB::SELECT('select * from dorigspesa where Id_DOTes = \'' . $r->Id_DOTes . '\'');
+                    $dorig_spesa = DB::SELECT('select * from DORigSpesa where Id_DOTes = \'' . $r->Id_DOTes . '\'');
                     if (sizeof($dorig_spesa) > 0) {
                         $first_row = $dorig_spesa[0];
                         foreach ($first_row as $key => $value) {
@@ -773,8 +773,8 @@ class AjaxController extends Controller
                         unset($evasione_dorig_spesa['ExtraInfoPresent']);
                         unset($evasione_dorig_spesa['Id_DoRigSpesa']);
                         unset($evasione_dorig_spesa['Evasa']);
+                        DB::table('DORigSpesa')->insertGetId($evasione_dorig_spesa);
                     }
-                    DB::table('DORigSpesa')->insertGetId($evasione_dorig_spesa);
 
                 }
 
