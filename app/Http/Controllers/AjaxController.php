@@ -725,6 +725,7 @@ class AjaxController extends Controller
                 $magazzino = $cd_mg_p; //magazzino di default
                 $insert_evasione['Cd_MG_P'] = '';
                 $insert_evasione['Cd_MG_A'] = '';
+                $insert_evasione['TipoPc'] = $r->TipoPC;
                 $old_dotes = DB::SELECT('select * from dotes where Id_DOTes = \'' . $r->Id_DOTes . '\'');
                 if (sizeof($old_dotes) > 0) {
                     $agente = ($old_dotes[0]->Cd_Agente_1) ? $old_dotes[0]->Cd_Agente_1 : null;
@@ -841,7 +842,6 @@ class AjaxController extends Controller
             DB::statement("exec asp_DO_End '$Id_DoTes_old'");
             DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes1'");
             DB::statement("exec asp_DO_End '$Id_DoTes1'");
-
             return $Id_DoTes1;
         } catch (\Exception $e) {
             DB::ROLLBACK();
