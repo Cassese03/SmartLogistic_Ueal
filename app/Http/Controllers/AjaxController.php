@@ -741,8 +741,7 @@ class AjaxController extends Controller
                 }
 
                 if ($Id_DoTes == '') {
-                    DB::table('DOTes')->insertGetId(['Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
-                    $Id_DoTes = DB::SELECT('SELECT TOP 1 Id_DOTes from DOTes ORDER BY TimeIns Desc')[0]->Id_DOTes;
+                    $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
                     if ($ubicazione != '0')
                         $insert_evasione['Cd_MGUbicazione_P'] = $ubicazione;
                     if ($magazzino != '0')
