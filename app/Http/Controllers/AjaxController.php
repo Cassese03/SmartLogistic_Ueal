@@ -749,8 +749,8 @@ class AjaxController extends Controller
                     if ($magazzino_A != '0')
                         $insert_evasione['Cd_MG_A'] = $magazzino_A;
                     if ($ScontoCassa != null) DB::UPDATE("Update dotes set dotes.ScontoCassa= '.$ScontoCassa.' where dotes.id_dotes = '$Id_DoTes'");
-                    DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes'");
-                    DB::statement("exec asp_DO_End $Id_DoTes");
+                    //DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes'");
+                    //DB::statement("exec asp_DO_End $Id_DoTes");
 
                     $evasione_dorig_spesa = [];
                     $dorig_spesa = DB::SELECT('select * from DORigSpesa where Id_DOTes = \'' . $r->Id_DOTes . '\'');
@@ -834,12 +834,12 @@ class AjaxController extends Controller
                     DB::UPDATE('Update DoRig set QtaEvadibile = \'0\'WHERE Id_DoRig = \'' . $Id_DoRig . '\'');
                     DB::update('Update dorig set Evasa = \'1\'   where Id_DoRig = \'' . $Id_DoRig . '\' ');
                     $Id_DoTes_old = DB::SELECT('SELECT * from DoRig where id_dorig = \'' . $Id_DoRig . '\' ')[0]->Id_DOTes;
-                    DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes_old'");
                 }
-                DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes1'");
             }
             DB::COMMIT();
+            DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes_old'");
             DB::statement("exec asp_DO_End '$Id_DoTes_old'");
+            DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes1'");
             DB::statement("exec asp_DO_End '$Id_DoTes1'");
 
             return $Id_DoTes1;
