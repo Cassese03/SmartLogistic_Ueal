@@ -835,12 +835,13 @@ class AjaxController extends Controller
                     DB::update('Update dorig set Evasa = \'1\'   where Id_DoRig = \'' . $Id_DoRig . '\' ');
                     $Id_DoTes_old = DB::SELECT('SELECT * from DoRig where id_dorig = \'' . $Id_DoRig . '\' ')[0]->Id_DOTes;
                     DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes_old'");
-                    DB::statement("exec asp_DO_End '$Id_DoTes_old'");
                 }
                 DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes1'");
-                DB::statement("exec asp_DO_End '$Id_DoTes1'");
             }
             DB::COMMIT();
+            DB::statement("exec asp_DO_End '$Id_DoTes_old'");
+            DB::statement("exec asp_DO_End '$Id_DoTes1'");
+
             return $Id_DoTes1;
         } catch (\Exception $e) {
             DB::ROLLBACK();
