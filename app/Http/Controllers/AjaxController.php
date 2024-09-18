@@ -749,7 +749,7 @@ class AjaxController extends Controller
                         $insert_evasione['Cd_MG_P'] = $magazzino;
                     if ($magazzino_A != '0')
                         $insert_evasione['Cd_MG_A'] = $magazzino_A;
-                    if ($ScontoCassa != null) DB::UPDATE("Update dotes set dotes.ScontoCassa= '.$ScontoCassa.' where dotes.id_dotes = '$Id_DoTes'");
+                    if ($ScontoCassa != null) DB::UPDATE("Update dotes set dotes.ScontoCassa= '$ScontoCassa' where dotes.id_dotes = '$Id_DoTes'");
                     //DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes'");
                     //DB::statement("exec asp_DO_End $Id_DoTes");
 
