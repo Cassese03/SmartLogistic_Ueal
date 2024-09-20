@@ -773,6 +773,7 @@ class AjaxController extends Controller
                         unset($evasione_dorig_spesa['ExtraInfoPresent']);
                         unset($evasione_dorig_spesa['Id_DoRigSpesa']);
                         unset($evasione_dorig_spesa['Evasa']);
+                        unset($evasione_dorig_spesa['ImportoEvasoV']);
                         DB::table('DORigSpesa')->insertGetId($evasione_dorig_spesa);
                     }
 
