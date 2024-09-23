@@ -733,16 +733,20 @@ class AjaxController extends Controller
                     $notepiede = ($old_dotes[0]->NotePiede) ? $old_dotes[0]->NotePiede : null;
                     $pagamento = ($old_dotes[0]->Cd_PG) ? $old_dotes[0]->Cd_PG : null;
                     $ScontoCassa = ($old_dotes[0]->ScontoCassa) ? $old_dotes[0]->ScontoCassa : null;
+                    $Cd_DoVettore_1 = ($old_dotes[0]->Cd_DoVettore_1) ? $old_dotes[0]->Cd_DoVettore_1 : null;
+                    $Cd_DoVettore_2 = ($old_dotes[0]->Cd_DoVettore_2) ? $old_dotes[0]->Cd_DoVettore_2 : null;
                 } else {
                     $agente = null;
                     $agente_2 = null;
                     $notepiede = null;
                     $pagamento = null;
                     $ScontoCassa = null;
+                    $Cd_DoVettore_1 = null;
+                    $Cd_DoVettore_2 = null;
                 }
 
                 if ($Id_DoTes == '') {
-                    $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
+                    $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
                     if ($ubicazione != '0')
                         $insert_evasione['Cd_MGUbicazione_P'] = $ubicazione;
                     if ($magazzino != '0')
@@ -812,8 +816,8 @@ class AjaxController extends Controller
                 $insert_evasione['Cd_Aliquota'] = $r->Cd_Aliquota;
                 if ($r->ProvvigioneRiga_1 != '')
                     $insert_evasione['ProvvigioneRiga_1'] = $r->ProvvigioneRiga_1;
-                if ($r->ProvvigioneRiga_1 != '')
-                    $insert_evasione['ProvvigioneRiga_2'] = $r->ProvvigioneRiga_1;
+                if ($r->ProvvigioneRiga_2 != '')
+                    $insert_evasione['ProvvigioneRiga_2'] = $r->ProvvigioneRiga_2;
                 if ($r->ScontoRiga != '')
                     $insert_evasione['ScontoRiga'] = $r->ScontoRiga;
                 $insert_evasione['Cd_CGConto'] = $r->Cd_CGConto;
