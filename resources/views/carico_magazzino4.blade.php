@@ -515,7 +515,7 @@
                                                         <button type="reset" name="evadi_riga"
                                                                 value="<?php echo $r->Cd_AR;?>"
                                                                 class="btn btn-success btn-sm col-3"
-                                                                onclick="controllo_articolo_smart2('<?php echo $r->Cd_AR?>;0;<?php echo ($r->Cd_ARLotto) ? $r->Cd_ARLotto :'0' ?>')">
+                                                                onclick="<?php if($r->Cd_AR != null){ ?>controllo_articolo_smart2('<?php echo $r->Cd_AR?>;0;<?php echo ($r->Cd_ARLotto) ? $r->Cd_ARLotto :'0' ?>')<?php } else{ ?>controllo_articolo_smart3(<?php echo $r->Id_DORig ;?>);<?php } ?>">
                                                             <i class="bi bi-check-circle">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                                      height="16" fill="currentColor"
@@ -1636,6 +1636,12 @@
         });
     }
 
+    function controllo_articolo_smart3(id_dorig) {
+        document.getElementById('modal_controllo_dorig').value = id_dorig;
+        document.getElementById('modal_controllo_quantita').value = 1;
+        evadi_articolo2('0');
+    }
+
     function evadi_articolo2(conf) {
 
         if (conf != '1') {
@@ -1656,6 +1662,7 @@
 
             dorig = document.getElementById('DORIG').value;
             max_evasione = document.getElementById('qta_max_evad_' + text).value;
+
             qta_da_evadere = document.getElementById('modal_controllo_quantita').value;
 
             let lotti = Object.keys(evadi).filter(key => key.startsWith(text)).map(key => ({
@@ -1663,10 +1670,12 @@
                 value: evadi[key]
             }));
             let somma = lotti.reduce((acc, item) => acc + item.value, 0);
-            console.log('qta da evadere + somma ');
-            console.log((parseInt(qta_da_evadere) + parseInt(somma)));
-            console.log('max evasione : ');
-            console.log(parseInt(max_evasione));
+            //console.log('qta da evadere + somma ');
+            //console.log(qta_da_evadere);
+            //console.log(somma);
+            //console.log((parseInt(qta_da_evadere) + parseInt(somma)));
+            //console.log('max evasione : ');
+            //console.log(parseInt(max_evasione));
 
             if (typeof (evadi[textXEvasione]) != "undefined" && evadi[textXEvasione] !== null && somma != 0) {
 
