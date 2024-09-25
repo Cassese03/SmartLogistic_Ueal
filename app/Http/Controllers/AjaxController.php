@@ -799,7 +799,11 @@ class AjaxController extends Controller
                         if (($check_lotto[0]->DataScadenza == null || $check_lotto[0]->DataScadenza == '') && $data_scadenza != 0) {
                             DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . $data_scadenza . '\' WHERE Cd_AR = \'' . $r->Cd_AR . '\' and Cd_ARLotto = \'' . $lotto . '\'');
                         }
-                    }
+                    }/*
+                    else {
+                        DB::INSERT("INSERT INTO ARLotto (Cd_AR,Cd_ARLotto,Descrizione) Values ('.$r->Cd_AR.','.$lotto.','Lotto '.$lotto.' di articolo '.$r->Cd_AR.'') ");
+                        $insert_evasione['Cd_ARLotto'] = $lotto;
+                    }*/
                 } else {
                     if (isset($insert_evasione['Cd_ARLotto'])) unset($insert_evasione['Cd_ARLotto']);
                 }

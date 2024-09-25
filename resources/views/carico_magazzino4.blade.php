@@ -1464,13 +1464,13 @@
         let somma = lotti.reduce((acc, item) => acc + item.value, 0);
 
         if (parseInt(somma) > 0) {
-            document.getElementById('riga_' + text).style.backgroundColor = 'yellow';
-            newElement2 = document.getElementById('riga_' + text);
-            document.getElementById('riga_' + text).remove();
+            document.getElementById('riga_' + id_riga).style.backgroundColor = 'yellow';
+            newElement2 = document.getElementById('riga_' + id_riga);
+            document.getElementById('riga_' + id_riga).remove();
             document.getElementById('lista').insertBefore(newElement2, document.getElementById('lista').firstChild);
         } else {
-            document.getElementById('riga_' + text).style.backgroundColor = 'white';
-            newElement2 = document.getElementById('riga_' + text);
+            document.getElementById('riga_' + id_riga).style.backgroundColor = 'white';
+            newElement2 = document.getElementById('riga_' + id_riga);
         }
         $('#modal_rimuovi_lotto_' + id_riga).modal('hide');
     }
