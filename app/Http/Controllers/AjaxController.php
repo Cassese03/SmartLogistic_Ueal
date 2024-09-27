@@ -820,6 +820,9 @@ class AjaxController extends Controller
                     unset($insert_evasione['Cd_AR']);
                     $insert_evasione['Descrizione'] = $r->Descrizione;
                     $insert_evasione['Cd_ARMisura'] = $r->Cd_ARMisura;
+                } else {
+                    unset($insert_evasione['Descrizione']);
+                    unset($insert_evasione['Cd_ARMisura']);
                 }
                 $insert_evasione['Id_DORig_Evade'] = $Id_DoRig;
                 $insert_evasione['PrezzoUnitarioV'] = $r->PrezzoUnitarioV;

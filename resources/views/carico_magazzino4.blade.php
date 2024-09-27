@@ -515,7 +515,7 @@
                                                         <button type="reset" name="evadi_riga"
                                                                 value="<?php echo $r->Cd_AR;?>"
                                                                 class="btn btn-success btn-sm col-3"
-                                                                onclick="<?php if($r->Cd_AR != null){ ?>controllo_articolo_smart2('<?php echo $r->Cd_AR?>;0;<?php echo ($r->Cd_ARLotto) ? $r->Cd_ARLotto :'0' ?>')<?php } else{ ?>controllo_articolo_smart3(<?php echo $r->Id_DORig ;?>);<?php } ?>">
+                                                                onclick="<?php if($r->Cd_AR != null){ ?>controllo_articolo_smart2('<?php echo $r->Cd_AR?>;0;<?php echo ($r->Cd_ARLotto) ? $r->Cd_ARLotto :'0' ?>')<?php } else{ ?>controllo_articolo_smart3(<?php echo $r->Id_DORig ;?>,'<?php echo $r->QtaEvadibile;?>');<?php } ?>">
                                                             <i class="bi bi-check-circle">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                                      height="16" fill="currentColor"
@@ -1636,9 +1636,9 @@
         });
     }
 
-    function controllo_articolo_smart3(id_dorig) {
+    function controllo_articolo_smart3(id_dorig, qta) {
         document.getElementById('modal_controllo_dorig').value = id_dorig;
-        document.getElementById('modal_controllo_quantita').value = 1;
+        document.getElementById('modal_controllo_quantita').value = qta;
         evadi_articolo2('0');
     }
 
