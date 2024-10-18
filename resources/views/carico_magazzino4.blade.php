@@ -1322,6 +1322,44 @@
     successAudio = document.getElementById('successAudio');
 
     var evadi = {};
+    prova = JSON.parse(sessionStorage.getItem('{{$documento->Id_DoTes}}'));
+    if (prova != null) {
+        evadi = prova;
+        Object.entries(evadi).forEach(([key, value]) => {
+            check_documento(key, value);
+        });
+    }
+
+    console.log(evadi);
+
+    function check_documento(key, value) {
+        id_riga = key.split(';')[0];
+        scadenza = key.split(';')[1];
+        lotto = key.split(';')[2];
+        max_evasione = document.getElementById('qta_max_evad_' + id_riga).value;
+
+        newElement = document.createElement('h5');
+        newElement.style.textAlign = 'center';
+        newElement.style.color = 'blue';
+        newElement.id = 'riga_' + key + '_counter';
+        if (lotto !== '0')
+            newElement.innerHTML = 'Righe in Evasione (' + lotto + '):  ' + evadi[key];
+        else
+            newElement.innerHTML = 'Righe in Evasione : ' + evadi[key];
+        document.getElementById('riga_' + id_riga + '_counter').appendChild(newElement);
+
+        if (parseInt(value) === parseInt(max_evasione)) {
+            document.getElementById('riga_' + id_riga).style.backgroundColor = 'green';
+            newElement2 = document.getElementById('riga_' + id_riga);
+            document.getElementById('riga_' + id_riga).remove();
+            document.getElementById('lista').appendChild(newElement2);
+        } else {
+            document.getElementById('riga_' + id_riga).style.backgroundColor = 'yellow';
+            newElement2 = document.getElementById('riga_' + id_riga);
+            document.getElementById('riga_' + id_riga).remove();
+            document.getElementById('lista').insertBefore(newElement2, document.getElementById('lista').firstChild);
+        }
+    }
 
     function invia_numero_colli(dotes) {
         $.ajax({
@@ -1449,6 +1487,8 @@
     function eliminaLotto(identificativo) {
 
         delete evadi[identificativo];
+        sessionStorage.setItem('{{$documento->Id_DoTes}}', JSON.stringify(evadi));
+
 
         document.getElementById('riga_' + identificativo + '_counter').remove();
 
@@ -1616,6 +1656,7 @@
         }).done(function (result) {
             $('#ajax_loader').fadeOut();
             $('#modal_conf_riga').modal('hide');
+            sessionStorage.removeItem('{{$documento->Id_DoTes}}');
 
             document.getElementById('ajax_numero_colli').value = result;
             document.getElementById('ajax_peso').value = result;
@@ -1681,6 +1722,7 @@
 
                 if ((parseInt(qta_da_evadere) + parseInt(somma)) <= parseInt(max_evasione)) {
                     evadi[textXEvasione] = parseInt(evadi[textXEvasione]) + parseInt(qta_da_evadere);
+                    sessionStorage.setItem('{{$documento->Id_DoTes}}', JSON.stringify(evadi));
                 } else {
                     errorAudio.play();
                     $('#modal_alertMaxEvasione').modal('show');
@@ -1691,6 +1733,7 @@
                 if (somma > 0) {
                     if ((parseInt(qta_da_evadere) + parseInt(somma)) <= parseInt(max_evasione)) {
                         evadi[textXEvasione] = parseInt(qta_da_evadere);
+                        sessionStorage.setItem('{{$documento->Id_DoTes}}', JSON.stringify(evadi));
                     } else {
                         errorAudio.play();
                         $('#modal_alertMaxEvasione').modal('show');
@@ -1700,6 +1743,7 @@
 
                     if ((parseInt(qta_da_evadere)) <= parseInt(max_evasione)) {
                         evadi[textXEvasione] = parseInt(qta_da_evadere);
+                        sessionStorage.setItem('{{$documento->Id_DoTes}}', JSON.stringify(evadi));
                     } else {
                         errorAudio.play();
                         $('#modal_alertMaxEvasione').modal('show');
