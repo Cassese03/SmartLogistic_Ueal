@@ -798,13 +798,12 @@ class AjaxController extends Controller
                         $insert_evasione['Cd_ARLotto'] = $lotto;
                         if (($check_lotto[0]->DataScadenza == null || $check_lotto[0]->DataScadenza == '') && $data_scadenza != 0) {
                             DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . $data_scadenza . '\' WHERE Cd_AR = \'' . $r->Cd_AR . '\' and Cd_ARLotto = \'' . $lotto . '\'');
-                        }
-                    }
-                    else {
-                        DB::INSERT("INSERT INTO ARLotto (Cd_AR,Cd_ARLotto,Descrizione) Values ('.$r->Cd_AR.','.$lotto.','Lotto '.$lotto.' di articolo '.$r->Cd_AR.'') ");
+                        }           } else {
+                        DB::INSERT('INSERT INTO ARLotto (Cd_AR,Cd_ARLotto,Descrizione) Values (\'' . $r->Cd_AR . '\',\''.$lotto.'\',\'Lotto ' . $lotto . ' di articolo \''.$r->Cd_AR.'\') ');
                         $insert_evasione['Cd_ARLotto'] = $lotto;
                     }
                 } else {
+
                     if (isset($insert_evasione['Cd_ARLotto'])) unset($insert_evasione['Cd_ARLotto']);
                 }
                 $check = DB::SELECT('SELECT * from MGCausale where Cd_MGCausale IN (SELECT Cd_MGCausale FROM DO where cd_do = (SELECT TOP 1 Cd_DO FROM DOTes where Id_DOTes = \'' . $Id_DoTes . '\'))');
