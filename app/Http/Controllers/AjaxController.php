@@ -795,7 +795,7 @@ class AjaxController extends Controller
                     $insert_evasione['Cd_MG_P'] = $magazzino;
                 if ($insert_evasione['Cd_MG_A'] == null || $insert_evasione['Cd_MG_A'] == '0')
                     $insert_evasione['Cd_MG_A'] = $magazzino_A;
-                if ($lotto != '0' && $lotto != '') {
+                if ($lotto != '0' && $lotto != '' && $r->Cd_AR != '') {
                     $check_lotto = DB::SELECT('select * from arlotto where Cd_AR = \'' . $r->Cd_AR . '\' and  cd_arlotto = \'' . $lotto . '\'');
                     if (sizeof($check_lotto) > 0) {
                         $insert_evasione['Cd_ARLotto'] = $lotto;
