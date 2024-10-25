@@ -850,6 +850,7 @@ class AjaxController extends Controller
                 $qta_evadibile = intval($qta_evadibile) - intval($qtadaEvadere);
 
                 DB::table('DoRig')->insertGetId($insert_evasione);
+                unset($insert_evasione['ScontoRiga']);
 
                 $Id_DoRig_OLD = DB::SELECT('SELECT TOP 1 * FROM DORIG ORDER BY Id_DORig DESC')[0]->Id_DORig;
 
