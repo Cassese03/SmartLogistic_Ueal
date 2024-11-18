@@ -54,12 +54,26 @@ class AjaxController extends Controller
     public function crea_doc_riordino($id_dotes)
     {
         try {
-            $cd_do = DB::SELECT('SELECT * FROM DOTes where Id_DOTes = ' . $id_dotes)[0]->Cd_Do;
-            if ($cd_do == 'OVC') {
+            $cd_do = DB::SELECT('SELECT * FROM DOTes where Id_DOTes = ' . $id_dotes);
+            if ($cd_do[0]->Cd_Do == 'OVC') {
                 $righe = DB::SELECT('SELECT * FROM DORig where Id_DOTes = ' . $id_dotes . ' and QtaEvadibile > 0');
-                if (sizeof($righe) > 0)
+                if (sizeof($righe) > 0){
                     $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_CF' => $righe[0]->Cd_CF, 'Cd_Do' => 'RVC']);
-                else
+                    if( $cd_do[0]->Cd_Agente_1 != null)
+                        DB::UPDATE('Update DOTes set Cd_Agente_1 = \'' . $cd_do[0]->Cd_Agente_1 . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
+                    if( $cd_do[0]->Cd_Agente_2 != null)
+                        DB::UPDATE('Update DOTes set Cd_Agente_2 = \'' . $cd_do[0]->Cd_Agente_2 . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
+                    if( $cd_do[0]->Cd_PG != null)
+                        DB::UPDATE('Update DOTes set Cd_PG = \'' . $cd_do[0]->Cd_PG . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
+                     if( $cd_do[0]->Cd_DoVettore_1 != null)
+                        DB::UPDATE('Update DOTes set Cd_DoVettore_1 = \'' . $cd_do[0]->Cd_DoVettore_1 . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
+                    if( $cd_do[0]->Cd_DoVettore_2 != null)
+                        DB::UPDATE('Update DOTes set Cd_DoVettore_2 = \'' . $cd_do[0]->Cd_DoVettore_2 . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
+                    if( $cd_do[0]->ScontoCassa != null)
+                        DB::UPDATE('Update DOTes set ScontoCassa = \'' . $cd_do[0]->ScontoCassa . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
+                    if( $cd_do[0]->NotePiede != null)
+                        DB::UPDATE('Update DOTes set NotePiede = \'' . $cd_do[0]->NotePiede . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
+                }else
                     $Id_DoTes = 0;
                 foreach ($righe as $r) {
                     $Id_DoRig = $r->Id_DORig;
@@ -88,7 +102,12 @@ class AjaxController extends Controller
                     $insert_evasione['PrezzoUnitarioV'] = $r->PrezzoUnitarioV;
                     $insert_evasione['Qta'] = $qtadaEvadere;
                     $insert_evasione['QtaEvasa'] = $insert_evasione['Qta'];
-
+                    if ($r->ProvvigioneRiga_1 != '')
+                        $insert_evasione['ProvvigioneRiga_1'] = $r->ProvvigioneRiga_1;
+                    if ($r->ProvvigioneRiga_2 != '')
+                        $insert_evasione['ProvvigioneRiga_2'] = $r->ProvvigioneRiga_2;
+                    if ($r->ScontoRiga != '')
+                        $insert_evasione['ScontoRiga'] = $r->ScontoRiga;
                     $Riga = DB::SELECT('SELECT * FROM DoRig where Id_DoRig=\'' . $Id_DoRig . '\'');
                     $insert_evasione['Cd_Aliquota'] = $r->Cd_Aliquota;
                     $insert_evasione['Cd_CGConto'] = $r->Cd_CGConto;

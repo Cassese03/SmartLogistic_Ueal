@@ -13,3 +13,10 @@ yarn-error.log
 /public/img/ciao.pdf
 /public/img/target001.png
 .env
+.idea/modules.xml
+.idea/php.xml
+.idea/phpunit.xml
+.idea/SmartLogistic_Ueal.iml
+.idea/vcs.xml
+.idea/commandlinetools/Laravel_25_06_24__10_43.xml
+.idea/commandlinetools/schemas/frameworkDescriptionVersion1.1.4.xsd
