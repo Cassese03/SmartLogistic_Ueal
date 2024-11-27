@@ -609,7 +609,7 @@ class HomeController extends Controller
         }
 
         $fornitori = DB::select('SELECT * from CF where Id_CF = ' . $id_fornitore);
-        $documenti = DB::select('SELECT * from DOTes where Id_DoTes in (' . $id_dotes . ')');
+        $documenti = DB::select('SELECT *,(SELECT TOP 1 Descrizione from CFDest WHERE CFDest.Cd_CF = DOTes.Cd_CF and CFDest.Cd_CFDest = DOTes.Cd_CFDest) as DestinazioneDiversa from DOTes where Id_DoTes in (' . $id_dotes . ')');
         $cd_do = DB::select('SELECT * from DOTes where Id_DoTes  in (' . $id_dotes . ')')[0]->Cd_Do;
         if (sizeof($fornitori) > 0) {
             $fornitore = $fornitori[0];
@@ -662,7 +662,7 @@ class HomeController extends Controller
             }
             $session_mag = session('\'' . $id_dotes . '\'');
             $scatoli = DB::SELECT('SELECT * FROM AR WHERE Cd_AR LIKE \'SCATOLO%\'');
-            return View::make('carico_magazzino4', compact('scatoli', 'do', 'articolo', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo', 'flusso', 'righe'));
+            return View::make('carico_magazzino4', compact('scatoli', 'do', 'articolo', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento','documenti', 'articolo', 'flusso', 'righe'));
 
         }
 
@@ -710,7 +710,7 @@ class HomeController extends Controller
             DB::statement("exec asp_DO_End $id_dotes");
         }
         $fornitori = DB::select('SELECT * from CF where Id_CF = ' . $id_fornitore);
-        $documenti = DB::select('SELECT * from DOTes where Id_DoTes in (' . $id_dotes . ')');
+        $documenti = DB::select('SELECT *,(SELECT TOP 1 Descrizione from CFDest WHERE CFDest.Cd_CF = DOTes.Cd_CF and CFDest.Cd_CFDest = DOTes.Cd_CFDest) as DestinazioneDiversa  from DOTes where Id_DoTes in (' . $id_dotes . ')');
         $cd_do = DB::select('SELECT * from DOTes where Id_DoTes  in (' . $id_dotes . ')')[0]->Cd_Do;
         if (sizeof($fornitori) > 0) {
             $fornitore = $fornitori[0];
@@ -744,7 +744,7 @@ class HomeController extends Controller
             $session_mag = session('\'' . $id_dotes . '\'');
             $do = DB::SELECT('SELECT * FROM DO where cd_do = \'' . $cd_do . '\'');
             $scatoli = DB::SELECT('SELECT * FROM AR WHERE Cd_AR LIKE \'SCATOLO%\'');
-            return View::make('carico_magazzino04', compact('scatoli', 'do', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'articolo'));
+            return View::make('carico_magazzino04', compact('scatoli', 'do', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento','documenti', 'articolo'));
 
         }
 
