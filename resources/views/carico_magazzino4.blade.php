@@ -356,7 +356,7 @@
                        autocomplete="off">
                 <div class="background bg-125"><img src="/img/background.png" alt=""></div>
                 <div class="w-100">
-                    <h1 class="text-center text-white title-background"><?php echo $fornitore->Cd_CF . ' - ' . $fornitore->Descrizione . ' - ' .($documenti->DestinazioneDiversa)?$documenti->DestinazioneDiversa:$fornitore->Localita; ?>
+                    <h1 class="text-center text-white title-background"><?php echo $fornitore->Cd_CF . ' - ' . $fornitore->Descrizione; ?>
                         <br><small><?php echo $documento->Cd_Do ?> N.<?php echo $documento->NumeroDoc ?>
                             Del <?php echo date('d/m/Y', strtotime($documento->DataDoc)) ?></small></h1>
                 </div>

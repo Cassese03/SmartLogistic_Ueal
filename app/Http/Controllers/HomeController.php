@@ -609,7 +609,7 @@ class HomeController extends Controller
         }
 
         $fornitori = DB::select('SELECT * from CF where Id_CF = ' . $id_fornitore);
-        $documenti = DB::select('SELECT *,(SELECT TOP 1 Descrizione from CFDest WHERE CFDest.Cd_CF = DOTes.Cd_CF and CFDest.Cd_CFDest = DOTes.Cd_CFDest) as DestinazioneDiversa from DOTes where Id_DoTes in (' . $id_dotes . ')');
+        $documenti = DB::select('SELECT *from DOTes where Id_DoTes in (' . $id_dotes . ')');
         $cd_do = DB::select('SELECT * from DOTes where Id_DoTes  in (' . $id_dotes . ')')[0]->Cd_Do;
         if (sizeof($fornitori) > 0) {
             $fornitore = $fornitori[0];
@@ -710,7 +710,7 @@ class HomeController extends Controller
             DB::statement("exec asp_DO_End $id_dotes");
         }
         $fornitori = DB::select('SELECT * from CF where Id_CF = ' . $id_fornitore);
-        $documenti = DB::select('SELECT *,(SELECT TOP 1 Descrizione from CFDest WHERE CFDest.Cd_CF = DOTes.Cd_CF and CFDest.Cd_CFDest = DOTes.Cd_CFDest) as DestinazioneDiversa  from DOTes where Id_DoTes in (' . $id_dotes . ')');
+        $documenti = DB::select('SELECT * from DOTes where Id_DoTes in (' . $id_dotes . ')');
         $cd_do = DB::select('SELECT * from DOTes where Id_DoTes  in (' . $id_dotes . ')')[0]->Cd_Do;
         if (sizeof($fornitori) > 0) {
             $fornitore = $fornitori[0];
