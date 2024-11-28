@@ -57,23 +57,23 @@ class AjaxController extends Controller
             $cd_do = DB::SELECT('SELECT * FROM DOTes where Id_DOTes = ' . $id_dotes);
             if ($cd_do[0]->Cd_Do == 'OVC') {
                 $righe = DB::SELECT('SELECT * FROM DORig where Id_DOTes = ' . $id_dotes . ' and QtaEvadibile > 0');
-                if (sizeof($righe) > 0){
+                if (sizeof($righe) > 0) {
                     $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_CF' => $righe[0]->Cd_CF, 'Cd_Do' => 'RVC']);
-                    if( $cd_do[0]->Cd_Agente_1 != null)
+                    if ($cd_do[0]->Cd_Agente_1 != null)
                         DB::UPDATE('Update DOTes set Cd_Agente_1 = \'' . $cd_do[0]->Cd_Agente_1 . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
-                    if( $cd_do[0]->Cd_Agente_2 != null)
+                    if ($cd_do[0]->Cd_Agente_2 != null)
                         DB::UPDATE('Update DOTes set Cd_Agente_2 = \'' . $cd_do[0]->Cd_Agente_2 . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
-                    if( $cd_do[0]->Cd_PG != null)
+                    if ($cd_do[0]->Cd_PG != null)
                         DB::UPDATE('Update DOTes set Cd_PG = \'' . $cd_do[0]->Cd_PG . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
-                     if( $cd_do[0]->Cd_DoVettore_1 != null)
+                    if ($cd_do[0]->Cd_DoVettore_1 != null)
                         DB::UPDATE('Update DOTes set Cd_DoVettore_1 = \'' . $cd_do[0]->Cd_DoVettore_1 . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
-                    if( $cd_do[0]->Cd_DoVettore_2 != null)
+                    if ($cd_do[0]->Cd_DoVettore_2 != null)
                         DB::UPDATE('Update DOTes set Cd_DoVettore_2 = \'' . $cd_do[0]->Cd_DoVettore_2 . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
-                    if( $cd_do[0]->ScontoCassa != null)
+                    if ($cd_do[0]->ScontoCassa != null)
                         DB::UPDATE('Update DOTes set ScontoCassa = \'' . $cd_do[0]->ScontoCassa . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
-                    if( $cd_do[0]->NotePiede != null)
+                    if ($cd_do[0]->NotePiede != null)
                         DB::UPDATE('Update DOTes set NotePiede = \'' . $cd_do[0]->NotePiede . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
-                }else
+                } else
                     $Id_DoTes = 0;
                 foreach ($righe as $r) {
                     $Id_DoRig = $r->Id_DORig;
@@ -757,6 +757,7 @@ class AjaxController extends Controller
                 if (sizeof($old_dotes) > 0) {
                     $agente = ($old_dotes[0]->Cd_Agente_1) ? $old_dotes[0]->Cd_Agente_1 : null;
                     $agente_2 = ($old_dotes[0]->Cd_Agente_2) ? $old_dotes[0]->Cd_Agente_2 : null;
+                    $numeroDocRif = ($old_dotes[0]->NumeroDocRif) ? $old_dotes[0]->NumeroDocRif : null;
                     $notepiede = ($old_dotes[0]->NotePiede) ? $old_dotes[0]->NotePiede : null;
                     $pagamento = ($old_dotes[0]->Cd_PG) ? $old_dotes[0]->Cd_PG : null;
                     $ScontoCassa = ($old_dotes[0]->ScontoCassa) ? $old_dotes[0]->ScontoCassa : null;
@@ -765,6 +766,7 @@ class AjaxController extends Controller
                 } else {
                     $agente = null;
                     $agente_2 = null;
+                    $numeroDocRif = null;
                     $notepiede = null;
                     $pagamento = null;
                     $ScontoCassa = null;
@@ -773,7 +775,7 @@ class AjaxController extends Controller
                 }
 
                 if ($Id_DoTes == '') {
-                    $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
+                    $Id_DoTes = DB::table('DOTes')->insertGetId(['NumeroDocRif' => $numeroDocRif, 'Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
                     if ($ubicazione != '0')
                         $insert_evasione['Cd_MGUbicazione_P'] = $ubicazione;
                     if ($magazzino != '0')
