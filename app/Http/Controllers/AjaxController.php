@@ -763,6 +763,7 @@ class AjaxController extends Controller
                     $ScontoCassa = ($old_dotes[0]->ScontoCassa) ? $old_dotes[0]->ScontoCassa : null;
                     $Cd_DoVettore_1 = ($old_dotes[0]->Cd_DoVettore_1) ? $old_dotes[0]->Cd_DoVettore_1 : null;
                     $Cd_DoVettore_2 = ($old_dotes[0]->Cd_DoVettore_2) ? $old_dotes[0]->Cd_DoVettore_2 : null;
+                    $destinazione = ($old_dotes[0]->Cd_CFDest) ? $old_dotes[0]->Cd_CFDest : null;
                 } else {
                     $agente = null;
                     $agente_2 = null;
@@ -772,10 +773,11 @@ class AjaxController extends Controller
                     $ScontoCassa = null;
                     $Cd_DoVettore_1 = null;
                     $Cd_DoVettore_2 = null;
+                    $destinazione = null;
                 }
 
                 if ($Id_DoTes == '') {
-                    $Id_DoTes = DB::table('DOTes')->insertGetId(['NumeroDocRif' => $numeroDocRif, 'Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
+                    $Id_DoTes = DB::table('DOTes')->insertGetId(['NumeroDocRif' => $numeroDocRif,'Cd_CFDest' => $destinazione, 'Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
                     if ($ubicazione != '0')
                         $insert_evasione['Cd_MGUbicazione_P'] = $ubicazione;
                     if ($magazzino != '0')
