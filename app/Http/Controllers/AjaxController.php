@@ -101,7 +101,8 @@ class AjaxController extends Controller
                     $insert_evasione['Id_DORig_Evade'] = $Id_DoRig;
                     $insert_evasione['PrezzoUnitarioV'] = $r->PrezzoUnitarioV;
                     $insert_evasione['Qta'] = $qtadaEvadere;
-                    $insert_evasione['QtaEvasa'] = $insert_evasione['Qta'];
+                    $insert_evasione['QtaEvasa'] = $qtadaEvadere;
+                    $insert_evasione['QtaEvadibile'] = $qtadaEvadere;
                     if ($r->ProvvigioneRiga_1 != '')
                         $insert_evasione['ProvvigioneRiga_1'] = $r->ProvvigioneRiga_1;
                     if ($r->ProvvigioneRiga_2 != '')
@@ -777,7 +778,7 @@ class AjaxController extends Controller
                 }
 
                 if ($Id_DoTes == '') {
-                    $Id_DoTes = DB::table('DOTes')->insertGetId(['NumeroDocRif' => $numeroDocRif,'Cd_CFDest' => $destinazione, 'Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
+                    $Id_DoTes = DB::table('DOTes')->insertGetId(['NumeroDocRif' => $numeroDocRif, 'Cd_CFDest' => $destinazione, 'Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
                     if ($ubicazione != '0')
                         $insert_evasione['Cd_MGUbicazione_P'] = $ubicazione;
                     if ($magazzino != '0')
@@ -826,7 +827,7 @@ class AjaxController extends Controller
                             DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . $data_scadenza . '\' WHERE Cd_AR = \'' . $r->Cd_AR . '\' and Cd_ARLotto = \'' . $lotto . '\'');
                         }
                     } else {
-                        DB::INSERT('INSERT INTO ARLotto (Cd_AR,Cd_ARLotto,Descrizione) Values (\'' . $r->Cd_AR . '\',\'' . $lotto . '\',\'Lotto ' . $lotto . ' di articolo ' . $r->Cd_AR . '\')');
+                        DB::INSERT('INSERT INTO ARLotto (Cd_AR,Cd_ARLotto,Descrizione,DataScadenza) Values (\'' . $r->Cd_AR . '\',\'' . $lotto . '\',\'Lotto ' . $lotto . ' di articolo ' . $r->Cd_AR . '\',\'' . date('Ymd',strtotime(${$id_dorig . '_data_scadenza'})) . '\')');
                         $insert_evasione['Cd_ARLotto'] = $lotto;
                     }
                 } else {
@@ -883,8 +884,8 @@ class AjaxController extends Controller
                 } else {
                     DB::UPDATE('Update DoRig set QtaEvadibile = \'0\'WHERE Id_DoRig = \'' . $Id_DoRig . '\'');
                     DB::update('Update dorig set Evasa = \'1\'   where Id_DoRig = \'' . $Id_DoRig . '\' ');
-                    $Id_DoTes_old = DB::SELECT('SELECT * from DoRig where id_dorig = \'' . $Id_DoRig . '\' ')[0]->Id_DOTes;
                 }
+                $Id_DoTes_old = DB::SELECT('SELECT * from DoRig where id_dorig = \'' . $Id_DoRig . '\' ')[0]->Id_DOTes;
             }
             DB::COMMIT();
             DB::update("Update dotes set dotes.reserved_1= 'RRRRRRRRRR' where dotes.id_dotes = '$Id_DoTes_old'");
