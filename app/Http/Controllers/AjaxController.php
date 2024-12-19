@@ -699,7 +699,7 @@ class AjaxController extends Controller
                         if (!isset(${$r->Id_DORig . '_qta_' . ${$id_dorig . '_count'}})) {
                             break;
                         }
-                        $ciao .= ${$r->Id_DORig . '_lotto_' . ${$id_dorig . '_count'}}.'<br>';
+                        $ciao .= ${$r->Id_DORig . '_lotto_' . ${$id_dorig . '_count'}} . '<br>';
 
                         $Id_DoRig = $r->Id_DORig;
                         $qtadaEvadere = ${$r->Id_DORig . '_qta_' . ${$id_dorig . '_count'}};
@@ -719,6 +719,7 @@ class AjaxController extends Controller
                             $agente = ($old_dotes[0]->Cd_Agente_1) ? $old_dotes[0]->Cd_Agente_1 : null;
                             $agente_2 = ($old_dotes[0]->Cd_Agente_2) ? $old_dotes[0]->Cd_Agente_2 : null;
                             $numeroDocRif = ($old_dotes[0]->NumeroDocRif) ? $old_dotes[0]->NumeroDocRif : null;
+                            $banca_sconto = ($old_dotes[0]->Cd_CGConto_Banca) ? $old_dotes[0]->Cd_CGConto_Banca : null;
                             $notepiede = ($old_dotes[0]->NotePiede) ? $old_dotes[0]->NotePiede : null;
                             $pagamento = ($old_dotes[0]->Cd_PG) ? $old_dotes[0]->Cd_PG : null;
                             $ScontoCassa = ($old_dotes[0]->ScontoCassa) ? $old_dotes[0]->ScontoCassa : null;
@@ -732,13 +733,14 @@ class AjaxController extends Controller
                             $notepiede = null;
                             $pagamento = null;
                             $ScontoCassa = null;
+                            $banca_sconto = null;
                             $Cd_DoVettore_1 = null;
                             $Cd_DoVettore_2 = null;
                             $destinazione = null;
                         }
 
                         if ($Id_DoTes == '') {
-                            $Id_DoTes = DB::table('DOTes')->insertGetId(['NumeroDocRif' => $numeroDocRif, 'Cd_CFDest' => $destinazione, 'Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
+                            $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_CGConto_Banca ' => $banca_sconto, 'NumeroDocRif' => $numeroDocRif, 'Cd_CFDest' => $destinazione, 'Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
                             if ($ubicazione != '0')
                                 $insert_evasione['Cd_MGUbicazione_P'] = $ubicazione;
                             if ($magazzino != '0')
@@ -858,7 +860,7 @@ class AjaxController extends Controller
             return $Id_DoTes1;
         } catch (\Exception $e) {
             DB::ROLLBACK();
-            return $ciao.'<br>'.$e->getMessage() . ' - ' . $e->getLine();
+            return $ciao . '<br>' . $e->getMessage() . ' - ' . $e->getLine();
         }
     }
 
@@ -1118,7 +1120,7 @@ class AjaxController extends Controller
 
         </script>
 
-       <?php 
+        <?php
 //TODO CAMBAIRE GESTIONE EVASIONE A PZ A SECONDA DEL BARCODE
 
     }
