@@ -57,52 +57,6 @@
 
                             <button type="submit" value="login" name="login" class="btn btn-danger btn-sm">Accedi</button>
                         </form>
-                <!--
-
-                        <p class="login-box-msg">
-                            Effettua il Login
-                        </p>
-                        <ul class="list-group" >
-                            <li class="list-group-item">
-
-
-                                <a href="<?php echo URL::ASSET('articoli') ?>" class="media">
-                                    <div class="media-body">
-                                        <h5>Articoli</h5>
-                                        <p>Gestisci gli articoli di Arca</p>
-                                    </div>
-                                </a>
-
-                            </li>
-                            <li class="list-group-item">
-                                <a href="<?php echo URL::asset('magazzino') ?>" class="media">
-                                    <div class="media-body">
-                                        <h5>Magazzino</h5>
-                                        <p>Gestisci il Magazzino di Arca</p>
-                                    </div>
-                                </a>
-                            </li>
-
-                            <li class="list-group-item">
-                                <a href="<?php echo URL::asset('ordini') ?>" class="media">
-                                    <div class="media-body">
-                                        <h5>Passivo</h5>
-                                        <p>Gestisci gli Ordini ancora non chiusi</p>
-                                    </div>
-                                </a>
-                            </li>
-
-                            <li class="list-group-item">
-                                <a href="<?php echo URL::asset('attivi') ?>" class="media">
-                                    <div class="media-body">
-                                        <h5>Attivo</h5>
-                                        <p>Gestisci gli Ordini ancora non chiusi</p>
-                                    </div>
-                                </a>
-                            </li>
-
-                        </ul>
-                -->
                     </div>
 
                 </div>

@@ -308,18 +308,6 @@
     Your browser does not support the audio tag.
 </audio>
 
-<div class="loader justify-content-center ">
-    <div class="maxui-roller align-self-center">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-</div>
 <div class="wrapper">
 
     <!-- page main start -->
@@ -556,23 +544,13 @@
 
 
                 <?php } ?>
-                {{--
-                                <button
-                                    style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:violet;border: violet"
-                                    class="btn btn-primary" onclick="$('#modal_inserisci_scatole').modal('show');">Inserire Scatoli
-                                </button>--}}
+            
                 <?php if (sizeof($documento->righe) > 0){ ?>
                 <button
                     style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:#007bff;border: #007bff"
                     class="btn btn-primary" onclick="$('#modal_salva_documento').modal('show');">Salva Documento
                 </button>
                 <?php } ?>
-                {{--<?php if ($documento->Cd_Do == 'OVC'){ ?>
-                <button
-                    style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:#007bff;border: #007bff"
-                    class="btn btn-primary" onclick="$('#modal_stampa_documento').modal('show');">Stampa Documento
-                </button>
-                <?php } ?>--}}
             </div>
         </div>
 

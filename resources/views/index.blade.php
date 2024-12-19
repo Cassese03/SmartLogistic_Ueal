@@ -63,30 +63,7 @@
                                     </div>
                                 </a>
                             </li>
-                            {{--<li class="list-group-item">
-                                <a href="<?php echo URL::asset('magazzino/carico2/DDT') ?>" class="media">
-                                    <div class="media-body">
-                                        <h5>DDT</h5>
-                                        <p>Crea il tuo DDT</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="list-group-item">
-                                <a href="<?php echo URL::asset('magazzino/carico2/LPL') ?>" class="media">
-                                    <div class="media-body">
-                                        <h5>LPL</h5>
-                                        <p>Crea il tuo LPL</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="list-group-item">
-                                <a href="<?php echo URL::asset('magazzino/carico2/RCF') ?>" class="media">
-                                    <div class="media-body">
-                                        <h5>RCF</h5>
-                                        <p>Crea il tuo RCF</p>
-                                    </div>
-                                </a>
-                            </li>--}}
+                        
                             <li class="list-group-item">
                                 <a href="<?php echo URL::asset('qrcode') ?>" class="media">
                                     <div class="media-body">
@@ -103,25 +80,7 @@
                                     </div>
                                 </a>
                             </li>
-                            <!--
-                            <li class="list-group-item">
-                                <a href="<?php echo URL::asset('ordini') ?>" class="media">
-                                    <div class="media-body">
-                                        <h5>Passivo</h5>
-                                        <p>Gestisci gli Ordini ancora non chiusi</p>
-                                    </div>
-                                </a>
-                            </li>
-
-                            <li class="list-group-item">
-                                <a href="<?php echo URL::asset('attivi') ?>" class="media">
-                                    <div class="media-body">
-                                        <h5>Attivo</h5>
-                                        <p>Gestisci gli Ordini ancora non chiusi</p>
-                                    </div>
-                                </a>
-                            </li>
--->
+                        
                         </ul>
 
                     </div>
