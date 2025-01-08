@@ -649,8 +649,6 @@
         endChar: [], // be sure the scan is complete if key 13 (enter) is detec
         avgTimeByChar: 40, // it's not a barcode if a character takes longer than 40ms
         onComplete: function(code, qty){
-
-            alert('ciao');
             $.ajax({
                 url: "/ajax/cerca_articolo_inventario/"+code,
                 context: document.body

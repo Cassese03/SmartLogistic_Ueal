@@ -690,7 +690,6 @@ class AjaxController extends Controller
                         $Id_DoTes = $testata[0]->Id_DOTes;
             }
             $date = date('d/m/Y', strtotime('today'));
-            $ciao = 'ciao';
             $righe = DB::select('SELECT * FROM DORIG WHERE ID_DORIG IN (\'' . $Id_DoRig . '\')');
             foreach ($righe as $r) {
                 ${$id_dorig . '_count'} = 0;
@@ -699,7 +698,6 @@ class AjaxController extends Controller
                         if (!isset(${$r->Id_DORig . '_qta_' . ${$id_dorig . '_count'}})) {
                             break;
                         }
-                        $ciao .= ${$r->Id_DORig . '_lotto_' . ${$id_dorig . '_count'}} . '<br>';
 
                         $Id_DoRig = $r->Id_DORig;
                         $qtadaEvadere = ${$r->Id_DORig . '_qta_' . ${$id_dorig . '_count'}};
@@ -860,7 +858,7 @@ class AjaxController extends Controller
             return $Id_DoTes1;
         } catch (\Exception $e) {
             DB::ROLLBACK();
-            return $ciao . '<br>' . $e->getMessage() . ' - ' . $e->getLine();
+            return $e->getMessage() . ' - ' . $e->getLine();
         }
     }
 
