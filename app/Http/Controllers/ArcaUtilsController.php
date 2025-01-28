@@ -117,6 +117,8 @@ class ArcaUtilsController extends Controller
                     if ($check[0]->MagAFlag == 0)
                         unset($insert_righe_ordine['Cd_MG_A']);
                 }
+                if($insert_righe_ordine['Cd_MG_A'] == '1') $insert_righe_ordine['Cd_MG_A'] = '00001';
+                if($insert_righe_ordine['Cd_MG_P'] == '1') $insert_righe_ordine['Cd_MG_P'] = '00001';
                 if ($lotto != '0') {
                     $esiste = DB::select('SELECT * from DORig where Id_DoTes = ' . $id_ordine . ' and Cd_AR =  \'' . $codice_articolo . '\' and Cd_ARLotto = \'' . $lotto . '\' ');
                 } else {
