@@ -544,7 +544,7 @@
 
 
                 <?php } ?>
-            
+
                 <?php if (sizeof($documento->righe) > 0){ ?>
                 <button
                     style="margin-top:10px !important;width:80%;margin:0 auto;display:block;background-color:#007bff;border: #007bff"
@@ -1737,8 +1737,7 @@
                 value: evadi[key]
             }));
             let newsomma = newlotti.reduce((acc, item) => acc + item.value, 0);
-            console.log('new somma');
-            console.log(newsomma);
+
             if (parseInt(newsomma) === parseInt(max_evasione)) {
                 document.getElementById('riga_' + text).style.backgroundColor = 'green';
                 newElement2 = document.getElementById('riga_' + text);

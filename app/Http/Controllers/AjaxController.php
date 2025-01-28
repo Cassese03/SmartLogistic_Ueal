@@ -787,7 +787,7 @@ class AjaxController extends Controller
                                     DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . $data_scadenza . '\' WHERE Cd_AR = \'' . $r->Cd_AR . '\' and Cd_ARLotto = \'' . $lotto . '\'');
                                 }
                             } else {
-                                DB::INSERT('INSERT INTO ARLotto (Cd_AR,Cd_ARLotto,Descrizione,DataScadenza) Values (\'' . $r->Cd_AR . '\',\'' . $lotto . '\',\'Lotto ' . $lotto . ' di articolo ' . $r->Cd_AR . '\',\'' . date('Ymd', strtotime(${$id_dorig . '_data_scadenza_' . ${$id_dorig . '_count'}})) . '\')');
+                                DB::INSERT('INSERT INTO ARLotto (Cd_AR,Cd_ARLotto,Descrizione,DataScadenza) Values (\'' . $r->Cd_AR . '\',\'' . $lotto . '\',\'Lotto ' . $lotto . ' di articolo ' . $r->Cd_AR . '\',\'' . $data_scadenza . '\')');
                                 $insert_evasione['Cd_ARLotto'] = $lotto;
                             }
                         } else {
@@ -828,8 +828,8 @@ class AjaxController extends Controller
                         $insert_evasione['Id_DoTes'] = $Id_DoTes1;
 
 
-                        $qta_evasa = DB::SELECT('SELECT * FROM DORig WHERE Id_DoRig= \'' . $Id_DoRig . '\' ')[0]->QtaEvasa;
-                        $qta_evasa = intval($qta_evasa) + intval($qtadaEvadere);
+                        //$qta_evasa = DB::SELECT('SELECT * FROM DORig WHERE Id_DoRig= \'' . $Id_DoRig . '\' ')[0]->QtaEvasa;
+                        $qta_evasa = intval($qtadaEvadere);
                         $qta_evadibile = DB::SELECT('SELECT * FROM DORig WHERE Id_DoRig= \'' . $Id_DoRig . '\' ')[0]->QtaEvadibile;
                         $qta_evadibile = intval($qta_evadibile) - intval($qtadaEvadere);
 
@@ -1101,10 +1101,9 @@ class AjaxController extends Controller
             <?php foreach($lotto as $l){?>
             $('#modal_list_controllo_lotto').append('<option value="<?php echo $l->Cd_ARLotto;?>"><?php echo $l->Cd_ARLotto ?></option>')
             <?php } ?>
-
             $('#modal_controllo_data_scadenza').html
             <?php if($scadenza != 0){ ?>
-            ('<option value="<?php echo date('d/m/Y', strtotime($scadenza)) ?>" lotto="<?php echo $articoli->Cd_ARLotto ?>" selected><?php echo date('d/m/Y', strtotime($scadenza));  ?></option>')
+            ('<option value="<?php echo $scadenza ?>" lotto="<?php echo $articoli->Cd_ARLotto ?>" selected><?php  echo $scadenza ?></option>')
             <?php }else{ ?>
             ('<option lotto="Nessun Lotto" >Nessuna Scadenza</option>')
             <?php }?>
