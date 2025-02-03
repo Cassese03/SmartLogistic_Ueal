@@ -720,6 +720,7 @@ class AjaxController extends Controller
                             $banca_sconto = ($old_dotes[0]->Cd_CGConto_Banca) ? $old_dotes[0]->Cd_CGConto_Banca : null;
                             $notepiede = ($old_dotes[0]->NotePiede) ? $old_dotes[0]->NotePiede : null;
                             $pagamento = ($old_dotes[0]->Cd_PG) ? $old_dotes[0]->Cd_PG : null;
+                            $trasporto = ($old_dotes[0]->Cd_DoTrasporto) ? $old_dotes[0]->Cd_DoTrasporto : null;
                             $ScontoCassa = ($old_dotes[0]->ScontoCassa) ? $old_dotes[0]->ScontoCassa : null;
                             $Cd_DoVettore_1 = ($old_dotes[0]->Cd_DoVettore_1) ? $old_dotes[0]->Cd_DoVettore_1 : null;
                             $Cd_DoVettore_2 = ($old_dotes[0]->Cd_DoVettore_2) ? $old_dotes[0]->Cd_DoVettore_2 : null;
@@ -730,6 +731,7 @@ class AjaxController extends Controller
                             $numeroDocRif = null;
                             $notepiede = null;
                             $pagamento = null;
+                            $trasporto = null;
                             $ScontoCassa = null;
                             $banca_sconto = null;
                             $Cd_DoVettore_1 = null;
@@ -738,7 +740,7 @@ class AjaxController extends Controller
                         }
 
                         if ($Id_DoTes == '') {
-                            $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_CGConto_Banca ' => $banca_sconto, 'NumeroDocRif' => $numeroDocRif, 'Cd_CFDest' => $destinazione, 'Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
+                            $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_DoTrasporto ' => $trasporto, 'Cd_CGConto_Banca ' => $banca_sconto, 'NumeroDocRif' => $numeroDocRif, 'Cd_CFDest' => $destinazione, 'Cd_DoVettore_2' => $Cd_DoVettore_2, 'Cd_DoVettore_1' => $Cd_DoVettore_1, 'Cd_CF' => $cd_cf, 'Cd_Do' => $documento, 'Cd_Agente_1' => $agente, 'Cd_Agente_2' => $agente_2, 'NotePiede' => $notepiede, 'Cd_PG' => $pagamento]);
                             if ($ubicazione != '0')
                                 $insert_evasione['Cd_MGUbicazione_P'] = $ubicazione;
                             if ($magazzino != '0')
