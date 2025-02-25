@@ -16,7 +16,7 @@
 <body class="color-theme-blue push-content-right theme-light">
 <div class="loader justify-content-center ">
     <div class="maxui-roller align-self-center"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    
+
 </div>
 <div class="wrapper">
     <!-- page main start -->
@@ -54,7 +54,7 @@
                         <a href="<?php echo URL::asset('magazzino/passivi') ?>" class="media">
                             <div class="media-body">
                                 <h5>Ciclo Passivo</h5>
-                                <p>Effettua un Ordine di Carico di Magazzino </p>
+                                <p>Effettua un Carico di Magazzino da Fornitore </p>
                             </div>
                         </a>
                     </li>
@@ -63,7 +63,7 @@
                         <a href="<?php echo URL::asset('magazzino/attivo') ?>" class="media">
                             <div class="media-body">
                                 <h5>Ciclo Attivo</h5>
-                                <p>Effettua un Carico di Magazzino Da Fornitore</p>
+                                <p>Effettua uno Scarico di Magazzino per Cliente</p>
                             </div>
                         </a>
                     </li>

@@ -786,10 +786,10 @@ class AjaxController extends Controller
                             if (sizeof($check_lotto) > 0) {
                                 $insert_evasione['Cd_ARLotto'] = $lotto;
                                 if (($check_lotto[0]->DataScadenza == null || $check_lotto[0]->DataScadenza == '') && $data_scadenza != 0) {
-                                    DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . $data_scadenza . '\' WHERE Cd_AR = \'' . $r->Cd_AR . '\' and Cd_ARLotto = \'' . $lotto . '\'');
+                                    DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . date('Ymd', strtotime(${$id_dorig . '_data_scadenza_' . ${$id_dorig . '_count'}}))  . '\' WHERE Cd_AR = \'' . $r->Cd_AR . '\' and Cd_ARLotto = \'' . $lotto . '\'');
                                 }
                             } else {
-                                DB::INSERT('INSERT INTO ARLotto (Cd_AR,Cd_ARLotto,Descrizione,DataScadenza) Values (\'' . $r->Cd_AR . '\',\'' . $lotto . '\',\'Lotto ' . $lotto . ' di articolo ' . $r->Cd_AR . '\',\'' . $data_scadenza . '\')');
+                                DB::INSERT('INSERT INTO ARLotto (Cd_AR,Cd_ARLotto,Descrizione,DataScadenza) Values (\'' . $r->Cd_AR . '\',\'' . $lotto . '\',\'Lotto ' . $lotto . ' di articolo ' . $r->Cd_AR . '\',\'' . date('Ymd', strtotime(${$id_dorig . '_data_scadenza_' . ${$id_dorig . '_count'}})) . '\')');
                                 $insert_evasione['Cd_ARLotto'] = $lotto;
                             }
                         } else {
