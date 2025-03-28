@@ -58,11 +58,11 @@ class AjaxController extends Controller
             if ($cd_do[0]->Cd_Do == 'OVC') {
                 $righe = DB::SELECT('SELECT * FROM DORig where Id_DOTes = ' . $id_dotes . ' and QtaEvadibile > 0');
                 if (sizeof($righe) > 0) {
-                    $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_CF' => $righe[0]->Cd_CF, 'Cd_Do' => 'RVC']);
-                    if ($cd_do[0]->Cd_Agente_1 != null)
-                        DB::UPDATE('Update DOTes set Cd_Agente_1 = \'' . $cd_do[0]->Cd_Agente_1 . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
-                    if ($cd_do[0]->Cd_Agente_2 != null)
-                        DB::UPDATE('Update DOTes set Cd_Agente_2 = \'' . $cd_do[0]->Cd_Agente_2 . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
+
+                    $agente1 = $cd_do[0]->Cd_Agente_1;
+                    $agente2 = $cd_do[0]->Cd_Agente_2;
+
+                    $Id_DoTes = DB::table('DOTes')->insertGetId(['Cd_Agente_1' => $agente1, 'Cd_Agente_2' => $agente2, 'Cd_CF' => $righe[0]->Cd_CF, 'Cd_Do' => 'RVC']);
                     if ($cd_do[0]->Cd_PG != null)
                         DB::UPDATE('Update DOTes set Cd_PG = \'' . $cd_do[0]->Cd_PG . '\'WHERE Id_DOTes = \'' . $Id_DoTes . '\'');
                     if ($cd_do[0]->Cd_DoVettore_1 != null)
@@ -786,7 +786,7 @@ class AjaxController extends Controller
                             if (sizeof($check_lotto) > 0) {
                                 $insert_evasione['Cd_ARLotto'] = $lotto;
                                 if (($check_lotto[0]->DataScadenza == null || $check_lotto[0]->DataScadenza == '') && $data_scadenza != 0) {
-                                    DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . date('Ymd', strtotime(${$id_dorig . '_data_scadenza_' . ${$id_dorig . '_count'}}))  . '\' WHERE Cd_AR = \'' . $r->Cd_AR . '\' and Cd_ARLotto = \'' . $lotto . '\'');
+                                    DB::UPDATE('UPDATE ARLotto set DataScadenza = \'' . date('Ymd', strtotime(${$id_dorig . '_data_scadenza_' . ${$id_dorig . '_count'}})) . '\' WHERE Cd_AR = \'' . $r->Cd_AR . '\' and Cd_ARLotto = \'' . $lotto . '\'');
                                 }
                             } else {
                                 DB::INSERT('INSERT INTO ARLotto (Cd_AR,Cd_ARLotto,Descrizione,DataScadenza) Values (\'' . $r->Cd_AR . '\',\'' . $lotto . '\',\'Lotto ' . $lotto . ' di articolo ' . $r->Cd_AR . '\',\'' . date('Ymd', strtotime(${$id_dorig . '_data_scadenza_' . ${$id_dorig . '_count'}})) . '\')');
