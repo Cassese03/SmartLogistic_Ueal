@@ -647,10 +647,10 @@ class AjaxController extends Controller
             DB::beginTransaction();
 
             $Id_DoRig = 0;
-            print_r($_GET);
-            echo '<br>';
-            echo '<br>';
-            echo '<br>';
+            //print_r($_GET);
+            //echo '<br>';
+            //echo '<br>';
+            //echo '<br>';
             foreach ($_GET as $key => $d) {
                 $q = explode(';', $key);
                 if (sizeof($q) > 1)
@@ -703,27 +703,27 @@ class AjaxController extends Controller
                             break;
                         }
 
-                        echo '1 - ';
-                        echo ${$id_dorig . '_count'};
-                        echo '<br>';
-                        echo '2 - ';
-                        print_r($id_dorig . '_lotto_' . ${$id_dorig . '_count'});
-                        echo ' => ' . ${$id_dorig . '_lotto_' . ${$id_dorig . '_count'}};
-                        echo '<br>';
-                        echo '<br>';
-                        echo '<br>';
-                        echo '3 - ';
-                        print_r($id_dorig . '_qta_' . ${$id_dorig . '_count'});
-                        echo ' => ' . ${$id_dorig . '_qta_' . ${$id_dorig . '_count'}};
-                        echo '<br>';
-                        echo '<br>';
-                        echo '<br>';
-                        echo '4 - ';
-                        print_r($id_dorig . '_data_scadenza_' . ${$id_dorig . '_count'});
-                        echo ' => ' . ${$id_dorig . '_data_scadenza_' . ${$id_dorig . '_count'}};
-                        echo '<br>';
-                        echo '<br>';
-                        echo '<br>';
+                       //echo '1 - ';
+                       //echo ${$id_dorig . '_count'};
+                       //echo '<br>';
+                       //echo '2 - ';
+                       //print_r($id_dorig . '_lotto_' . ${$id_dorig . '_count'});
+                       //echo ' => ' . ${$id_dorig . '_lotto_' . ${$id_dorig . '_count'}};
+                       //echo '<br>';
+                       //echo '<br>';
+                       //echo '<br>';
+                       //echo '3 - ';
+                       //print_r($id_dorig . '_qta_' . ${$id_dorig . '_count'});
+                       //echo ' => ' . ${$id_dorig . '_qta_' . ${$id_dorig . '_count'}};
+                       //echo '<br>';
+                       //echo '<br>';
+                       //echo '<br>';
+                       //echo '4 - ';
+                       //print_r($id_dorig . '_data_scadenza_' . ${$id_dorig . '_count'});
+                       //echo ' => ' . ${$id_dorig . '_data_scadenza_' . ${$id_dorig . '_count'}};
+                       //echo '<br>';
+                       //echo '<br>';
+                       //echo '<br>';
 
                         $Id_DoRig = $r->Id_DORig;
                         $qtadaEvadere = ${$r->Id_DORig . '_qta_' . ${$id_dorig . '_count'}};
