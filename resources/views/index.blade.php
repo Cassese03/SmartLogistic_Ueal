@@ -12,12 +12,21 @@
     <link rel="stylesheet" href="vendor/materializeicon/material-icons.css">
     <link rel="stylesheet" href="vendor/swiper/css/swiper.min.css">
     <link id="theme" rel="stylesheet" href="css/style.css" type="text/css">
-    <title>SMART LOGISTIC</title>
+    <title>SMART LOGISTICA</title>
 </head>
 
 <body class="color-theme-blue push-content-right theme-light">
 <div class="loader justify-content-center ">
-    <div class="maxui-roller align-self-center"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="maxui-roller align-self-center">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
 </div>
 <div class="wrapper">
 
@@ -36,8 +45,8 @@
                             <img src="img/logo_arca.png" style="width:80%;padding:10%;margin:0 auto;display:block;">
 
                             <h1 class="text-center text-white title-background" style="margin-top:0">
-                                <small>SMART LOGISTIC<br></small>
-                                <?php echo $ditta->RagioneSociale ?></h1>
+                                <small>SMART LOGISTICA<br></small>
+                                <?php echo $ditta->RagioneSociale;?></h1>
 
                         </div>
                     </div>
@@ -63,7 +72,7 @@
                                     </div>
                                 </a>
                             </li>
-                        
+
                             <li class="list-group-item">
                                 <a href="<?php echo URL::asset('qrcode') ?>" class="media">
                                     <div class="media-body">
@@ -80,7 +89,7 @@
                                     </div>
                                 </a>
                             </li>
-                        
+
                         </ul>
 
                     </div>

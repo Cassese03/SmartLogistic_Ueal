@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="/vendor/materializeicon/material-icons.css">
     <link rel="stylesheet" href="/vendor/swiper/css/swiper.min.css">
     <link id="theme" rel="stylesheet" href="/css/style.css" type="text/css">
-    <title>SMART LOGISTIC</title>
+    <title>SMART LOGISTICA</title>
 </head>
 
 <style>

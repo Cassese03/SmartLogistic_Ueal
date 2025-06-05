@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/vendor/materializeicon/material-icons.css">
     <link rel="stylesheet" href="/vendor/swiper/css/swiper.min.css">
     <link id="theme" rel="stylesheet" href="/css/style.css" type="text/css">
-    <title>SMART LOGISTIC</title>
+    <title>SMART LOGISTICA</title>
     <div
         style="position: fixed;top: 0px;left: 0px;width: 100%;height: 100%;background: rgba(255, 255, 255,1);z-index: 1000000000;display: none;"
         id="ajax_loader">

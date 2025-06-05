@@ -6,7 +6,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
     @include('common.header')
-    <title>SMART LOGISTIC</title>
+    <title>SMART LOGISTICA</title>
 </head>
 
 <style>
