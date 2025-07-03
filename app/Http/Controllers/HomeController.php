@@ -428,7 +428,7 @@ class HomeController extends Controller
             }
             $session_mag = session('\'' . $id_dotes . '\'');
             $scatoli = DB::SELECT('SELECT * FROM AR WHERE Cd_AR LIKE \'SCATOLO%\'');
-            return View::make('carico_magazzino4', compact('scatoli', 'do', 'articolo', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento','documenti', 'articolo', 'flusso', 'righe'));
+            return View::make('carico_magazzino4', compact('scatoli', 'do', 'articolo', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'documenti', 'articolo', 'flusso', 'righe'));
 
         }
 
@@ -504,7 +504,7 @@ class HomeController extends Controller
             $session_mag = session('\'' . $id_dotes . '\'');
             $do = DB::SELECT('SELECT * FROM DO where cd_do = \'' . $cd_do . '\'');
             $scatoli = DB::SELECT('SELECT * FROM AR WHERE Cd_AR LIKE \'SCATOLO%\'');
-            return View::make('carico_magazzino04', compact('scatoli', 'do', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento','documenti', 'articolo'));
+            return View::make('carico_magazzino04', compact('scatoli', 'do', 'session_mag', 'magazzini_selected', 'magazzini', 'fornitore', 'id_dotes', 'documento', 'documenti', 'articolo'));
 
         }
 
@@ -540,12 +540,18 @@ class HomeController extends Controller
         return View::make('qrcode', compact('ultimi'));
     }
 
-    public function resultqrcode($alias, $scadenza, $lotto)
+    public function resultqrcode($alias, $scadenza = 0, $lotto = 0)
     {
+        if ($lotto == 0)
+            $lotto = '';
+        if ($scadenza == 0)
+            $scadenza = '';
         $alias = str_replace('slash', '/', $alias);
         $alias = str_replace('punto', ';', $alias);
+
         $scadenza = str_replace('slash', '/', $scadenza);
         $scadenza = str_replace('punto', ';', $scadenza);
+
         $lotto = str_replace('slash', '/', $lotto);
         $lotto = str_replace('punto', ';', $lotto);
         return View::make('qrcoderesult', compact('alias', 'scadenza', 'lotto'));

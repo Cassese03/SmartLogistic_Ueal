@@ -24,7 +24,7 @@ use Symfony\Component\VarDumper\Cloner\Data;
  */
 class AjaxController extends Controller
 {
-    public function barcode_add($codice, $scadenza, $lotto)
+    public function barcode_add($codice, $scadenza = 0, $lotto = 0)
     {
         $codice = str_replace('slash', '/', $codice);
         $lotto = str_replace('slash', '/', $lotto);

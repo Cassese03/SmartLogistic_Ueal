@@ -62,7 +62,8 @@
                         <input class="form-control" type="text" id="lotto" placeholder="Lotto">
                     </div>
 
-                    <button class="btn-primary" style="width: 100%;margin:3% 5% 2% 5%;" onclick="generateBarCode()">Invia
+                    <button class="btn-primary" style="width: 100%;margin:3% 5% 2% 5%;" onclick="generateBarCode()">
+                        Invia
                         Dati
                     </button>
 
@@ -90,70 +91,81 @@
                         @endforeach
                     </div>
                 </div>
+            </div>
 
 
-                <!-- Optional JavaScript -->
-                <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-                <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-                <script src="/js/jquery-3.2.1.min.js"></script>
-                <script src="/js/popper.min.js"></script>
-                <script src="/vendor/bootstrap-4.1.3/js/bootstrap.min.js"></script>
-                <script src="/vendor/cookie/jquery.cookie.js"></script>
-                <script src="/vendor/sparklines/jquery.sparkline.min.js"></script>
-                <script src="/vendor/circle-progress/circle-progress.min.js"></script>
-                <script src="/vendor/swiper/js/swiper.min.js"></script>
-                <script src="/js/main.js"></script>
-                <script type="text/javascript">
-                    function convertDateFormat(dateString) {
-                        // Dividi la stringa originale nel formato "dd/MM/yyyy"
-                        var parts = dateString.split('/');
-                        var day = parts[0];
-                        var month = parts[1];
-                        var year = parts[2];
+            <!-- Optional JavaScript -->
+            <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+            <script src="/js/jquery-3.2.1.min.js"></script>
+            <script src="/js/popper.min.js"></script>
+            <script src="/vendor/bootstrap-4.1.3/js/bootstrap.min.js"></script>
+            <script src="/vendor/cookie/jquery.cookie.js"></script>
+            <script src="/vendor/sparklines/jquery.sparkline.min.js"></script>
+            <script src="/vendor/circle-progress/circle-progress.min.js"></script>
+            <script src="/vendor/swiper/js/swiper.min.js"></script>
+            <script src="/js/main.js"></script>
+            <script type="text/javascript">
+                function convertDateFormat(dateString) {
+                    // Dividi la stringa originale nel formato "dd/MM/yyyy"
+                    var parts = dateString.split('/');
+                    var day = parts[0];
+                    var month = parts[1];
+                    var year = parts[2];
 
-                        // Crea la nuova stringa nel formato "yyyy-MM-dd"
-                        var formattedDate = year + '-' + month + '-' + day;
-                        return formattedDate;
+                    // Crea la nuova stringa nel formato "yyyy-MM-dd"
+                    var formattedDate = year + '-' + month + '-' + day;
+                    return formattedDate;
+                }
+
+                function replayQRCode(id) {
+                    codice = document.getElementById('codice_' + id).value;
+                    scadenza = document.getElementById('scadenza_' + id).value;
+                    lotto = document.getElementById('lotto_' + id).value;
+
+                    scadenza = convertDateFormat(scadenza);
+
+                    $('#alias').val(codice);
+                    $('#scadenza').val(scadenza);
+                    $('#lotto').val(lotto);
+                }
+
+                function generateBarCode() {
+                    var nric = $('#alias').val();
+                    scadenza = $('#scadenza').val();
+                    lotto = $('#lotto').val();
+
+
+                    if (scadenza != '' || $('#scadenza').val() != undefined) {
+                        const parts = scadenza.split('-');
+                        scadenza = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                    }
+                    if (lotto != '' || $('#lotto').val() != undefined) {
+
+                        lotto = lotto.replaceAll(';', 'punto');
+                        lotto = lotto.replaceAll('/', 'slash');
+                    }
+                    if (nric != '' || $('#nric').val() != undefined) {
+
+                        nric = nric.replaceAll(';', 'punto');
+                        nric = nric.replaceAll('/', 'slash');
+                    }
+                    if (scadenza != '' || $('#scadenza').val() != undefined) {
+                        scadenza = scadenza.replaceAll(';', 'punto');
+                        scadenza = scadenza.replaceAll('/', 'slash');
                     }
 
-                    function replayQRCode(id) {
-                        codice = document.getElementById('codice_' + id).value;
-                        scadenza = document.getElementById('scadenza_' + id).value;
-                        lotto = document.getElementById('lotto_' + id).value;
+                    $.ajax({
+                        url: "<?php echo URL::asset('ajax/barcode_add') ?>/" + nric + (scadenza != '' || $('#scadenza').val() != undefined) ? '/' + scadenza : (lotto != '' || $('#lotto').val() != undefined) ? '/undefined' : '' + (lotto != '' || $('#lotto').val() != undefined) ? '/' + lotto : '',
+                    }).done(function (result) {
+                        top.location.href = '/resultqrcode/' + nric + (scadenza != '' || $('#scadenza').val() != undefined) ? '/' + scadenza : (lotto != '' || $('#lotto').val() != undefined) ? '/undefined' : '' + (lotto != '' || $('#lotto').val() != undefined) ? '/' + lotto : '';
+                    });
 
-                        scadenza = convertDateFormat(scadenza);
-
-                        $('#alias').val(codice);
-                        $('#scadenza').val(scadenza);
-                        $('#lotto').val(lotto);
-                    }
-
-                    function generateBarCode() {
-                        var nric = $('#alias').val();
-                        if (nric != '' || $('#alias').val() != undefined) {
-                            scadenza = $('#scadenza').val();
-                            if (scadenza != '' || $('#scadenza').val() != undefined) {
-                                const parts = scadenza.split('-');
-                                scadenza = `${parts[2]}/${parts[1]}/${parts[0]}`;
-
-                                lotto = $('#lotto').val();
-                                if (lotto != '' || $('#lotto').val() != undefined) {
-                                    nric = nric.replaceAll(';', 'punto');
-                                    nric = nric.replaceAll('/', 'slash');
-                                    scadenza = scadenza.replaceAll(';', 'punto');
-                                    scadenza = scadenza.replaceAll('/', 'slash');
-                                    lotto = lotto.replaceAll(';', 'punto');
-                                    lotto = lotto.replaceAll('/', 'slash');
-                                    $.ajax({
-                                        url: "<?php echo URL::asset('ajax/barcode_add') ?>/" + nric + '/' + scadenza + '/' + lotto,
-                                    }).done(function (result) {
-                                        top.location.href = '/resultqrcode/' + nric + '/' + scadenza + '/' + lotto;
-                                    });
-                                }
-                            }
-                        }
-                    }
-                </script>
+                }
+            </script>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>

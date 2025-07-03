@@ -21,6 +21,8 @@ Route::any('logout', 'HomeController@logout');
 
 Route::any('qrcode', 'HomeController@qrcode');
 Route::any('resultqrcode/{alias}/{scadenza}/{lotto}', 'HomeController@resultqrcode');
+Route::any('resultqrcode/{alias}/{scadenza}', 'HomeController@resultqrcode');
+Route::any('resultqrcode/{alias}', 'HomeController@resultqrcode');
 
 Route::any('articoli', 'HomeController@articoli');
 Route::any('modifica_articolo/{id}', 'HomeController@modifica_articolo');
@@ -62,6 +64,8 @@ Route::any('ajax/cerca_articolo_smart_inventario/{q}/{tipo}', 'AjaxController@ce
 Route::any('ajax/elimina/{id_dotes}', 'AjaxController@elimina');
 Route::any('ajax/salva/{id_dotes}', 'AjaxController@salva');
 Route::any('ajax/barcode_add/{codice}/{scadenza}/{lotto}', 'AjaxController@barcode_add');
+Route::any('ajax/barcode_add/{codice}/{scadenza}', 'AjaxController@barcode_add');
+Route::any('ajax/barcode_add/{codice}', 'AjaxController@barcode_add');
 Route::any('ajax/segnalazione/{dotes}/{dorig}/{testo}', 'AjaxController@segnalazione');
 Route::any('ajax/invia_mail/{dotes}/{dorig}/{testo}', 'AjaxController@invia_mail');
 Route::any('ajax/segnalazione_salva/{dotes}/{dorig}/{testo}', 'AjaxController@segnalazione_salva');
