@@ -155,10 +155,29 @@
                         scadenza = scadenza.replaceAll('/', 'slash');
                     }
 
+                    var url = "<?php echo URL::asset('ajax/barcode_add') ?>/" + nric;
+                    if (scadenza !== '') {
+                        url += '/' + scadenza;
+                    } else {
+                        url += '/undefined';
+                    }
+                    if (lotto !== '') {
+                        url += '/' + lotto;
+                    }
+
                     $.ajax({
-                        url: "<?php echo URL::asset('ajax/barcode_add') ?>/" + nric + (scadenza != '' || $('#scadenza').val() != undefined) ? '/' + scadenza : (lotto != '' || $('#lotto').val() != undefined) ? '/undefined' : '' + (lotto != '' || $('#lotto').val() != undefined) ? '/' + lotto : '',
+                        url: url,
                     }).done(function (result) {
-                        top.location.href = '/resultqrcode/' + nric + (scadenza != '' || $('#scadenza').val() != undefined) ? '/' + scadenza : (lotto != '' || $('#lotto').val() != undefined) ? '/undefined' : '' + (lotto != '' || $('#lotto').val() != undefined) ? '/' + lotto : '';
+                        var redirectUrl = '/resultqrcode/' + nric;
+                        if (scadenza !== '') {
+                            redirectUrl += '/' + scadenza;
+                        } else {
+                            redirectUrl += '/undefined';
+                        }
+                        if (lotto !== '') {
+                            redirectUrl += '/' + lotto;
+                        }
+                        top.location.href = redirectUrl;
                     });
 
                 }
