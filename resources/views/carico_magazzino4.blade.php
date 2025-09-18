@@ -348,7 +348,7 @@
                         <br><small><?php echo $documento->Cd_Do ?> N.<?php echo $documento->NumeroDoc ?>
                             Del <?php echo date('d/m/Y', strtotime($documento->DataDoc)) ?></small></h1>
                 </div>
-                <form method="post" id="session" style="margin: 2%;display: none">
+                <form method="post" id="session" style="margin: 2%;">
                     <input type="hidden" name="change_mg_session" value="change_mg_session">
                     <div style="width: 90%;display: flex;gap: 5%;margin:2% 5% 0 5%">
                         <div style="width: 90%;">
