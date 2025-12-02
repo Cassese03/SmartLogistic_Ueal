@@ -201,7 +201,7 @@ class HomeController extends Controller
         if (!session()->has('utente')) {
             return Redirect::to('login');
         }
-        $documenti = DB::select('SELECT *,(SELECT COUNT(*) FROM DOTes WHERE Cd_DO = DO.Cd_DO and Prelevabile = 1 and RigheEvadibili > 0) as doc_da_lavorare FROM DO WHERE Cd_DO in (\'LP\',\'RMC\',\'RMA\',\'OVC\',\'OVW\',\'SM\') and CliFor = \'C\'');
+        $documenti = DB::select('SELECT *,(SELECT COUNT(*) FROM DOTes WHERE Cd_DO = DO.Cd_DO and Prelevabile = 1 and RigheEvadibili > 0) as doc_da_lavorare FROM DO WHERE Cd_DO in (\'LP\',\'RMC\',\'RMA\',\'OVC\',\'OVW\',\'SM\', \'RTN\') and CliFor = \'C\'');
         return View::make('attivo', compact('documenti'));
     }
 
